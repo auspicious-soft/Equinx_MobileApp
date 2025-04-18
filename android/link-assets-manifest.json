@@ -1,0 +1,37 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/Assets/fonts/BricolageGrotesque_Condensed-Bold.ttf",
+      "sha1": "160bdf4890cebb14a2488df614dafd0fd88d1a30"
+    },
+    {
+      "path": "src/Assets/fonts/BricolageGrotesque_Condensed-ExtraBold.ttf",
+      "sha1": "787f02c36bf72f2ac726b0a504339c3ba8025f71"
+    },
+    {
+      "path": "src/Assets/fonts/BricolageGrotesque_Condensed-ExtraLight.ttf",
+      "sha1": "7cb0dc91198cffd1a7f399e0041a8a26d34ffe15"
+    },
+    {
+      "path": "src/Assets/fonts/BricolageGrotesque_Condensed-Light.ttf",
+      "sha1": "756e8611aab7e80a765c5389424cf69d14362726"
+    },
+    {
+      "path": "src/Assets/fonts/BricolageGrotesque_Condensed-Medium.ttf",
+      "sha1": "1a643869814a4dc9503572669b90c5aaa1e02e70"
+    },
+    {
+      "path": "src/Assets/fonts/BricolageGrotesque_Condensed-Regular.ttf",
+      "sha1": "2d4e80a8426388b247964ed7eb9d3084fdd9b047"
+    },
+    {
+      "path": "src/Assets/fonts/BricolageGrotesque_Condensed-SemiBold.ttf",
+      "sha1": "d132c8afe197750a7dd65d5bc34f94ead5ef9fe8"
+    },
+    {
+      "path": "src/Assets/fonts/index.tsx",
+      "sha1": "3e153c3b56bac5ac8be0e7aca61a17f6f1ec2dd5"
+    }
+  ]
+}

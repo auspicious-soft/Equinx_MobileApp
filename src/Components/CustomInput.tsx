@@ -1,0 +1,280 @@
+import React, { FC, useState } from "react";
+import {
+  FlexStyle,
+  StyleProp,
+  StyleSheet,
+  TextInputProps,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+  Modal,
+  FlatList,
+  Pressable,
+} from "react-native";
+import { TextInput } from "react-native-gesture-handler";
+import ICONS from "../Assets/Icons";
+import COLORS from "../Utilities/Colors";
+import { horizontalScale, verticalScale } from "../Utilities/Metrics";
+import CustomIcon from "./CustomIcon";
+import { CustomText } from "./CustomText";
+import dayjs from "dayjs";
+import DatePicker from "react-native-date-picker";
+
+type CustomInputProps = TextInputProps & {
+  placeholder?: string;
+  type?:
+    | "text"
+    | "password"
+    | "number"
+    | "dropdown"
+    | "textArea"
+    | "date"
+    | "time";
+  isBackArrow?: boolean;
+  onChangeText: (text: string) => void;
+  value: string;
+  style?: object;
+  isFilterIcon?: boolean;
+  onFilterPress?: () => void;
+  onBackPress?: () => void;
+  label?: string;
+  height?: FlexStyle["height"];
+  backgroundColor?: string;
+  inputStyle?: StyleProp<TextStyle>;
+  baseStyle?: StyleProp<ViewStyle>;
+  options?: Array<{ label: string; value: string }>;
+  width?: FlexStyle["width"];
+  disabled?: boolean;
+};
+
+const CustomInput: FC<CustomInputProps> = (props) => {
+  const {
+    value,
+    label,
+    placeholder,
+    type,
+    onChangeText,
+    options = [],
+    baseStyle,
+    disabled = false,
+  } = props;
+
+  const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+  const [isPickerVisible, setPickerVisible] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const togglePasswordVisibility = () => {
+    setIsPasswordVisible(!isPasswordVisible);
+  };
+
+  const changeValueInNumber = (dir: "up" | "down") => {
+    const currentValue = Number(value) || 0;
+    let newValue = dir === "up" ? currentValue + 1 : currentValue - 1;
+    // Prevent negative values
+    newValue = Math.max(0, newValue);
+    onChangeText(newValue.toString());
+  };
+  1;
+  const handleConfirm = (date: Date) => {
+    setPickerVisible(false);
+    setSelectedDate(date);
+    if (type === "date") {
+      const formattedDate = dayjs(date).format("D[th] MMM YYYY");
+      onChangeText(formattedDate);
+    } else if (type === "time") {
+      const formattedTime = dayjs(date).format("hh:mm A");
+      onChangeText(formattedTime);
+    }
+  };
+
+  const handleCancel = () => {
+    setPickerVisible(false);
+  };
+
+  const handleDropdownSelect = (selectedValue: string) => {
+    onChangeText(selectedValue);
+    setShowDropdown(false);
+  };
+
+  return (
+    <View
+      style={[
+        baseStyle,
+        {
+          gap: verticalScale(6),
+        },
+      ]}
+    >
+      {label && (
+        <CustomText fontFamily="regular" color={COLORS.oldGrey} fontSize={14}>
+          {label}
+        </CustomText>
+      )}
+      <TouchableOpacity
+        activeOpacity={1}
+        onPressIn={() => {
+          if (type === "dropdown") {
+            setShowDropdown(true);
+          } else if (type === "time" || type === "date") {
+            setPickerVisible(true);
+          }
+        }}
+        style={[
+          styles.inputContainer,
+          {
+            backgroundColor: disabled ? COLORS.greyishWhite : COLORS.white,
+          },
+        ]}
+      >
+        <TextInput
+          style={{
+            height: "auto",
+            paddingVertical: verticalScale(14),
+            flex: 1,
+            color: COLORS.darkBLue,
+          }}
+          keyboardType={type === "number" ? "numeric" : "default"}
+          value={value}
+          placeholder={placeholder}
+          placeholderTextColor={COLORS.oldGrey}
+          secureTextEntry={type === "password" && !isPasswordVisible}
+          onChangeText={onChangeText}
+          editable={type !== "date" && type !== "time" && type !== "dropdown"}
+        />
+
+        {type === "dropdown" && (
+          <TouchableOpacity onPress={() => setShowDropdown(!showDropdown)}>
+            <CustomIcon Icon={ICONS.DropdownIcon} height={12} width={12} />
+          </TouchableOpacity>
+        )}
+
+        {type === "password" && (
+          <TouchableOpacity onPress={togglePasswordVisibility}>
+            <CustomIcon
+              Icon={isPasswordVisible ? ICONS.EyeOnIcon : ICONS.EyeOffIcon}
+              height={20}
+              width={20}
+            />
+          </TouchableOpacity>
+        )}
+
+        {type === "number" && (
+          <View>
+            <TouchableOpacity
+              style={[
+                styles.numberButton,
+                {
+                  paddingTop: verticalScale(5),
+                },
+              ]}
+              onPress={() => changeValueInNumber("up")}
+            >
+              <CustomIcon Icon={ICONS.ArrowUpIcon} height={10} width={10} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.numberButton,
+                {
+                  paddingBottom: verticalScale(5),
+                },
+              ]}
+              onPress={() => changeValueInNumber("down")}
+            >
+              <CustomIcon Icon={ICONS.ArrowDownIcon} height={10} width={10} />
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {(type === "date" || type === "time") && (
+          <>
+            <TouchableOpacity
+              activeOpacity={0.6}
+              onPress={() => setPickerVisible(true)}
+            >
+              <CustomIcon
+                Icon={type === "date" ? ICONS.CalendarIcon : ICONS.CalendarIcon}
+                height={20}
+                width={20}
+              />
+            </TouchableOpacity>
+            <DatePicker
+              modal
+              open={isPickerVisible}
+              mode={type}
+              date={selectedDate || new Date()}
+              onConfirm={handleConfirm}
+              onCancel={handleCancel}
+            />
+          </>
+        )}
+
+        <Modal
+          visible={showDropdown}
+          transparent
+          animationType="fade"
+          onRequestClose={() => setShowDropdown(false)}
+        >
+          <Pressable
+            style={styles.modalOverlay}
+            onPress={() => setShowDropdown(false)}
+          >
+            <View style={styles.dropdownContainer}>
+              <FlatList
+                data={options}
+                keyExtractor={(item) => item.value}
+                renderItem={({ item }) => (
+                  <TouchableOpacity
+                    style={styles.dropdownItem}
+                    onPress={() => handleDropdownSelect(item.value)}
+                  >
+                    <CustomText fontFamily="regular" fontSize={14}>
+                      {item.label}
+                    </CustomText>
+                  </TouchableOpacity>
+                )}
+              />
+            </View>
+          </Pressable>
+        </Modal>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+export default CustomInput;
+
+const styles = StyleSheet.create({
+  inputContainer: {
+    borderWidth: 0.5,
+    borderColor: COLORS.oldGrey,
+    paddingHorizontal: horizontalScale(14),
+    borderRadius: verticalScale(5),
+    flexDirection: "row",
+    alignItems: "center",
+    gap: horizontalScale(10),
+  },
+  numberButton: {
+    paddingHorizontal: horizontalScale(5),
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  dropdownContainer: {
+    backgroundColor: "white",
+    borderRadius: 8,
+    padding: verticalScale(10),
+    width: "80%",
+    maxHeight: "50%",
+  },
+  dropdownItem: {
+    paddingVertical: verticalScale(12),
+    paddingHorizontal: horizontalScale(16),
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.oldGrey + "20",
+  },
+});
