@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
 import React, { FC, useEffect, useMemo, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -7,12 +9,22 @@ import CustomInput from "../../Components/CustomInput";
 import { CustomText } from "../../Components/CustomText";
 import { KeyboardAvoidingContainer } from "../../Components/KeyboardAvoidingComponent";
 import PrimaryButton from "../../Components/PrimaryButton";
+import {
+  setCurrentQuestionId,
+  setFirstMealTime,
+  setLastMealTime,
+  setProfileForm,
+  setQuestionAnswer,
+  setSelectedOptions,
+  setWeightGoal,
+} from "../../Redux/slices/questionSlice";
+import { useAppDispatch, useAppSelector } from "../../Redux/store";
 import QueastionResponse from "../../Seeds/QuestionAPIData";
 import { QuestionScreenProps } from "../../Typings/route";
 import COLORS from "../../Utilities/Colors";
-import { horizontalScale, verticalScale, wp } from "../../Utilities/Metrics";
-import DatePicker from "react-native-date-picker";
-import dayjs from "dayjs";
+import { horizontalScale, verticalScale } from "../../Utilities/Metrics";
+
+dayjs.extend(customParseFormat);
 
 type ProfileForm = {
   gender: string;
@@ -31,22 +43,17 @@ const GENDER_OPTIONS = [
 const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
   const { questionId, totalQuestions } = route.params;
 
-  const [selectedOptions, setSelectedOptions] = useState<string[]>([]);
+  const dispatch = useAppDispatch();
+  const {
+    selectedOptions,
+    questionAnswers,
+    profileForm,
+    weightGoal,
+    firstMmealTime,
+    lastMealTime,
+  } = useAppSelector((state) => state.questions);
+
   const [isMultiSelect, setIsMultiSelect] = useState(false);
-  const [profileForm, setProfileForm] = useState<ProfileForm>({
-    gender: "",
-    dob: "",
-    age: "",
-    height: "",
-    weight: "",
-  });
-
-  const [weightGoal, setWeightGoal] = useState("");
-
-  const [firstMmealTime, setFirstMealTime] = useState<any>(null);
-  const [lastMealTime, setLastMealTime] = useState<any>(null);
-
-  const [selectedTime, setSelectedTime] = useState<Date>(new Date()); // State to hold the Date object from picker
 
   const questionData = QueastionResponse.data.questions[questionId];
 
@@ -68,22 +75,46 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
     return "";
   }, [profileForm.height, profileForm.weight]);
 
-  // Handle option selection
+  // Handle option selection with limit of 5
   const handleOptionSelect = (optionId: string) => {
     if (isMultiSelect) {
-      setSelectedOptions((prev) =>
-        prev.includes(optionId)
-          ? prev.filter((id) => id !== optionId)
-          : [...prev, optionId]
-      );
+      // For multi-select questions, limit to 5 selections
+      if (
+        questionData.text ===
+        "How would you describe your eating habits? (Multi-select)"
+      ) {
+        if (
+          selectedOptions.length >= 3 &&
+          !selectedOptions.includes(optionId)
+        ) {
+          return;
+        }
+      } else {
+        if (
+          selectedOptions.length >= 5 &&
+          !selectedOptions.includes(optionId)
+        ) {
+          return;
+        }
+      }
+      const newOptions = selectedOptions.includes(optionId)
+        ? selectedOptions.filter((id) => id !== optionId)
+        : [...selectedOptions, optionId];
+
+      // Update both the current selection and store it by question ID
+      dispatch(setSelectedOptions(newOptions));
+      dispatch(setQuestionAnswer({ questionId, answers: newOptions }));
     } else {
-      setSelectedOptions([optionId]);
+      // For single-select questions
+      const newOptions = [optionId];
+      dispatch(setSelectedOptions(newOptions));
+      dispatch(setQuestionAnswer({ questionId, answers: newOptions }));
     }
   };
 
   // Handle profile form input changes
   const handleProfileChange = (field: keyof ProfileForm) => (value: string) => {
-    setProfileForm((prev) => ({ ...prev, [field]: value }));
+    dispatch(setProfileForm({ [field]: value }));
   };
 
   // Check if an option is selected
@@ -137,27 +168,43 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
     }
   };
 
-  const handleFirstMealTimeChange = (date: Date) => {
-    setSelectedTime(date);
-    const formattedTime = dayjs(date).format("hh:mm A");
-    setFirstMealTime(formattedTime);
-  };
-
-  const handleLastMealTimeChange = (date: Date) => {
-    setSelectedTime(date);
-    const formattedTime = dayjs(date).format("hh:mm A");
-    setLastMealTime(formattedTime);
-  };
-
-  // Validate questionData
+  // Validate questionData, set multi-select, and load saved answers
   useEffect(() => {
     if (!questionData) {
       navigation.goBack();
       return;
     }
-    setIsMultiSelect(questionData.text.toLowerCase().includes("multi-select"));
-    setSelectedOptions([]);
-  }, [questionId, questionData, navigation]);
+
+    // Set the current question ID in Redux
+    dispatch(setCurrentQuestionId(questionId));
+
+    // Determine if this is a multi-select question
+    const isMulti =
+      questionData.text.toLowerCase().includes("multi-select") ||
+      questionData.type === "multiSelect";
+    setIsMultiSelect(isMulti);
+
+    // Load previously saved answers for this question if they exist
+    if (questionAnswers[questionId]) {
+      dispatch(setSelectedOptions(questionAnswers[questionId]));
+    } else {
+      // Reset selected options if no saved answers
+      dispatch(setSelectedOptions([]));
+    }
+  }, [questionId, questionData, navigation, dispatch, questionAnswers]);
+
+  // Update age based on DOB
+  useEffect(() => {
+    if (profileForm.dob) {
+      const normalizedDateStr = profileForm.dob.replace(/(st|nd|rd|th)/, "");
+      const birthDate = dayjs(normalizedDateStr, "DD MMM YYYY");
+      if (birthDate.isValid()) {
+        const today = dayjs();
+        const age = today.diff(birthDate, "year");
+        dispatch(setProfileForm({ age: age.toString() }));
+      }
+    }
+  }, [profileForm.dob, dispatch]);
 
   if (!questionData) {
     return null; // Or a fallback UI
@@ -166,15 +213,7 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       <SafeAreaView style={styles.content}>
-        <View
-          style={[
-            styles.header,
-            {
-              justifyContent: questionId === 0 ? "flex-end" : "space-between",
-              paddingVertical: questionId === 0 ? horizontalScale(10) : 0,
-            },
-          ]}
-        >
+        <View style={styles.header}>
           {questionId > 0 && (
             <TouchableOpacity
               onPress={handleBack}
@@ -184,12 +223,6 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
               <CustomIcon Icon={ICONS.BackArrow} height={30} width={30} />
             </TouchableOpacity>
           )}
-          <CustomText color={COLORS.oldGrey}>
-            {questionData.order < 10
-              ? `0${questionData.order}`
-              : questionData.order}{" "}
-            / {totalQuestions}
-          </CustomText>
         </View>
         <View style={styles.questionContainer}>
           <View style={styles.questionTextContainer}>
@@ -239,6 +272,33 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
                     onPress={() => handleOptionSelect(option.value.toString())}
                     activeOpacity={0.7}
                   >
+                    {option.hasIcon && (
+                      <View
+                        style={{
+                          marginRight: horizontalScale(10),
+                          backgroundColor: isOptionSelected(
+                            option.value.toString()
+                          )
+                            ? COLORS.white
+                            : COLORS.greyishWhite,
+                          borderRadius: 100,
+                          width: verticalScale(26),
+                          height: verticalScale(26),
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <CustomIcon
+                          Icon={
+                            ICONS[
+                              `Mcq${option.value.toString()}` as keyof typeof ICONS
+                            ]
+                          }
+                          height={16}
+                          width={16}
+                        />
+                      </View>
+                    )}
                     <CustomText
                       fontSize={14}
                       style={styles.optionText}
@@ -290,16 +350,17 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
                     value={profileForm.dob}
                     onChangeText={handleProfileChange("dob")}
                     baseStyle={styles.dateInput}
+                    maxDate={new Date()}
                     accessibilityLabel="Select date of birth"
                   />
                   <CustomInput
                     label="Age"
-                    type="number"
                     placeholder="Age"
                     value={profileForm.age}
                     onChangeText={handleProfileChange("age")}
                     baseStyle={styles.ageInput}
-                    accessibilityLabel="Enter age"
+                    disabled
+                    editable={false}
                   />
                 </View>
                 <View style={styles.inputRow}>
@@ -387,34 +448,28 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
             </View>
           )}
 
-          {questionData.type === "time1" && (
-            <View style={{ alignItems: "center" }}>
-              <DatePicker
-                mode="time"
-                date={selectedTime}
-                onDateChange={handleFirstMealTimeChange}
-                is24hourSource="locale"
-              />
+          {questionData.type === "mealTimes" && (
+            <View style={{ gap: verticalScale(20) }}>
+              <View style={styles.optionsContainer}>
+                <CustomInput
+                  label="First Meal"
+                  type="time"
+                  placeholder="Select time"
+                  value={firstMmealTime}
+                  onChangeText={(value) => dispatch(setFirstMealTime(value))}
+                />
+                <CustomInput
+                  label="Last Meal"
+                  type="time"
+                  placeholder="Select time"
+                  value={lastMealTime}
+                  onChangeText={(value) => dispatch(setLastMealTime(value))}
+                />
+              </View>
               <PrimaryButton
                 title="Next"
                 onPress={handleNext}
-                disabled={!firstMmealTime}
-              />
-            </View>
-          )}
-
-          {questionData.type === "time2" && (
-            <View style={{ alignItems: "center" }}>
-              <DatePicker
-                mode="time"
-                date={selectedTime}
-                onDateChange={handleLastMealTimeChange}
-                is24hourSource="locale"
-              />
-              <PrimaryButton
-                title="Next"
-                onPress={handleNext}
-                disabled={!lastMealTime}
+                disabled={!firstMmealTime || !lastMealTime}
               />
             </View>
           )}
@@ -426,7 +481,7 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
                 type="number"
                 placeholder="180 lbs"
                 value={weightGoal}
-                onChangeText={setWeightGoal}
+                onChangeText={(value) => dispatch(setWeightGoal(value))}
                 accessibilityLabel="Enter height"
                 autoFocus
               />
@@ -457,6 +512,8 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "flex-start",
+    minHeight: verticalScale(40),
   },
   backButton: {
     padding: horizontalScale(5),
@@ -487,7 +544,7 @@ const styles = StyleSheet.create({
   },
   optionsContainer: {
     width: "100%",
-    gap: verticalScale(20),
+    gap: verticalScale(15),
   },
   optionItem: {
     flexDirection: "row",

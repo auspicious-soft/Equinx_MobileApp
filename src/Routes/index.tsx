@@ -1,17 +1,22 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import React from "react";
+import CreatePassword from "../Screens/CreatePassword";
+import ForgotPassword from "../Screens/ForgotPassword";
 import InfoScreen from "../Screens/infoScreen";
+import Login from "../Screens/Login";
 import NotificationTestScreen from "../Screens/NotificationTestScreen";
+import Otp from "../Screens/Otp";
 import PlanScreen from "../Screens/PlanScreen";
 import QuestionScreen from "../Screens/QuestionScreen";
+import Register from "../Screens/Register";
 import Splash from "../Screens/Splash";
 import {
-    AuthStackParams,
-    BottomTabParams,
-    MainStackParams,
-    OnBoardingStackParams,
-    RootStackParams,
+  AuthStackParams,
+  BottomTabParams,
+  MainStackParams,
+  OnBoardingStackParams,
+  RootStackParams,
 } from "../Typings/route";
 
 const RootStack = createNativeStackNavigator<RootStackParams>();
@@ -21,21 +26,21 @@ const Tabs = createBottomTabNavigator<BottomTabParams>();
 const Main = createNativeStackNavigator<MainStackParams>(); // Create Drawer Navigator
 
 const Routing = () => {
-  //   function AuthStack() {
-  //     return (
-  //       <Auth.Navigator
-  //         screenOptions={{
-  //           headerShown: false,
-  //         }}
-  //       >
-  //         <Auth.Screen name="welcome" component={Welcome} />
-  //         <Auth.Screen name="signIn" component={SignIn} />
-  //         <Auth.Screen name="signUp" component={SignUp} />
-  //         <Auth.Screen name="forgotpassword" component={ForgotPassword} />
-  //         <Auth.Screen name="resetPassword" component={ResetPassword} />
-  //       </Auth.Navigator>
-  //     );
-  //   }
+  function AuthStack() {
+    return (
+      <Auth.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Auth.Screen name="login" component={Login} />
+        <Auth.Screen name="register" component={Register} />
+        <Auth.Screen name="otp" component={Otp} />
+        <Auth.Screen name="forgotpassword" component={ForgotPassword} />
+        <Auth.Screen name="createNewPassword" component={CreatePassword} />
+      </Auth.Navigator>
+    );
+  }
 
   function OnBoardingStack() {
     return (
@@ -119,12 +124,11 @@ const Routing = () => {
     <RootStack.Navigator
       screenOptions={{
         headerShown: false,
-        animation: "none",
       }}
     >
       <RootStack.Screen name="splash" component={Splash} />
       <RootStack.Screen name="onBoardingStack" component={OnBoardingStack} />
-      {/* <RootStack.Screen name="authStack" component={AuthStack} /> */}
+      <RootStack.Screen name="authStack" component={AuthStack} />
       {/* <RootStack.Screen name="mainStack" component={MianStack} /> */}
     </RootStack.Navigator>
   );

@@ -2,11 +2,13 @@ import { configureStore } from "@reduxjs/toolkit";
 import { useDispatch, useSelector } from "react-redux";
 import initialReducer from "./slices/initialSlice";
 import modalReducer from "./slices/modalSlice";
+import questionReducer from "./slices/questionSlice";
 
 export const store = configureStore({
   reducer: {
     initial: initialReducer,
     modals: modalReducer,
+    questions: questionReducer,
   },
 });
 

@@ -18,6 +18,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5b0",
             },
+            hasIcon: true,
           },
           {
             text: "Weight loss",
@@ -25,6 +26,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5b1",
             },
+            hasIcon: true,
           },
           {
             text: "Feeling more energetic",
@@ -32,6 +34,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5b2",
             },
+            hasIcon: true,
           },
         ],
         order: 1,
@@ -58,6 +61,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5b4",
             },
+            hasIcon: true,
           },
           {
             text: "Intermediate",
@@ -65,6 +69,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5b5",
             },
+            hasIcon: true,
           },
           {
             text: "Advanced",
@@ -72,6 +77,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5b6",
             },
+            hasIcon: true,
           },
         ],
         order: 2,
@@ -99,6 +105,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5b8",
             },
+            hasIcon: true,
           },
           {
             text: "Low energy",
@@ -106,6 +113,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5b9",
             },
+            hasIcon: true,
           },
           {
             text: "Lack of motivation",
@@ -113,6 +121,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5ba",
             },
+            hasIcon: true,
           },
           {
             text: "Fitting in with social events",
@@ -120,6 +129,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5bb",
             },
+            hasIcon: true,
           },
           {
             text: "Sleep issues",
@@ -127,6 +137,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5bc",
             },
+            hasIcon: true,
           },
         ],
         order: 3,
@@ -154,6 +165,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5be",
             },
+            hasIcon: false,
           },
           {
             text: "dob",
@@ -161,6 +173,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5bf",
             },
+            hasIcon: false,
           },
           {
             text: "age",
@@ -168,6 +181,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5c0",
             },
+            hasIcon: false,
           },
           {
             text: "height",
@@ -175,6 +189,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5c1",
             },
+            hasIcon: false,
           },
           {
             text: "weight",
@@ -182,6 +197,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5c2",
             },
+            hasIcon: false,
           },
           {
             text: "bmi",
@@ -189,6 +205,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5c3",
             },
+            hasIcon: false,
           },
         ],
         order: 4,
@@ -208,7 +225,7 @@ const QueastionResponse = {
         subtitle:
           "Exploring the key areas where our teamwork can make the biggest impact.",
         type: "multiSelect",
-        next: "question",
+        next: "info2",
         options: [
           {
             text: "Strong immune system",
@@ -216,6 +233,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5c5",
             },
+            hasIcon: false,
           },
           {
             text: "Better digestion",
@@ -223,6 +241,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5c6",
             },
+            hasIcon: false,
           },
           {
             text: "Boosting energy",
@@ -230,6 +249,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5c7",
             },
+            hasIcon: false,
           },
           {
             text: "Challenging myself",
@@ -237,6 +257,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5c8",
             },
+            hasIcon: false,
           },
           {
             text: "Improving sleep quality ",
@@ -244,6 +265,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5c9",
             },
+            hasIcon: false,
           },
           {
             text: "Mental clarity",
@@ -251,6 +273,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5ca",
             },
+            hasIcon: false,
           },
           {
             text: "Reducing stress and tension ",
@@ -258,6 +281,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5cb",
             },
+            hasIcon: false,
           },
           {
             text: "Increasing self-confidence ",
@@ -265,6 +289,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5cc",
             },
+            hasIcon: false,
           },
           {
             text: "Longer and healthier life",
@@ -272,6 +297,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5cd",
             },
+            hasIcon: false,
           },
         ],
         order: 5,
@@ -299,6 +325,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5cf",
             },
+            hasIcon: false,
           },
           {
             text: "5:2 (5 days normal, 2 days low calorie) ",
@@ -306,6 +333,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5d0",
             },
+            hasIcon: false,
           },
           {
             text: "OMAD (One Meal a Day) ",
@@ -313,6 +341,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5d1",
             },
+            hasIcon: false,
           },
           {
             text: "I haven’t decided yet",
@@ -320,6 +349,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5d2",
             },
+            hasIcon: false,
           },
         ],
         order: 6,
@@ -347,6 +377,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5d4",
             },
+            hasIcon: false,
           },
           {
             text: "3-4 days ",
@@ -354,6 +385,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5d5",
             },
+            hasIcon: false,
           },
           {
             text: "5-6 days ",
@@ -361,6 +393,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5d6",
             },
+            hasIcon: false,
           },
           {
             text: "Every day ",
@@ -368,6 +401,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5d7",
             },
+            hasIcon: false,
           },
           {
             text: "I’m not sure yet",
@@ -375,6 +409,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5d8",
             },
+            hasIcon: false,
           },
         ],
         order: 7,
@@ -402,6 +437,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5da",
             },
+            hasIcon: false,
           },
           {
             text: "2",
@@ -409,6 +445,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5db",
             },
+            hasIcon: false,
           },
           {
             text: "3",
@@ -416,6 +453,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5dc",
             },
+            hasIcon: false,
           },
           {
             text: "More Than 3",
@@ -423,6 +461,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5dd",
             },
+            hasIcon: false,
           },
         ],
         order: 8,
@@ -438,48 +477,32 @@ const QueastionResponse = {
         _id: {
           $oid: "67f90bb08b68fd5c142ff5de",
         },
-        text: "What time do you usually have your first meal?  ",
+        text: "What time do you usually have your meals?",
         subtitle:
-          "Your first meal can provide insight into your eating habits and help you optimize your nutrition throughout the day.",
-        type: "time1",
+          "Knowing when you eat your first and last meals helps analyze your eating habits and daily nutrition patterns.",
+        type: "mealTimes",
         next: "question",
         options: [
           {
-            text: "mealTime",
+            text: "First Meal Time",
             value: 40,
+            key: "time1",
             _id: {
               $oid: "67f90bb08b68fd5c142ff5df",
             },
+            hasIcon: false,
           },
-        ],
-        order: 9,
-        __v: 0,
-        createdAt: {
-          $date: "2025-04-11T12:31:44.904Z",
-        },
-        updatedAt: {
-          $date: "2025-04-11T12:31:44.904Z",
-        },
-      },
-      {
-        _id: {
-          $oid: "67f90bb08b68fd5c142ff5e0",
-        },
-        text: "What time do you usually have your last meal?  ",
-        subtitle:
-          "Your last meal timing helps us optimize your fasting window.",
-        type: "time2",
-        next: "question",
-        options: [
           {
-            text: "mealTime",
+            text: "Last Meal Time",
             value: 41,
+            key: "time2",
             _id: {
               $oid: "67f90bb08b68fd5c142ff5e1",
             },
+            hasIcon: false,
           },
         ],
-        order: 10,
+        order: 9,
         __v: 0,
         createdAt: {
           $date: "2025-04-11T12:31:44.904Z",
@@ -504,6 +527,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5e3",
             },
+            hasIcon: false,
           },
           {
             text: "Sometimes",
@@ -511,6 +535,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5e4",
             },
+            hasIcon: false,
           },
           {
             text: "Not Really",
@@ -518,9 +543,10 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5e5",
             },
+            hasIcon: false,
           },
         ],
-        order: 11,
+        order: 10,
         __v: 0,
         createdAt: {
           $date: "2025-04-11T12:31:44.904Z",
@@ -545,6 +571,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5e7",
             },
+            hasIcon: false,
           },
           {
             text: "No",
@@ -552,6 +579,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5e8",
             },
+            hasIcon: false,
           },
           {
             text: "A little",
@@ -559,9 +587,10 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5e9",
             },
+            hasIcon: false,
           },
         ],
-        order: 12,
+        order: 11,
         __v: 0,
         createdAt: {
           $date: "2025-04-11T12:31:44.904Z",
@@ -586,6 +615,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5eb",
             },
+            hasIcon: false,
           },
           {
             text: "Between 1500-2000 kcal ",
@@ -593,6 +623,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5ec",
             },
+            hasIcon: false,
           },
           {
             text: "Between 2000-2500 kcal ",
@@ -600,6 +631,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5ed",
             },
+            hasIcon: false,
           },
           {
             text: "More than 2500 kcal ",
@@ -607,6 +639,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5ee",
             },
+            hasIcon: false,
           },
           {
             text: "I’m not sure",
@@ -614,9 +647,10 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5ef",
             },
+            hasIcon: false,
           },
         ],
-        order: 13,
+        order: 12,
         __v: 0,
         createdAt: {
           $date: "2025-04-11T12:31:44.904Z",
@@ -641,6 +675,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5f1",
             },
+            hasIcon: false,
           },
           {
             text: "Pescatarian",
@@ -648,6 +683,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5f2",
             },
+            hasIcon: false,
           },
           {
             text: "Vegetarian",
@@ -655,6 +691,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5f3",
             },
+            hasIcon: false,
           },
           {
             text: "Vegan",
@@ -662,6 +699,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5f4",
             },
+            hasIcon: false,
           },
           {
             text: "Ketogenic",
@@ -669,20 +707,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5f5",
             },
-          },
-          {
-            text: "Paleo",
-            value: 58,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff5f6",
-            },
-          },
-          {
-            text: "Ketogenic Vegan ",
-            value: 59,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff5f7",
-            },
+            hasIcon: false,
           },
           {
             text: "Lactose-free ",
@@ -690,6 +715,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5f8",
             },
+            hasIcon: false,
           },
           {
             text: "Gluten-free",
@@ -697,6 +723,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5f9",
             },
+            hasIcon: false,
           },
           {
             text: "Mediterranean diet",
@@ -704,9 +731,10 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5fa",
             },
+            hasIcon: false,
           },
         ],
-        order: 14,
+        order: 13,
         __v: 0,
         createdAt: {
           $date: "2025-04-11T12:31:44.904Z",
@@ -731,6 +759,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5fc",
             },
+            hasIcon: false,
           },
           {
             text: "Between 2-6 glasses",
@@ -738,6 +767,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5fd",
             },
+            hasIcon: false,
           },
           {
             text: "More than 6 glasses",
@@ -745,6 +775,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5fe",
             },
+            hasIcon: false,
           },
           {
             text: "I mostly drink coffee and tea",
@@ -752,9 +783,10 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff5ff",
             },
+            hasIcon: false,
           },
         ],
-        order: 15,
+        order: 14,
         __v: 0,
         createdAt: {
           $date: "2025-04-11T12:31:44.905Z",
@@ -779,6 +811,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff601",
             },
+            hasIcon: false,
           },
           {
             text: "Once a week",
@@ -786,6 +819,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff602",
             },
+            hasIcon: false,
           },
           {
             text: "2-3 times a week",
@@ -793,6 +827,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff603",
             },
+            hasIcon: false,
           },
           {
             text: "Almost every day",
@@ -800,9 +835,10 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff604",
             },
+            hasIcon: false,
           },
         ],
-        order: 16,
+        order: 15,
         __v: 0,
         createdAt: {
           $date: "2025-04-11T12:31:44.905Z",
@@ -819,7 +855,7 @@ const QueastionResponse = {
         subtitle:
           "Knowing your workout time helps us optimize fasting and energy management.",
         type: "mcq",
-        next: "question",
+        next: "info6",
         options: [
           {
             text: "Morning",
@@ -827,6 +863,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff606",
             },
+            hasIcon: false,
           },
           {
             text: "Noon",
@@ -834,6 +871,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff607",
             },
+            hasIcon: false,
           },
           {
             text: "Evening",
@@ -841,6 +879,7 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff608",
             },
+            hasIcon: false,
           },
           {
             text: "I don’t exercise",
@@ -848,77 +887,10 @@ const QueastionResponse = {
             _id: {
               $oid: "67f90bb08b68fd5c142ff609",
             },
+            hasIcon: false,
           },
         ],
-        order: 17,
-        __v: 0,
-        createdAt: {
-          $date: "2025-04-11T12:31:44.905Z",
-        },
-        updatedAt: {
-          $date: "2025-04-11T12:31:44.905Z",
-        },
-      },
-      {
-        _id: {
-          $oid: "67f90bb08b68fd5c142ff60a",
-        },
-        text: "How would you describe your lifestyle? ",
-        subtitle:
-          "Your daily routine impacts your fasting success. Let’s personalize your experience.",
-        type: "mcq",
-        next: "info6",
-        options: [
-          {
-            text: "Sedentary",
-            value: 75,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff60b",
-            },
-          },
-          {
-            text: "Somewhat active",
-            value: 76,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff60c",
-            },
-          },
-          {
-            text: "Very active",
-            value: 77,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff60d",
-            },
-          },
-        ],
-        order: 18,
-        __v: 0,
-        createdAt: {
-          $date: "2025-04-11T12:31:44.905Z",
-        },
-        updatedAt: {
-          $date: "2025-04-11T12:31:44.905Z",
-        },
-      },
-      {
-        _id: {
-          $oid: "67f90bb08b68fd5c142ff60e",
-        },
-        text: "What is your goal weight?",
-        subtitle:
-          "We use this info to tailor your fasting plan and progress tracking.",
-        type: "number",
-        next: "planScreen",
-        options: [
-          {
-            text: "weight",
-            value: 78,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff60f",
-            },
-          },
-        ],
-        order: 19,
+        order: 16,
         __v: 0,
         createdAt: {
           $date: "2025-04-11T12:31:44.905Z",

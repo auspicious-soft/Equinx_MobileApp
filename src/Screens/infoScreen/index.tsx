@@ -2,6 +2,8 @@ import notifee, { AuthorizationStatus } from "@notifee/react-native";
 import React, { FC, useEffect, useState } from "react";
 import {
   Alert,
+  Animated,
+  Easing,
   Image,
   ImageBackground,
   SafeAreaView,
@@ -30,12 +32,42 @@ const InfoScreen: FC<InfoScreenProps> = ({ navigation, route }) => {
 
   const screenData = InfoScreenData.find((_, index) => index === currentIndex);
 
-  // Check notification permission status on mount for screens 6 and 7
+  // Animation values
+  const imageAnim = React.useRef(new Animated.Value(-hp(50))).current; // Start from top
+  const textAnim = React.useRef(new Animated.Value(-hp(50))).current; // Start from bottom
+  const buttonAnim = React.useRef(new Animated.Value(hp(50))).current; // Start from bottom
+
   useEffect(() => {
+    // Animate image/icon from top
+    Animated.timing(imageAnim, {
+      toValue: 0,
+      duration: 1000,
+      easing: Easing.ease,
+      useNativeDriver: true,
+    }).start();
+
+    // Animate text from bottom
+    Animated.timing(textAnim, {
+      toValue: 0,
+      duration: 1000,
+      easing: Easing.ease,
+      useNativeDriver: true,
+    }).start();
+
+    // Animate button from bottom (delay for staggered effect)
+    Animated.timing(buttonAnim, {
+      toValue: 0,
+      duration: 1000,
+      easing: Easing.ease,
+      useNativeDriver: true,
+      delay: 300, // Delay to stagger animation
+    }).start();
+
+    // Check notification permission status on mount for screens 6 and 7
     if (currentIndex === 6 || currentIndex === 7) {
       checkNotificationPermission();
     }
-  }, [currentIndex]);
+  }, [currentIndex, imageAnim, textAnim, buttonAnim]);
 
   // Check if notification permissions are already granted
   const checkNotificationPermission = async () => {
@@ -47,11 +79,12 @@ const InfoScreen: FC<InfoScreenProps> = ({ navigation, route }) => {
 
   const handleNext = () => {
     if (screenData?.nextScreen === "questionScreen") {
-      // Navigate to the question screen
       navigation.replace("questionScreen", {
         questionId: nextQuestion || 0,
         totalQuestions: QueastionResponse.data.questions.length,
       });
+    } else if (screenData?.nextScreen === "planScreen") {
+      navigation.replace("planScreen");
     } else {
       navigation.navigate("infoScreen", {
         index: currentIndex + 1,
@@ -60,24 +93,17 @@ const InfoScreen: FC<InfoScreenProps> = ({ navigation, route }) => {
     }
   };
 
-  // Initialize notifications and request permission
   const initNotifications = async () => {
     try {
-      // Create notification channels (Android) and request permissions
       await NotificationService.initializeNotifications();
-
-      // Check if permission was granted
       const settings = await notifee.getNotificationSettings();
       const isGranted =
         settings.authorizationStatus >= AuthorizationStatus.AUTHORIZED;
-
       setPermissionGranted(isGranted);
 
       if (isGranted) {
-        // Navigate to next screen after a short delay
         handleNext();
       } else {
-        // Show alert if permission was denied
         Alert.alert(
           "Notification Permission",
           "Notifications help you stay on track with your fasting schedule. You can enable them later in settings.",
@@ -94,7 +120,6 @@ const InfoScreen: FC<InfoScreenProps> = ({ navigation, route }) => {
     }
   };
 
-  console.log(permissionGranted);
   return (
     <ImageBackground
       source={IMAGES.greenBg}
@@ -111,29 +136,50 @@ const InfoScreen: FC<InfoScreenProps> = ({ navigation, route }) => {
                 alignItems: "center",
               }}
             >
-              <View style={styles.imageContainer}>
-                {currentIndex === 1 ? (
-                  <Image
-                    source={IMAGES.info2}
-                    style={{
-                      width: wp(90),
-                      height: hp(60),
-                      resizeMode: "contain",
-                    }}
-                  />
-                ) : (
-                  <CustomIcon
-                    Icon={screenData.image}
-                    width={wp(60)}
-                    height={hp(25)}
-                  />
-                )}
-              </View>
+              <Animated.View
+                style={{
+                  transform: [{ translateY: imageAnim }],
+                }}
+              >
+                <View style={styles.imageContainer}>
+                  {currentIndex === 1 ||
+                  currentIndex === 3 ||
+                  currentIndex === 4 ? (
+                    <Image
+                      source={
+                        currentIndex === 1
+                          ? IMAGES.info2
+                          : currentIndex === 3
+                          ? IMAGES.info4
+                          : IMAGES.info5
+                      }
+                      style={{
+                        width: currentIndex === 1 ? wp(90) : wp(70),
+                        height: currentIndex === 1 ? hp(60) : hp(30),
+                        resizeMode: "contain",
+                      }}
+                    />
+                  ) : (
+                    <CustomIcon
+                      Icon={screenData.image}
+                      width={wp(60)}
+                      height={hp(25)}
+                    />
+                  )}
+                </View>
+              </Animated.View>
 
-              <View style={styles.textContainer}>
-                <Text style={styles.title}>{screenData.title}</Text>
-                <Text style={styles.subtitle}>{screenData.subTitle}</Text>
-              </View>
+              <Animated.View
+                style={{
+                  transform: [{ translateY: textAnim }],
+                  width: "100%",
+                }}
+              >
+                <View style={styles.textContainer}>
+                  <Text style={styles.title}>{screenData.title}</Text>
+                  <Text style={styles.subtitle}>{screenData.subTitle}</Text>
+                </View>
+              </Animated.View>
             </View>
           )}
 
@@ -175,7 +221,9 @@ const InfoScreen: FC<InfoScreenProps> = ({ navigation, route }) => {
               />
             </View>
           )}
-
+          {currentIndex === InfoScreenData.length - 2 && permissionGranted && (
+            <PrimaryButton title={"Continue"} onPress={handleNext} />
+          )}
           {currentIndex === InfoScreenData.length - 1 && (
             <View
               style={{
@@ -214,9 +262,15 @@ const InfoScreen: FC<InfoScreenProps> = ({ navigation, route }) => {
               />
             </View>
           )}
-
-          {currentIndex < InfoScreenData.length - 1 && (
-            <PrimaryButton title={"Continue"} onPress={handleNext} />
+          {currentIndex < InfoScreenData.length - 2 && (
+            <Animated.View
+              style={{
+                transform: [{ translateY: buttonAnim }],
+                width: "100%",
+              }}
+            >
+              <PrimaryButton title={"Continue"} onPress={handleNext} />
+            </Animated.View>
           )}
         </View>
       </SafeAreaView>

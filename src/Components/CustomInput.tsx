@@ -1,6 +1,10 @@
+import dayjs from "dayjs";
 import React, { FC, useState } from "react";
 import {
+  FlatList,
   FlexStyle,
+  Modal,
+  Pressable,
   StyleProp,
   StyleSheet,
   TextInputProps,
@@ -8,18 +12,14 @@ import {
   TouchableOpacity,
   View,
   ViewStyle,
-  Modal,
-  FlatList,
-  Pressable,
 } from "react-native";
+import DatePicker from "react-native-date-picker";
 import { TextInput } from "react-native-gesture-handler";
 import ICONS from "../Assets/Icons";
 import COLORS from "../Utilities/Colors";
 import { horizontalScale, verticalScale } from "../Utilities/Metrics";
 import CustomIcon from "./CustomIcon";
 import { CustomText } from "./CustomText";
-import dayjs from "dayjs";
-import DatePicker from "react-native-date-picker";
 
 type CustomInputProps = TextInputProps & {
   placeholder?: string;
@@ -46,6 +46,7 @@ type CustomInputProps = TextInputProps & {
   options?: Array<{ label: string; value: string }>;
   width?: FlexStyle["width"];
   disabled?: boolean;
+  maxDate?: Date;
 };
 
 const CustomInput: FC<CustomInputProps> = (props) => {
@@ -58,6 +59,7 @@ const CustomInput: FC<CustomInputProps> = (props) => {
     options = [],
     baseStyle,
     disabled = false,
+    maxDate,
   } = props;
 
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
@@ -76,13 +78,19 @@ const CustomInput: FC<CustomInputProps> = (props) => {
     newValue = Math.max(0, newValue);
     onChangeText(newValue.toString());
   };
-  1;
+
   const handleConfirm = (date: Date) => {
     setPickerVisible(false);
     setSelectedDate(date);
     if (type === "date") {
       const formattedDate = dayjs(date).format("D[th] MMM YYYY");
       onChangeText(formattedDate);
+
+      // Calculate age based on date of birth
+      const today = dayjs();
+      const birthDate = dayjs(date);
+      const age = today.diff(birthDate, "year");
+      onChangeText(formattedDate); // Update with age
     } else if (type === "time") {
       const formattedTime = dayjs(date).format("hh:mm A");
       onChangeText(formattedTime);
@@ -141,7 +149,12 @@ const CustomInput: FC<CustomInputProps> = (props) => {
           placeholderTextColor={COLORS.oldGrey}
           secureTextEntry={type === "password" && !isPasswordVisible}
           onChangeText={onChangeText}
-          editable={type !== "date" && type !== "time" && type !== "dropdown"}
+          editable={
+            type !== "date" &&
+            type !== "time" &&
+            type !== "dropdown" &&
+            !disabled
+          }
         />
 
         {type === "dropdown" && (
@@ -194,7 +207,7 @@ const CustomInput: FC<CustomInputProps> = (props) => {
               onPress={() => setPickerVisible(true)}
             >
               <CustomIcon
-                Icon={type === "date" ? ICONS.CalendarIcon : ICONS.CalendarIcon}
+                Icon={type === "date" ? ICONS.CalendarIcon : ICONS.ClockIcon}
                 height={20}
                 width={20}
               />
@@ -206,6 +219,7 @@ const CustomInput: FC<CustomInputProps> = (props) => {
               date={selectedDate || new Date()}
               onConfirm={handleConfirm}
               onCancel={handleCancel}
+              maximumDate={maxDate}
             />
           </>
         )}

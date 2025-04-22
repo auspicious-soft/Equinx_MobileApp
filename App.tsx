@@ -56,8 +56,6 @@ const App = () => {
     };
   }, [currentRoute]);
 
-  console.log(currentRoute);
-
   useEffect(() => {
     Appearance.setColorScheme("light");
   }, []);

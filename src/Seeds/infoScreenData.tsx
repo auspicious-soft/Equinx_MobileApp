@@ -12,7 +12,7 @@ const InfoScreenData = [
     image: ICONS.Info2,
     title: "",
     subTitle: "",
-    nextScreen: "infoScreen",
+    nextScreen: "questionScreen",
   },
   {
     image: ICONS.Info3,
@@ -53,7 +53,7 @@ const InfoScreenData = [
     title: "Unlock Insights with Apple Health",
     subTitle:
       "Enable this feature for smarter tracking, deeper insights, and a more personalized fasting experience tailored to your health goals.",
-    nextScreen: "questionScreen",
+    nextScreen: "planScreen",
   },
 ];
 

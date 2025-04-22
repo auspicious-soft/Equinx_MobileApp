@@ -16,6 +16,18 @@ import ArrowDownIcon from "./arrowDown.svg";
 import ArrowUpIcon from "./arrowUp.svg";
 import CalendarIcon from "./CalendarIcon.svg";
 import PlanScreenIcon from "./PlanScreenIcon.svg";
+import ClockIcon from "./clockIcon.svg";
+import Mcq1 from "./mcq1.svg";
+import Mcq2 from "./mcq2.svg";
+import Mcq3 from "./mcq3.svg";
+import Mcq4 from "./mcq4.svg";
+import Mcq5 from "./mcq5.svg";
+import Mcq6 from "./mcq6.svg";
+import Mcq7 from "./mcq7.svg";
+import Mcq8 from "./mcq8.svg";
+import Mcq9 from "./mcq9.svg";
+import Mcq10 from "./mcq10.svg";
+import Mcq11 from "./mcq11.svg";
 
 const ICONS = {
   AppLogo,
@@ -36,6 +48,18 @@ const ICONS = {
   ArrowUpIcon,
   CalendarIcon,
   PlanScreenIcon,
+  Mcq1,
+  Mcq2,
+  Mcq3,
+  Mcq4,
+  Mcq5,
+  Mcq6,
+  Mcq7,
+  Mcq8,
+  Mcq9,
+  Mcq10,
+  Mcq11,
+  ClockIcon,
 };
 
 export default ICONS;
