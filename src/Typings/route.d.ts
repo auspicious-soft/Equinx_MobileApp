@@ -25,7 +25,9 @@ export type OnBoardingStackParams = {
 export type AuthStackParams = {
   login: undefined;
   register: undefined;
-  otp: undefined;
+  otp: {
+    isFrom: "register" | "forgotpassword";
+  };
   forgotpassword: undefined;
   createNewPassword: undefined;
 };
@@ -45,11 +47,11 @@ export type MainStackParams = {
 };
 
 export type BottomTabParams = {
-  HOME: undefined;
-  PLAN: undefined;
-  STATS: undefined;
-  INSIGHT: undefined;
-  SETTINGS: undefined;
+  home: undefined;
+  myPlan: undefined;
+  nutrition: undefined;
+  chats: undefined;
+  settings: undefined;
 };
 
 // Splash Screens
@@ -58,6 +60,8 @@ export type InfoScreenProps = NativeStackScreenProps<
   RootStackParams & OnBoardingStackParams,
   "infoScreen"
 >;
+
+// Auth Screens
 
 export type PlanScreenProps = NativeStackScreenProps<
   RootStackParams & OnBoardingStackParams,
@@ -71,4 +75,48 @@ export type NotificationTestScreenProps = NativeStackScreenProps<
 export type QuestionScreenProps = NativeStackScreenProps<
   RootStackParams & OnBoardingStackParams,
   "questionScreen"
+>;
+
+export type LoginScreenProps = NativeStackScreenProps<
+  AuthStackParams & MainStackParams,
+  "login"
+>;
+export type RegisterScreenProps = NativeStackScreenProps<
+  AuthStackParams,
+  "register"
+>;
+export type OTPScreenProps = NativeStackScreenProps<
+  AuthStackParams & MainStackParams,
+  "otp"
+>;
+export type ForgotPasswordScreenProps = NativeStackScreenProps<
+  AuthStackParams,
+  "forgotpassword"
+>;
+export type CreatePasswordScreenProps = NativeStackScreenProps<
+  AuthStackParams,
+  "createNewPassword"
+>;
+
+// Bottom Tab Bars
+
+export type HomeScreenProps = NativeStackScreenProps<
+BottomTabParams & MainStackParams,
+  'home'
+>;
+export type MyPlanScreenProps = NativeStackScreenProps<
+BottomTabParams & MainStackParams,
+  'myPlan'
+>;
+export type NutritionScreenProps = NativeStackScreenProps<
+BottomTabParams & MainStackParams,
+  'nutrition'
+>;
+export type ChatScreenProps = NativeStackScreenProps<
+BottomTabParams & MainStackParams,
+  'chats'
+>;
+export type SettingsScreenProps = NativeStackScreenProps<
+BottomTabParams & MainStackParams,
+  'settings'
 >;

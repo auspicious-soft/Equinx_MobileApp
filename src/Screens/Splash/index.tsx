@@ -30,12 +30,19 @@ const Splash: FC<SplashProps> = ({ navigation }) => {
         useNativeDriver: true,
       }).start(() => {
         navigation.replace("onBoardingStack", {
-          screen: "infoScreen",
-          params: {
-            index: 0,
-            nextQuestion: 0,
-          },
+          screen: "planScreen",
+          // params: {
+          //   index: 0,
+          //   nextQuestion: 0,
+          // },
         });
+        // navigation.replace("onBoardingStack", {
+        //   screen: "infoScreen",
+        //   params: {
+        //     index: 0,
+        //     nextQuestion: 0,
+        //   },
+        // });
       });
     }, 3000);
 

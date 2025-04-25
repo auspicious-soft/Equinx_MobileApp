@@ -3,12 +3,10 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  StatusBar,
   StyleSheet,
   View,
   ViewStyle,
 } from "react-native";
-import COLORS from "../Utilities/Colors";
 
 interface KeyboardAvoidingContainerProps {
   children: React.ReactNode;
@@ -21,7 +19,7 @@ export function KeyboardAvoidingContainer({
   children,
   style,
   scrollEnabled = true,
-  backgroundColor = COLORS.white,
+  backgroundColor = "transparent",
 }: KeyboardAvoidingContainerProps) {
   const Content = scrollEnabled ? ScrollView : View;
   return (
@@ -32,18 +30,17 @@ export function KeyboardAvoidingContainer({
           backgroundColor,
         },
       ]}
-      behavior={Platform.OS === "ios" ? "padding" : "padding"}
-      keyboardVerticalOffset={
-        Platform.OS === "ios" ? 0 : StatusBar.currentHeight
-      }
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
     >
       <Content
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
         contentContainerStyle={[
           scrollEnabled ? styles.scrollContent : styles.content,
           style,
         ]}
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="never"
+        keyboardShouldPersistTaps="handled"
       >
         {children}
       </Content>

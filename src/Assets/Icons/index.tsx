@@ -28,6 +28,21 @@ import Mcq8 from "./mcq8.svg";
 import Mcq9 from "./mcq9.svg";
 import Mcq10 from "./mcq10.svg";
 import Mcq11 from "./mcq11.svg";
+import profileIcon from "./profileIcon.svg";
+import googleIcon from "./googleIcon.svg";
+import faceBookIcon from "./facebookIcon.svg";
+import homeTabIcon from "./homeTabIcon.svg";
+import homeActiveIcon from "./homeActiveIcon.svg";
+import myPlanTabIcon from "./myPlanTabIcon.svg";
+import myPlanActiveIcon from "./myPlanActiveIcon.svg";
+import nutritonTabIcon from "./nutritionTabIcon.svg";
+import nutritonActiveIcon from "./nutritionActiveIcon.svg";
+import chatTabIcon from "./chatTabIcon.svg";
+import chatActiveIcon from "./chatActiveIcon.svg";
+import settingsTabIcon from "./settingsTabIcon.svg";
+import settingsActiveIcon from "./settingsActiveIcon.svg";
+import activeCheckBox from "./activeCheckkBox.svg";
+import checkBox from "./checkBox.svg";
 
 const ICONS = {
   AppLogo,
@@ -60,6 +75,21 @@ const ICONS = {
   Mcq10,
   Mcq11,
   ClockIcon,
+  profileIcon,
+  googleIcon,
+  faceBookIcon,
+  homeTabIcon,
+  homeActiveIcon,
+  myPlanTabIcon,
+  myPlanActiveIcon,
+  nutritonTabIcon,
+  nutritonActiveIcon,
+  chatTabIcon,
+  chatActiveIcon,
+  settingsTabIcon,
+  settingsActiveIcon,
+  checkBox,
+  activeCheckBox,
 };
 
 export default ICONS;

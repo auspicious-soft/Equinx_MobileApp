@@ -33,7 +33,18 @@ const App = () => {
     dispatch(setCurrentRoute(routeName));
   };
 
-  const greenRoutes = ["splash", "infoScreen", "planScreen"];
+  const greenRoutes = [
+    "splash",
+    "infoScreen",
+    "planScreen",
+    "login",
+    "register",
+    "forgotpassword",
+    "otp",
+    "createNewPassword",
+  ];
+
+  console.log(currentRoute);
 
   const statusBarConfig = useMemo(() => {
     const isAuthRoute = currentRoute && greenRoutes.includes(currentRoute);

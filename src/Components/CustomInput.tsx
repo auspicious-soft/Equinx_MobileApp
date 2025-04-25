@@ -47,6 +47,7 @@ type CustomInputProps = TextInputProps & {
   width?: FlexStyle["width"];
   disabled?: boolean;
   maxDate?: Date;
+  leftIcon?: any;
 };
 
 const CustomInput: FC<CustomInputProps> = (props) => {
@@ -58,8 +59,10 @@ const CustomInput: FC<CustomInputProps> = (props) => {
     onChangeText,
     options = [],
     baseStyle,
+    inputStyle,
     disabled = false,
     maxDate,
+    leftIcon,
   } = props;
 
   const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
@@ -136,17 +139,21 @@ const CustomInput: FC<CustomInputProps> = (props) => {
           },
         ]}
       >
+        {leftIcon && <CustomIcon Icon={leftIcon} height={16} width={16} />}
         <TextInput
-          style={{
-            height: "auto",
-            paddingVertical: verticalScale(14),
-            flex: 1,
-            color: COLORS.darkBLue,
-          }}
+          style={[
+            {
+              height: "auto",
+              paddingVertical: verticalScale(14),
+              flex: 1,
+              color: COLORS.darkBLue,
+            },
+            inputStyle,
+          ]}
           keyboardType={type === "number" ? "numeric" : "default"}
           value={value}
           placeholder={placeholder}
-          placeholderTextColor={COLORS.oldGrey}
+          placeholderTextColor="#C5C9D0"
           secureTextEntry={type === "password" && !isPasswordVisible}
           onChangeText={onChangeText}
           editable={
@@ -261,10 +268,10 @@ export default CustomInput;
 
 const styles = StyleSheet.create({
   inputContainer: {
-    borderWidth: 0.5,
-    borderColor: COLORS.oldGrey,
+    borderWidth: 1,
+    borderColor: COLORS.greyishWhite,
     paddingHorizontal: horizontalScale(14),
-    borderRadius: verticalScale(5),
+    borderRadius: verticalScale(12),
     flexDirection: "row",
     alignItems: "center",
     gap: horizontalScale(10),

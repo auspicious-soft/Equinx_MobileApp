@@ -7,7 +7,6 @@ import InfoScreen from "../Screens/infoScreen";
 import Login from "../Screens/Login";
 import NotificationTestScreen from "../Screens/NotificationTestScreen";
 import Otp from "../Screens/Otp";
-import PlanScreen from "../Screens/PlanScreen";
 import QuestionScreen from "../Screens/QuestionScreen";
 import Register from "../Screens/Register";
 import Splash from "../Screens/Splash";
@@ -18,6 +17,13 @@ import {
   OnBoardingStackParams,
   RootStackParams,
 } from "../Typings/route";
+import Home from "../Screens/Home";
+import Nutrition from "../Screens/Nutrition";
+import Chat from "../Screens/Chat";
+import Settings from "../Screens/Settings";
+import BottomTabBar from "../Components/BottomBar";
+import MyPlan from "../Screens/MyPlan";
+import PlanScreen from "../Screens/PlanScreen";
 
 const RootStack = createNativeStackNavigator<RootStackParams>();
 const Auth = createNativeStackNavigator<AuthStackParams>();
@@ -60,65 +66,65 @@ const Routing = () => {
     );
   }
 
-  //   function TabStack() {
-  //     return (
-  //       <Tabs.Navigator
-  //         screenOptions={{
-  //           headerShown: false,
-  //         }}
-  //         tabBar={(props) => <BottomTabBar {...props} />}
-  //       >
-  //         <Tabs.Screen
-  //           options={{
-  //             title: "HOME",
-  //           }}
-  //           name="HOME"
-  //           component={HOME}
-  //         />
-  //         <Tabs.Screen
-  //           options={{
-  //             title: "PLAN",
-  //           }}
-  //           name="PLAN"
-  //           component={PLAN}
-  //         />
-  //         <Tabs.Screen
-  //           options={{
-  //             title: "STATS",
-  //           }}
-  //           name="STATS"
-  //           component={STATS}
-  //         />
-  //         <Tabs.Screen
-  //           options={{
-  //             title: "INSIGHT",
-  //           }}
-  //           name="INSIGHT"
-  //           component={INSIGHT}
-  //         />
-  //         <Tabs.Screen
-  //           options={{
-  //             title: "SETTINGS",
-  //           }}
-  //           name="SETTINGS"
-  //           component={SETTINGS}
-  //         />
-  //       </Tabs.Navigator>
-  //     );
-  //   }
+  function TabStack() {
+    return (
+      <Tabs.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+        tabBar={(props) => <BottomTabBar {...props} />}
+      >
+        <Tabs.Screen
+          options={{
+            title: "HOME",
+          }}
+          name="home"
+          component={Home}
+        />
+        <Tabs.Screen
+          options={{
+            title: "PLAN",
+          }}
+          name="myPlan"
+          component={MyPlan}
+        />
+        <Tabs.Screen
+          options={{
+            title: "NUTRITION",
+          }}
+          name="nutrition"
+          component={Nutrition}
+        />
+        <Tabs.Screen
+          options={{
+            title: "CHATS",
+          }}
+          name="chats"
+          component={Chat}
+        />
+        <Tabs.Screen
+          options={{
+            title: "SETTINGS",
+          }}
+          name="settings"
+          component={Settings}
+        />
+      </Tabs.Navigator>
+    );
+  }
 
-  //   function MianStack() {
-  //     return (
-  //       <Main.Navigator
-  //         screenOptions={{
-  //           headerShown: false,
-  //         }}
-  //       >
-  //         <Main.Screen name="tabs" component={TabStack} />
-  //         <Main.Screen name="mealDetails" component={MealDetails} />
-  //       </Main.Navigator>
-  //     );
-  //   }
+  function MainStack() {
+    return (
+      <Main.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        <Main.Screen name="tabs" component={TabStack} />
+        {/* <Main.Screen name="mealDetails" component={MealDetails} /> */}
+      </Main.Navigator>
+    );
+  }
 
   return (
     <RootStack.Navigator
@@ -129,7 +135,7 @@ const Routing = () => {
       <RootStack.Screen name="splash" component={Splash} />
       <RootStack.Screen name="onBoardingStack" component={OnBoardingStack} />
       <RootStack.Screen name="authStack" component={AuthStack} />
-      {/* <RootStack.Screen name="mainStack" component={MianStack} /> */}
+      <RootStack.Screen name="mainStack" component={MainStack} />
     </RootStack.Navigator>
   );
 };

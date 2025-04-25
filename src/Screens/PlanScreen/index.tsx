@@ -170,7 +170,11 @@ const PlanScreen: FC<PlanScreenProps> = ({ navigation }) => {
             ))}
           </View>
           <PrimaryButton
-            onPress={() => []}
+            onPress={() =>
+              navigation.replace("authStack", {
+                screen: "login",
+              })
+            }
             isFullWidth={false}
             title="Skip"
             bgColor={["transparent", "transparent"]}
