@@ -8,6 +8,9 @@ const IMAGES = {
   mealImage_2: require("./mealImage_2.png"),
   yogaImage_2: require("./yogaImage_2.png"),
   yogaImage_3: require("./yogaImage_3.png"),
+  homeImage: require("./homeImage.png"),
+  homeImag2: require("./homeImage2.png"),
+  yogaHomeImage: require("./yogaHomeImage.png"),
 };
 
 export default IMAGES;

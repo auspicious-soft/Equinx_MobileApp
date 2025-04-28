@@ -43,6 +43,7 @@ import settingsTabIcon from "./settingsTabIcon.svg";
 import settingsActiveIcon from "./settingsActiveIcon.svg";
 import activeCheckBox from "./activeCheckkBox.svg";
 import checkBox from "./checkBox.svg";
+import penIcon from "./penIcon.svg";
 
 const ICONS = {
   AppLogo,
@@ -90,6 +91,7 @@ const ICONS = {
   settingsActiveIcon,
   checkBox,
   activeCheckBox,
+  penIcon,
 };
 
 export default ICONS;

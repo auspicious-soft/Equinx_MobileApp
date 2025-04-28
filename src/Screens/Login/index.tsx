@@ -44,6 +44,7 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
         >
           <View style={{ gap: 10 }}>
             <Image source={IMAGES.yogaImage} style={styles.yogaImageStyle} />
+
             <View style={styles.textHeaderContainer}>
               <CustomText
                 fontSize={22}

@@ -6,7 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useState } from "react";
 import LinearGradient from "react-native-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomIcon from "../../Components/CustomIcon";
@@ -54,22 +54,11 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
       <SafeAreaView style={styles.container}>
         <KeyboardAvoidingContainer
           style={{
-            // gap: verticalScale(10),
             paddingBottom: verticalScale(20),
             paddingTop: verticalScale(40),
             paddingHorizontal: horizontalScale(20),
           }}
         >
-          {/* {navigation.canGoBack() && (
-            <TouchableOpacity
-              onPress={() => navigation.goBack()}
-              accessibilityLabel="Go back"
-              style={styles.backButton}
-            >
-              <CustomIcon Icon={ICONS.BackArrow} height={30} width={30} />
-            </TouchableOpacity>
-          )} */}
-
           <Image source={IMAGES.mealImage_2} style={styles.mealImageStyle} />
 
           <View style={styles.contentContainer}>
