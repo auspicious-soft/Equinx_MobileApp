@@ -83,7 +83,7 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
         </CustomText>
         <View style={styles.foodWrapper}>
           <Image source={item.IMG} style={styles.foodIMG} />
-          <View style={{ gap: verticalScale(10) }}>
+          <View style={{ gap: verticalScale(10), flex: 1 }}>
             <CustomText fontSize={14} color={COLORS.darkBLue}>
               {item.title}
             </CustomText>
@@ -92,6 +92,7 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
                 flexDirection: "row",
                 alignItems: "flex-end",
                 justifyContent: "space-between",
+                paddingEnd: horizontalScale(10),
               }}
             >
               <View style={styles.KcalContainer}>
