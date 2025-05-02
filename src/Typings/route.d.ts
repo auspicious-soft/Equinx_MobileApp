@@ -44,6 +44,11 @@ export type MainStackParams = {
     data: any;
     title: string;
   };
+  MemberShip: undefined;
+  Welcome: undefined;
+  Recalculate: undefined;
+  profile: undefined;
+  Fasts: undefined;
 };
 
 export type BottomTabParams = {
@@ -78,7 +83,7 @@ export type QuestionScreenProps = NativeStackScreenProps<
 >;
 
 export type LoginScreenProps = NativeStackScreenProps<
-  AuthStackParams & MainStackParams,
+  AuthStackParams & MainStackParams & RootStackParams,
   "login"
 >;
 export type RegisterScreenProps = NativeStackScreenProps<
@@ -101,22 +106,46 @@ export type CreatePasswordScreenProps = NativeStackScreenProps<
 // Bottom Tab Bars
 
 export type HomeScreenProps = NativeStackScreenProps<
-BottomTabParams & MainStackParams,
-  'home'
+  BottomTabParams & MainStackParams,
+  "home"
 >;
 export type MyPlanScreenProps = NativeStackScreenProps<
-BottomTabParams & MainStackParams,
-  'myPlan'
+  BottomTabParams & MainStackParams,
+  "myPlan"
 >;
 export type NutritionScreenProps = NativeStackScreenProps<
-BottomTabParams & MainStackParams,
-  'nutrition'
+  BottomTabParams & MainStackParams,
+  "nutrition"
 >;
 export type ChatScreenProps = NativeStackScreenProps<
-BottomTabParams & MainStackParams,
-  'chats'
+  BottomTabParams & MainStackParams,
+  "chats"
 >;
 export type SettingsScreenProps = NativeStackScreenProps<
-BottomTabParams & MainStackParams,
-  'settings'
+  BottomTabParams & MainStackParams,
+  "settings"
+>;
+
+// Main Screens
+
+export type MemberShipScreenProps = NativeStackScreenProps<
+  BottomTabParams & MainStackParams & RootStackParams,
+  "MemberShip"
+>;
+
+export type WelcomeScreenProps = NativeStackScreenProps<
+  BottomTabParams & MainStackParams,
+  "Welcome"
+>;
+export type RecalculateScreenProps = NativeStackScreenProps<
+  BottomTabParams & MainStackParams,
+  "Recalculate"
+>;
+export type ProfileScreenProps = NativeStackScreenProps<
+  BottomTabParams & MainStackParams,
+  "profile"
+>;
+export type FastsScreenProps = NativeStackScreenProps<
+  BottomTabParams & MainStackParams,
+  "Fasts"
 >;

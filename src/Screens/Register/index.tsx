@@ -45,117 +45,121 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
   };
 
   return (
-    <LinearGradient
-      colors={["#CCFFD5", "#BAFFA9", "#FFFFFF", "#FFFFFF", "#FFFFFF"]} // Light green to very light green to white
-      style={styles.gradient}
-      start={{ x: 0.3, y: 0 }} // Start from the top center
-      end={{ x: 0.3, y: 1 }}
-    >
-      <SafeAreaView style={styles.container}>
-        <KeyboardAvoidingContainer
-          style={{
-            paddingBottom: verticalScale(20),
-            paddingTop: verticalScale(40),
-            paddingHorizontal: horizontalScale(20),
-          }}
-        >
-          <Image source={IMAGES.mealImage_2} style={styles.mealImageStyle} />
+    <KeyboardAvoidingContainer>
+      <LinearGradient
+        colors={["#CCFFD5", "#BAFFA9", "#FFFFFF", "#FFFFFF", "#FFFFFF"]} // Light green to very light green to white
+        style={styles.gradient}
+        start={{ x: 0.3, y: 0 }} // Start from the top center
+        end={{ x: 0.3, y: 1 }}
+      >
+        <SafeAreaView style={styles.container}>
+          <View
+            style={{
+              gap: verticalScale(10),
+              height: hp(100),
+              paddingBottom: verticalScale(20),
+              paddingTop: verticalScale(40),
+              paddingHorizontal: horizontalScale(20),
+            }}
+          >
+            <Image source={IMAGES.mealImage_2} style={styles.mealImageStyle} />
 
-          <View style={styles.contentContainer}>
-            <View style={styles.headerTextContainer}>
-              <CustomText fontSize={22} fontFamily={"bold"}>
-                Register
-              </CustomText>
-              <CustomText fontSize={12} color={COLORS.darkBLue}>
-                Create a new account to continue.
-              </CustomText>
-            </View>
-
-            <View
-              style={{ marginTop: verticalScale(15), gap: verticalScale(10) }}
-            >
-              <CustomInput
-                label="Full Name"
-                value={name}
-                onChangeText={setName}
-                placeholder="Enter your name"
-                inputStyle={{
-                  paddingVertical: verticalScale(15),
-                }}
-              />
-              <CustomInput
-                label="Email Address"
-                value={email}
-                onChangeText={setEmail}
-                placeholder="Enter your email"
-                inputStyle={{
-                  paddingVertical: verticalScale(15),
-                }}
-              />
-
-              <View style={{ gap: verticalScale(5) }}>
-                <CustomText fontSize={12} color={COLORS.oldGrey}>
-                  Phone Number (optional)
+            <View style={styles.contentContainer}>
+              <View style={styles.headerTextContainer}>
+                <CustomText fontSize={22} fontFamily={"bold"}>
+                  Register
                 </CustomText>
-                <View style={styles.phoneInputContainer}>
-                  <TouchableOpacity
-                    onPress={() => setShowCountryPicker(true)}
-                    style={styles.countryPickerContainer}
-                  >
-                    <CountryPicker
-                      {...{
-                        countryCode,
-                        withFlag: true,
-                        withFilter: true,
-                        withCallingCode: true,
-                        withCountryNameButton: false,
-                        onSelect,
-                      }}
-                      visible={showCountryPicker}
-                      onClose={() => setShowCountryPicker(false)}
-                      theme={{
-                        onBackgroundTextColor: COLORS.lightGrey,
-                        flagSizeButton: 20,
-                      }}
-                    />
-                    <CustomIcon
-                      Icon={ICONS.ArrowDownIcon}
-                      height={10}
-                      width={10}
-                    />
-                  </TouchableOpacity>
-                  <View style={styles.numberWithCallingContainer}>
-                    <CustomText fontSize={14} color={COLORS.oldGrey}>
-                      {`${country ? `(${country?.callingCode})` : ""}`}
-                    </CustomText>
-                    <TextInput
-                      onChangeText={setPhone}
-                      placeholder="Enter your phone number"
-                      placeholderTextColor="#D1D4D8"
-                      style={styles.inputStyle}
-                      keyboardType="number-pad"
-                      value={phone}
-                    />
+                <CustomText fontSize={12} color={COLORS.darkBLue}>
+                  Create a new account to continue.
+                </CustomText>
+              </View>
+
+              <View
+                style={{ marginTop: verticalScale(15), gap: verticalScale(10) }}
+              >
+                <CustomInput
+                  label="Full Name"
+                  value={name}
+                  onChangeText={setName}
+                  placeholder="Enter your name"
+                  inputStyle={{
+                    paddingVertical: verticalScale(15),
+                  }}
+                />
+                <CustomInput
+                  label="Email Address"
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="Enter your email"
+                  inputStyle={{
+                    paddingVertical: verticalScale(15),
+                  }}
+                />
+
+                <View style={{ gap: verticalScale(5) }}>
+                  <CustomText fontSize={12} color={COLORS.oldGrey}>
+                    Phone Number (optional)
+                  </CustomText>
+                  <View style={styles.phoneInputContainer}>
+                    <TouchableOpacity
+                      onPress={() => setShowCountryPicker(true)}
+                      style={styles.countryPickerContainer}
+                    >
+                      <CountryPicker
+                        {...{
+                          countryCode,
+                          withFlag: true,
+                          withFilter: true,
+                          withCallingCode: true,
+                          withCountryNameButton: false,
+                          onSelect,
+                        }}
+                        visible={showCountryPicker}
+                        onClose={() => setShowCountryPicker(false)}
+                        theme={{
+                          onBackgroundTextColor: COLORS.lightGrey,
+                          flagSizeButton: 20,
+                        }}
+                      />
+                      <CustomIcon
+                        Icon={ICONS.ArrowDownIcon}
+                        height={10}
+                        width={10}
+                      />
+                    </TouchableOpacity>
+                    <View style={styles.numberWithCallingContainer}>
+                      <CustomText fontSize={14} color={COLORS.oldGrey}>
+                        {`${country ? `(${country?.callingCode})` : ""}`}
+                      </CustomText>
+                      <TextInput
+                        onChangeText={setPhone}
+                        placeholder="Enter your phone number"
+                        placeholderTextColor="#D1D4D8"
+                        style={styles.inputStyle}
+                        keyboardType="number-pad"
+                        value={phone}
+                      />
+                    </View>
                   </View>
                 </View>
               </View>
-            </View>
 
-            <PrimaryButton title="Register" onPress={handleNavigation} />
-            <View style={styles.footerContainer}>
-              <CustomText fontSize={12} color={COLORS.oldGrey}>
-                Already have an account?
-              </CustomText>
-              <TouchableOpacity onPress={() => navigation.replace("login")}>
-                <CustomText fontSize={12} color={COLORS.skyBlue}>
-                  Login
+              <PrimaryButton title="Register" onPress={handleNavigation} />
+              <View style={styles.footerContainer}>
+                <CustomText fontSize={12} color={COLORS.oldGrey}>
+                  Already have an account?
                 </CustomText>
-              </TouchableOpacity>
+                <TouchableOpacity onPress={() => navigation.replace("login")}>
+                  <CustomText fontSize={12} color={COLORS.skyBlue}>
+                    Login
+                  </CustomText>
+                </TouchableOpacity>
+              </View>
             </View>
           </View>
-        </KeyboardAvoidingContainer>
-      </SafeAreaView>
-    </LinearGradient>
+        </SafeAreaView>
+      </LinearGradient>
+    </KeyboardAvoidingContainer>
   );
 };
 
@@ -167,8 +171,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    // paddingHorizontal: horizontalScale(20),
-    // backgroundColor: "red",
   },
   backButton: {
     padding: horizontalScale(5),

@@ -2,7 +2,6 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { FC, useState } from "react";
 import LinearGradient from "react-native-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
-import CustomIcon from "../../Components/CustomIcon";
 import ICONS from "../../Assets/Icons";
 import { horizontalScale, hp, verticalScale } from "../../Utilities/Metrics";
 import IMAGES from "../../Assets/Images";
@@ -22,21 +21,23 @@ const ForgotPassword: FC<ForgotPasswordScreenProps> = ({ navigation }) => {
     });
   };
   return (
-    <LinearGradient
-      colors={["#CCFFD5", "#BAFFA9", "#FFFFFF", "#FFFFFF", "#FFFFFF"]} // Light green to very light green to white
-      style={styles.gradient}
-      start={{ x: 0.3, y: 0 }} // Start from the top center
-      end={{ x: 0.3, y: 1 }}
-    >
-      <SafeAreaView style={styles.container}>
-        <KeyboardAvoidingContainer
-          style={{
-            paddingBottom: verticalScale(20),
-            paddingTop: verticalScale(40),
-            paddingHorizontal: horizontalScale(20),
-          }}
-        >
-          <View style={{ gap: verticalScale(10) }}>
+    <KeyboardAvoidingContainer scrollEnabled={true}>
+      <LinearGradient
+        colors={["#CCFFD5", "#BAFFA9", "#FFFFFF", "#FFFFFF", "#FFFFFF"]} // Light green to very light green to white
+        style={styles.gradient}
+        start={{ x: 0.3, y: 0 }} // Start from the top center
+        end={{ x: 0.3, y: 1 }}
+      >
+        <SafeAreaView style={styles.container}>
+          <View
+            style={{
+              gap: verticalScale(10),
+              height: hp(100),
+              paddingBottom: verticalScale(20),
+              paddingTop: verticalScale(40),
+              paddingHorizontal: horizontalScale(20),
+            }}
+          >
             <Image source={IMAGES.mealImage} style={styles.mealImageStyle} />
             <View style={styles.textHeaderContainer}>
               <CustomText
@@ -79,9 +80,9 @@ const ForgotPassword: FC<ForgotPasswordScreenProps> = ({ navigation }) => {
               </View>
             </View>
           </View>
-        </KeyboardAvoidingContainer>
-      </SafeAreaView>
-    </LinearGradient>
+        </SafeAreaView>
+      </LinearGradient>
+    </KeyboardAvoidingContainer>
   );
 };
 
@@ -93,10 +94,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    // paddingHorizontal: horizontalScale(20),
-    // gap: verticalScale(10),
-    // backgroundColor: "red",
-    // paddingVertical: verticalScale(25),
   },
   backButton: {
     padding: horizontalScale(5),

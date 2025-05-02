@@ -42,6 +42,8 @@ const App = () => {
     "forgotpassword",
     "otp",
     "createNewPassword",
+    "Welcome",
+    "MemberShip",
   ];
 
   console.log(currentRoute);

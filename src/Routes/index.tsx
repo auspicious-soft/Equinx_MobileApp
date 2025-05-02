@@ -24,6 +24,11 @@ import Settings from "../Screens/Settings";
 import BottomTabBar from "../Components/BottomBar";
 import MyPlan from "../Screens/MyPlan";
 import PlanScreen from "../Screens/PlanScreen";
+import MemberShip from "../Screens/MemberShipScreen";
+import WelcomeScreen from "../Screens/WelcomeScreen";
+import Recalculate from "../Screens/Recalculate";
+import Profile from "../Screens/Profile";
+import Fasts from "../Screens/Fasts";
 
 const RootStack = createNativeStackNavigator<RootStackParams>();
 const Auth = createNativeStackNavigator<AuthStackParams>();
@@ -122,6 +127,11 @@ const Routing = () => {
       >
         <Main.Screen name="tabs" component={TabStack} />
         {/* <Main.Screen name="mealDetails" component={MealDetails} /> */}
+        <Main.Screen name="MemberShip" component={MemberShip} />
+        <Main.Screen name="Welcome" component={WelcomeScreen} />
+        <Main.Screen name="Recalculate" component={Recalculate} />
+        <Main.Screen name="profile" component={Profile} />
+        <Main.Screen name="Fasts" component={Fasts} />
       </Main.Navigator>
     );
   }
@@ -132,10 +142,10 @@ const Routing = () => {
         headerShown: false,
       }}
     >
-      <RootStack.Screen name="mainStack" component={MainStack} />
       <RootStack.Screen name="splash" component={Splash} />
       <RootStack.Screen name="onBoardingStack" component={OnBoardingStack} />
       <RootStack.Screen name="authStack" component={AuthStack} />
+      <RootStack.Screen name="mainStack" component={MainStack} />
     </RootStack.Navigator>
   );
 };

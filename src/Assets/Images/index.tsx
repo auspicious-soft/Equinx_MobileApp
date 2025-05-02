@@ -11,6 +11,23 @@ const IMAGES = {
   homeImage: require("./homeImage.png"),
   homeImag2: require("./homeImage2.png"),
   yogaHomeImage: require("./yogaHomeImage.png"),
+  myPlanImage: require("./myPlanImage.png"),
+  breakFastImg: require("./breakfastImage.png"),
+  snackImg: require("./snackImage.png"),
+  dinnerImg: require("./dinnerImage.png"),
+  benefitImg: require("./benefitImage.png"),
+  exploringImg: require("./exploringImg.png"),
+  fastingImg: require("./fastingImage.png"),
+  noteBookImg: require("./noteBookImg.png"),
+  welcomeImg: require("./welcomeImg.png"),
+  bottleImg: require("./bottleImg.png"),
+  glassImg: require("./glassImg.png"),
+  captureMealImg: require("./captureMealImg.png"),
+  peopleSayImg: require("./peopleSayImg.png"),
+  macroMealImg: require("./macroMealImg.png"),
+  coverMealImg: require("./coverMealImg.png"),
+  userImg: require("./userImg.png"),
+  appleHealth: require("./appleHealthImg.png"),
 };
 
 export default IMAGES;

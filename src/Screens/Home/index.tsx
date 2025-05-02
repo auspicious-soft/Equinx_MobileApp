@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import { HomeScreenProps } from "../../Typings/route";
 import COLORS from "../../Utilities/Colors";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -23,8 +23,21 @@ import PrimaryButton from "../../Components/PrimaryButton";
 import CustomIcon from "../../Components/CustomIcon";
 import ICONS from "../../Assets/Icons";
 import IMAGES from "../../Assets/Images";
+import WaterTrackModal from "../../Components/Modals/WaterTrackModal";
+import RecordIntakeModal from "../../Components/Modals/RecordIntakeModal";
 
 const Home: FC<HomeScreenProps> = () => {
+  const [isModal, setIsModal] = useState(false);
+  const [recordModal, setRecordModal] = useState(false);
+
+  const closeModal = () => {
+    setIsModal(false);
+  };
+
+  const closeRecordModal = () => {
+    setRecordModal(false);
+  };
+
   return (
     <ScrollView
       showsHorizontalScrollIndicator={false}
@@ -42,13 +55,17 @@ const Home: FC<HomeScreenProps> = () => {
           }}
         >
           <View style={styles.headerContainer}>
-            <CustomText fontSize={22} color={COLORS.darkBLue}>
+            <CustomText fontSize={22} color={COLORS.darkBLue} fontFamily="bold">
               Good Morning{" "}
-              <CustomText fontSize={22} color={COLORS.green}>
+              <CustomText fontSize={22} color={COLORS.green} fontFamily="bold">
                 Miley Jones
               </CustomText>
             </CustomText>
-            <CustomText fontSize={12} color={COLORS.darkBLue}>
+            <CustomText
+              fontSize={12}
+              color={COLORS.darkBLue}
+              fontFamily="regular"
+            >
               Ready to crush your fast today?
             </CustomText>
           </View>
@@ -61,7 +78,11 @@ const Home: FC<HomeScreenProps> = () => {
               }}
             >
               <View style={styles.fastingContainer}>
-                <CustomText fontSize={12} color={COLORS.darkBLue}>
+                <CustomText
+                  fontSize={12}
+                  color={COLORS.darkBLue}
+                  fontFamily="regular"
+                >
                   16:8 fasting schedule
                 </CustomText>
               </View>
@@ -74,10 +95,18 @@ const Home: FC<HomeScreenProps> = () => {
                 backgroundStrokeWidth={15}
                 progressStrokeWidth={20}
               >
-                <CustomText fontSize={12} color={COLORS.darkBLue}>
+                <CustomText
+                  fontSize={12}
+                  color={COLORS.darkBLue}
+                  fontFamily="regular"
+                >
                   Time since last fast
                 </CustomText>
-                <CustomText fontSize={28} color={COLORS.darkBLue}>
+                <CustomText
+                  fontSize={28}
+                  color={COLORS.darkBLue}
+                  fontFamily="bold"
+                >
                   2 days
                 </CustomText>
               </CircularProgress>
@@ -100,8 +129,13 @@ const Home: FC<HomeScreenProps> = () => {
               >
                 Water Tracker
               </CustomText>
-              <TouchableOpacity style={styles.penBtn}>
-                <CustomIcon Icon={ICONS.penIcon} height={11} width={11} />
+              <TouchableOpacity
+                style={styles.penBtn}
+                onPress={() => {
+                  setIsModal(true);
+                }}
+              >
+                <CustomIcon Icon={ICONS.penIcon} height={13} width={13} />
               </TouchableOpacity>
             </View>
 
@@ -110,24 +144,39 @@ const Home: FC<HomeScreenProps> = () => {
                 fontSize={18}
                 color={COLORS.green}
                 style={{ textAlign: "center" }}
+                fontFamily="bold"
               >
                 0.5 Litres{" "}
-                <CustomText fontSize={18} color={COLORS.darkBLue}>
+                <CustomText
+                  fontSize={18}
+                  color={COLORS.darkBLue}
+                  fontFamily="regular"
+                >
                   today
                 </CustomText>
               </CustomText>
               <View style={styles.dailyGoalContainer}>
-                <CustomText fontSize={12} color={COLORS.darkBLue}>
+                <CustomText
+                  fontSize={12}
+                  color={COLORS.darkBLue}
+                  fontFamily="regular"
+                >
                   Daily Goal
                 </CustomText>
 
-                <CustomText fontSize={12} color={COLORS.green}>
+                <CustomText
+                  fontSize={12}
+                  color={COLORS.green}
+                  fontFamily="regular"
+                >
                   3.6 liters
                 </CustomText>
               </View>
               <PrimaryButton
                 title="Record intake"
-                onPress={() => {}}
+                onPress={() => {
+                  setRecordModal(true);
+                }}
                 style={{
                   width: wp(75),
                 }}
@@ -136,14 +185,14 @@ const Home: FC<HomeScreenProps> = () => {
           </View>
 
           <View style={{ gap: 10 }}>
-            <CustomText fontSize={18} color={COLORS.darkBLue}>
+            <CustomText fontSize={18} color={COLORS.darkBLue} fontFamily="bold">
               Quick Stats
             </CustomText>
             <View style={styles.statsWrapper}>
               <View style={styles.statsInsideCards}>
                 <View
                   style={{
-                    gap: verticalScale(10),
+                    gap: verticalScale(8),
                     paddingHorizontal: horizontalScale(5),
                   }}
                 >
@@ -157,21 +206,24 @@ const Home: FC<HomeScreenProps> = () => {
                     in a row
                   </CustomText>
                 </View>
-                <View style={{ position: "absolute", right: 0, bottom: 1 }}>
-                  <Image
-                    source={IMAGES.homeImage}
-                    style={{
-                      height: 80,
-                      width: 80,
-                      resizeMode: "cover",
-                    }}
-                  />
-                </View>
+                {/* <View style={{ position: "absolute", right: 0, bottom: 1 }}> */}
+                <Image
+                  source={IMAGES.homeImage}
+                  style={{
+                    height: 90,
+                    width: 100,
+                    resizeMode: "cover",
+                    position: "absolute",
+                    right: 0,
+                    bottom: 0,
+                  }}
+                />
+                {/* </View> */}
               </View>
               <View style={styles.statsInsideCards}>
                 <View
                   style={{
-                    gap: verticalScale(10),
+                    gap: verticalScale(8),
                     paddingHorizontal: horizontalScale(5),
                   }}
                 >
@@ -185,16 +237,17 @@ const Home: FC<HomeScreenProps> = () => {
                     This Week
                   </CustomText>
                 </View>
-                <View style={{ position: "absolute", right: 0, bottom: 1 }}>
-                  <Image
-                    source={IMAGES.homeImag2}
-                    style={{
-                      height: 80,
-                      width: 80,
-                      resizeMode: "cover",
-                    }}
-                  />
-                </View>
+                <Image
+                  source={IMAGES.homeImag2}
+                  style={{
+                    height: 90,
+                    width: 90,
+                    resizeMode: "cover",
+                    position: "absolute",
+                    right: 0,
+                    bottom: 0,
+                  }}
+                />
               </View>
             </View>
           </View>
@@ -205,22 +258,45 @@ const Home: FC<HomeScreenProps> = () => {
                 height: hp(30),
                 width: wp(90),
                 paddingBottom: verticalScale(20),
-                paddingHorizontal: horizontalScale(10),
+                paddingHorizontal: horizontalScale(15),
                 gap: verticalScale(10),
                 justifyContent: "flex-end",
               }}
               resizeMode="cover"
+              borderRadius={12}
             >
-              <CustomText fontSize={14} color={COLORS.white}>
+              <CustomText fontSize={14} color={COLORS.white} fontFamily="bold">
                 Need Guidance? Ask Your Fasting Coach
               </CustomText>
-              <CustomText fontSize={12} color={COLORS.white}>
+              <CustomText
+                fontSize={12}
+                color={COLORS.white}
+                fontFamily="regular"
+              >
                 Get personalized tips, motivation, and fasting insights from our
                 AI coach.
               </CustomText>
             </ImageBackground>
             <PrimaryButton title="Start Chat" onPress={() => {}} />
           </View>
+          <WaterTrackModal
+            closeModal={closeModal}
+            isVisible={isModal}
+            heading="Water Tracking Options"
+            title="Select Container"
+            size="Set Container Size"
+            ml="250 ml"
+            goal="Set Daily Goal"
+            ml2="3600 ml"
+            reminder="Water Reminder"
+            description="Receive notifications to make drinking water a habit."
+          />
+          <RecordIntakeModal
+            closeModal={closeRecordModal}
+            isVisible={recordModal}
+            heading="Record Intake"
+            title="250 ml"
+          />
         </SafeAreaView>
       </View>
     </ScrollView>
@@ -285,9 +361,10 @@ const styles = StyleSheet.create({
     borderColor: COLORS.green,
     paddingVertical: verticalScale(15),
     flexDirection: "row",
-    width: wp(45),
+    width: wp(44),
     borderRadius: 15,
     paddingHorizontal: horizontalScale(10),
+    overflow: "hidden",
   },
   statsWrapper: {
     flexDirection: "row",

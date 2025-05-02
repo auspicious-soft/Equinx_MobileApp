@@ -68,7 +68,12 @@ const CircularProgress: React.FC<ProgressCircleProps> = ({
       </Svg>
 
       {/* Centered Content */}
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
+      <View
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
         {children}
       </View>
     </View>

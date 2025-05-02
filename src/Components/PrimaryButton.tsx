@@ -4,6 +4,7 @@ import {
   TextStyle,
   TouchableOpacity,
   ViewStyle,
+  Vibration,
 } from "react-native";
 import COLORS from "../Utilities/Colors";
 import { horizontalScale, verticalScale, wp } from "../Utilities/Metrics";
@@ -53,7 +54,10 @@ const PrimaryButton: FC<PrimaryButtonProps> = ({
         disabled={disabled}
         activeOpacity={0.7}
         style={[isFullWidth && styles.button, style]}
-        onPress={onPress}
+        onPress={() => {
+          Vibration.vibrate(20);
+          onPress();
+        }}
       >
         <CustomText
           fontFamily="bold"

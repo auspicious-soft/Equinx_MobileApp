@@ -13,6 +13,7 @@ interface KeyboardAvoidingContainerProps {
   style?: ViewStyle;
   scrollEnabled?: boolean;
   backgroundColor?: string;
+  bounce?: boolean;
 }
 
 export function KeyboardAvoidingContainer({
@@ -20,6 +21,7 @@ export function KeyboardAvoidingContainer({
   style,
   scrollEnabled = true,
   backgroundColor = "transparent",
+  bounce = false,
 }: KeyboardAvoidingContainerProps) {
   const Content = scrollEnabled ? ScrollView : View;
   return (
@@ -34,6 +36,7 @@ export function KeyboardAvoidingContainer({
       keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
     >
       <Content
+        bounces={bounce}
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={[

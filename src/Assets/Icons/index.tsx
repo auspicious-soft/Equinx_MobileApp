@@ -44,6 +44,23 @@ import settingsActiveIcon from "./settingsActiveIcon.svg";
 import activeCheckBox from "./activeCheckkBox.svg";
 import checkBox from "./checkBox.svg";
 import penIcon from "./penIcon.svg";
+import rightGreenArrow from "./rightGreenArrow.svg";
+import bottleIcon from "./bottleIcon.svg";
+import glassIcon from "./glassIcon.svg";
+import rightArrow from "./rightArrowIcon.svg";
+import greenCheckBox from "./greenCheckBox.svg";
+import whitePenIcon from "./whitePenIcon.svg";
+import lockIcon from "./lockIcon.svg";
+import userIcon from "./userIcon.svg";
+import memberShipIcon from "./membershipIcon.svg";
+import policyIcon from "./policyIcon.svg";
+import rateUsIcon from "./rateUsIcon.svg";
+import bookIcon from "./bookIcon.svg";
+import notifyIcon from "./notificationIcon.svg";
+import supportIcon from "./supportIcon.svg";
+import networkIcon from "./networkIcon.svg";
+import heartIcon from "./heartIcon.svg";
+import filterIcon from "./filterIcon.svg";
 
 const ICONS = {
   AppLogo,
@@ -92,6 +109,23 @@ const ICONS = {
   checkBox,
   activeCheckBox,
   penIcon,
+  rightGreenArrow,
+  bottleIcon,
+  glassIcon,
+  rightArrow,
+  greenCheckBox,
+  whitePenIcon,
+  lockIcon,
+  memberShipIcon,
+  userIcon,
+  policyIcon,
+  rateUsIcon,
+  supportIcon,
+  bookIcon,
+  notifyIcon,
+  networkIcon,
+  heartIcon,
+  filterIcon,
 };
 
 export default ICONS;

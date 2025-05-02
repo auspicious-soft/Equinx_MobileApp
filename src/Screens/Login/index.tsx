@@ -12,7 +12,6 @@ import PrimaryButton from "../../Components/PrimaryButton";
 import { LoginScreenProps } from "../../Typings/route";
 import COLORS from "../../Utilities/Colors";
 import { horizontalScale, hp, verticalScale } from "../../Utilities/Metrics";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const Login: FC<LoginScreenProps> = ({ navigation }) => {
   const [activeCheckBox, setActiveCheckBox] = useState<
@@ -28,21 +27,15 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   return (
-    <LinearGradient
-      colors={["#CCFFD5", "#BAFFA9", "#FFFFFF", "#FFFFFF", "#FFFFFF"]} // Light green to very light green to white
-      style={styles.gradient}
-      start={{ x: 0.3, y: 0 }} // Start from the top center
-      end={{ x: 0.3, y: 1 }}
-    >
-      <SafeAreaView style={styles.container}>
-        <KeyboardAvoidingContainer
-          style={{
-            paddingBottom: verticalScale(20),
-            paddingTop: verticalScale(40),
-            paddingHorizontal: horizontalScale(20),
-          }}
-        >
-          <View style={{ gap: 10 }}>
+    <KeyboardAvoidingContainer>
+      <LinearGradient
+        colors={["#CCFFD5", "#BAFFA9", "#FFFFFF", "#FFFFFF", "#FFFFFF"]} // Light green to very light green to white
+        style={styles.gradient}
+        start={{ x: 0.3, y: 0 }} // Start from the top center
+        end={{ x: 0.3, y: 1 }}
+      >
+        <SafeAreaView style={styles.container}>
+          <View style={{ gap: verticalScale(10) }}>
             <Image source={IMAGES.yogaImage} style={styles.yogaImageStyle} />
 
             <View style={styles.textHeaderContainer}>
@@ -88,8 +81,11 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
             </View>
 
             <View style={styles.remember_forgotContainer}>
-              <View style={styles.rememberContainer}>
-                <TouchableOpacity onPress={toggleCheckBox}>
+              <TouchableOpacity
+                style={styles.rememberContainer}
+                onPress={toggleCheckBox}
+              >
+                <TouchableOpacity>
                   {activeCheckBox === "ActiveBox" ? (
                     <CustomIcon
                       Icon={ICONS.activeCheckBox}
@@ -103,7 +99,7 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
                 <CustomText fontSize={12} color={COLORS.oldGrey}>
                   Remember me
                 </CustomText>
-              </View>
+              </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => navigation.navigate("forgotpassword")}
               >
@@ -113,7 +109,19 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
               </TouchableOpacity>
             </View>
 
-            <PrimaryButton title="Log in" onPress={() => {}} textSize={20} />
+            <PrimaryButton
+              title="Log in"
+              onPress={() =>
+                // navigation.replace("mainStack", {
+                //   screen: "tabs",
+                //   params: { screen: "home" },
+                // })
+                navigation.navigate("mainStack", {
+                  screen: "Welcome",
+                })
+              }
+              textSize={20}
+            />
 
             <View style={styles.footerTextContainer}>
               <View style={styles.dontAccountContainer}>
@@ -148,9 +156,9 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
               </TouchableOpacity>
             </View>
           </View>
-        </KeyboardAvoidingContainer>
-      </SafeAreaView>
-    </LinearGradient>
+        </SafeAreaView>
+      </LinearGradient>
+    </KeyboardAvoidingContainer>
   );
 };
 
@@ -162,6 +170,9 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    paddingBottom: verticalScale(20),
+    paddingTop: verticalScale(40),
+    paddingHorizontal: horizontalScale(20),
   },
   backButton: {
     padding: horizontalScale(5),

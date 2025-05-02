@@ -8,9 +8,7 @@ import {
 import React, { FC, useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import LinearGradient from "react-native-linear-gradient";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import CustomIcon from "../../Components/CustomIcon";
-import ICONS from "../../Assets/Icons";
+
 import { horizontalScale, hp, verticalScale } from "../../Utilities/Metrics";
 import IMAGES from "../../Assets/Images";
 import { CustomText } from "../../Components/CustomText";
@@ -72,21 +70,23 @@ const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
     }
   };
   return (
-    <LinearGradient
-      colors={["#CCFFD5", "#BAFFA9", "#FFFFFF", "#FFFFFF", "#FFFFFF"]} // Light green to very light green to white
-      style={styles.gradient}
-      start={{ x: 0.3, y: 0 }} // Start from the top center
-      end={{ x: 0.3, y: 1 }}
-    >
-      <SafeAreaView style={styles.container}>
-        <KeyboardAvoidingContainer
-          style={{
-            paddingBottom: verticalScale(20),
-            paddingTop: verticalScale(40),
-            paddingHorizontal: horizontalScale(20),
-          }}
-        >
-          <View style={{ gap: verticalScale(10) }}>
+    <KeyboardAvoidingContainer>
+      <LinearGradient
+        colors={["#CCFFD5", "#BAFFA9", "#FFFFFF", "#FFFFFF", "#FFFFFF"]} // Light green to very light green to white
+        style={styles.gradient}
+        start={{ x: 0.3, y: 0 }} // Start from the top center
+        end={{ x: 0.3, y: 1 }}
+      >
+        <SafeAreaView style={styles.container}>
+          <View
+            style={{
+              gap: verticalScale(10),
+              height: hp(100),
+              paddingBottom: verticalScale(20),
+              paddingTop: verticalScale(40),
+              paddingHorizontal: horizontalScale(20),
+            }}
+          >
             <Image source={IMAGES.yogaImage_2} style={styles.mealImageStyle} />
             <View style={styles.textHeaderContainer}>
               <CustomText
@@ -150,9 +150,9 @@ const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
               subTitle="Your Phone Number has been successfully verified. Please login to continue."
             />
           </View>
-        </KeyboardAvoidingContainer>
-      </SafeAreaView>
-    </LinearGradient>
+        </SafeAreaView>
+      </LinearGradient>
+    </KeyboardAvoidingContainer>
   );
 };
 
@@ -164,10 +164,6 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    // gap: verticalScale(10),
-    // paddingHorizontal: horizontalScale(20),
-    // paddingVertical: verticalScale(20),
-    // backgroundColor: "red",
   },
   backButton: {
     padding: horizontalScale(5),
