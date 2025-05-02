@@ -64,7 +64,7 @@ const MacroBalanceModal: FC<MacroBalanceModalProps> = ({
               <CustomText
                 fontSize={10}
                 fontFamily="regular"
-                color={COLORS.green}
+                color={COLORS.darkBLue}
                 style={{ textAlign: "center" }}
               >
                 Great job! Your macros are well-balanced.
