@@ -384,8 +384,8 @@ const styles = StyleSheet.create({
   },
   circleView: {
     borderWidth: 1,
-    height: Platform.OS === "ios" ? hp(12.6) : hp(14),
-    width: Platform.OS === "ios" ? wp(27.4) : wp(30),
+    height: Platform.OS === "ios" ? hp(12.6) : hp(14.5),
+    width: Platform.OS === "ios" ? wp(27.4) : wp(30.7),
     borderRadius: 60,
     justifyContent: "center",
     alignItems: "center",
@@ -393,8 +393,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   userImg: {
-    height: Platform.OS === "ios" ? hp(11.9) : hp(13),
-    width: Platform.OS === "ios" ? wp(25.9) : wp(27),
+    height: Platform.OS === "ios" ? hp(11.9) : hp(13.7),
+    width: Platform.OS === "ios" ? wp(25.9) : wp(28.9),
     borderRadius: 60,
   },
   penBtn: {

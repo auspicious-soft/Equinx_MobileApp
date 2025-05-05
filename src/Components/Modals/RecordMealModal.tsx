@@ -33,6 +33,10 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
     setSelectedType(mealType!);
   }, [mealType]);
 
+  const [carbs, setCarbs] = useState("");
+  const [protine, setProtine] = useState("");
+  const [fat, setFat] = useState("");
+
   return (
     <Modal
       visible={isVisible}
@@ -277,8 +281,8 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                   gms of carbs
                 </CustomText>
                 <CustomInput
-                  onChangeText={() => {}}
-                  value=""
+                  onChangeText={setCarbs}
+                  value={carbs}
                   inputStyle={{
                     paddingVertical: verticalScale(10),
                   }}
@@ -297,8 +301,8 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                   gms of proteins
                 </CustomText>
                 <CustomInput
-                  onChangeText={() => {}}
-                  value=""
+                  onChangeText={setProtine}
+                  value={protine}
                   inputStyle={{
                     paddingVertical: verticalScale(10),
                   }}
@@ -317,8 +321,8 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                   gms of fat
                 </CustomText>
                 <CustomInput
-                  onChangeText={() => {}}
-                  value=""
+                  onChangeText={setFat}
+                  value={fat}
                   inputStyle={{
                     paddingVertical: verticalScale(10),
                   }}

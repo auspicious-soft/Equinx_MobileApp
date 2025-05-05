@@ -1,14 +1,57 @@
-import { Image, ImageBackground, StyleSheet, Text, View } from "react-native";
-import React, { FC } from "react";
+import {
+  Animated,
+  Easing,
+  Image,
+  ImageBackground,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+import React, { FC, useEffect } from "react";
 import { WelcomeScreenProps } from "../../Typings/route";
 import { SafeAreaView } from "react-native-safe-area-context";
 import IMAGES from "../../Assets/Images";
-import { hp, verticalScale, wp } from "../../Utilities/Metrics";
+import {
+  horizontalScale,
+  hp,
+  verticalScale,
+  wp,
+} from "../../Utilities/Metrics";
 import { CustomText } from "../../Components/CustomText";
 import COLORS from "../../Utilities/Colors";
 import PrimaryButton from "../../Components/PrimaryButton";
 
 const WelcomeScreen: FC<WelcomeScreenProps> = ({ navigation }) => {
+  const imageAnim = React.useRef(new Animated.Value(-hp(50))).current; // Start from top
+  const textAnim = React.useRef(new Animated.Value(-hp(50))).current; // Start from bottom
+  const buttonAnim = React.useRef(new Animated.Value(hp(50))).current; // Start from bottom
+
+  useEffect(() => {
+    // Animate image/icon from top
+    Animated.timing(imageAnim, {
+      toValue: 0,
+      duration: 1000,
+      easing: Easing.ease,
+      useNativeDriver: true,
+    }).start();
+
+    // Animate text from bottom
+    Animated.timing(textAnim, {
+      toValue: 0,
+      duration: 1000,
+      easing: Easing.ease,
+      useNativeDriver: true,
+    }).start();
+
+    // Animate button from bottom (delay for staggered effect)
+    Animated.timing(buttonAnim, {
+      toValue: 0,
+      duration: 1000,
+      easing: Easing.ease,
+      useNativeDriver: true,
+      delay: 300, // Delay to stagger animation
+    }).start();
+  }, [imageAnim, textAnim, buttonAnim]);
   return (
     <ImageBackground
       source={IMAGES.greenBg}
@@ -20,30 +63,56 @@ const WelcomeScreen: FC<WelcomeScreenProps> = ({ navigation }) => {
           style={{
             flex: 1,
             gap: verticalScale(15),
+            alignItems: "center",
           }}
         >
-          <Image source={IMAGES.welcomeImg} style={styles.imgeStyle} />
-          <View style={styles.contentContainer}>
-            <CustomText fontSize={22} fontFamily="bold" color={COLORS.darkBLue}>
-              Welcome Companion
-            </CustomText>
-            <CustomText
-              fontSize={14}
-              fontFamily="regular"
-              color={COLORS.darkBLue}
-            >
-              Your intermittent fasting journey awaits you!
-            </CustomText>
-          </View>
+          <Animated.View
+            style={{
+              transform: [{ translateY: imageAnim }],
+            }}
+          >
+            <Image source={IMAGES.welcomeImg} style={styles.imgeStyle} />
+          </Animated.View>
+
+          <Animated.View
+            style={{
+              transform: [{ translateY: textAnim }],
+              width: "100%",
+            }}
+          >
+            <View style={styles.contentContainer}>
+              <CustomText
+                fontSize={22}
+                fontFamily="bold"
+                color={COLORS.darkBLue}
+              >
+                Welcome Companion
+              </CustomText>
+              <CustomText
+                fontSize={14}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                Your intermittent fasting journey awaits you!
+              </CustomText>
+            </View>
+          </Animated.View>
         </View>
-        <PrimaryButton
-          title="Containue"
-          onPress={() => {
-            navigation.replace("tabs", {
-              screen: "home",
-            });
+        <Animated.View
+          style={{
+            transform: [{ translateY: buttonAnim }],
+            width: "100%",
           }}
-        />
+        >
+          <PrimaryButton
+            title="Containue"
+            onPress={() => {
+              navigation.replace("tabs", {
+                screen: "home",
+              });
+            }}
+          />
+        </Animated.View>
       </SafeAreaView>
     </ImageBackground>
   );
@@ -56,6 +125,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     paddingVertical: verticalScale(20),
+    paddingHorizontal: horizontalScale(25),
     // justifyContent: "center",
   },
   gradient: {
