@@ -1,3 +1,5 @@
+import IMAGES from "../Assets/Images";
+
 export type FastsDataType = {
   id: number;
   date: string;

@@ -29,6 +29,12 @@ import WelcomeScreen from "../Screens/WelcomeScreen";
 import Recalculate from "../Screens/Recalculate";
 import Profile from "../Screens/Profile";
 import Fasts from "../Screens/Fasts";
+import FastDetail from "../Screens/FastDetails";
+import EditProfile from "../Screens/EditProfile";
+import ChangePassword from "../Screens/ChangePassword";
+import UserMemberShip from "../Screens/UserMemberShip";
+import LanguageScreen from "../Screens/LanguageScreen";
+import Sync from "../Screens/Sync";
 
 const RootStack = createNativeStackNavigator<RootStackParams>();
 const Auth = createNativeStackNavigator<AuthStackParams>();
@@ -132,6 +138,12 @@ const Routing = () => {
         <Main.Screen name="Recalculate" component={Recalculate} />
         <Main.Screen name="profile" component={Profile} />
         <Main.Screen name="Fasts" component={Fasts} />
+        <Main.Screen name="FastDetails" component={FastDetail} />
+        <Main.Screen name="EditProfile" component={EditProfile} />
+        <Main.Screen name="ChangePassword" component={ChangePassword} />
+        <Main.Screen name="UserMemberShip" component={UserMemberShip} />
+        <Main.Screen name="LanguageScreen" component={LanguageScreen} />
+        <Main.Screen name="Sync" component={Sync} />
       </Main.Navigator>
     );
   }
@@ -142,10 +154,10 @@ const Routing = () => {
         headerShown: false,
       }}
     >
+      <RootStack.Screen name="mainStack" component={MainStack} />
       <RootStack.Screen name="splash" component={Splash} />
       <RootStack.Screen name="onBoardingStack" component={OnBoardingStack} />
       <RootStack.Screen name="authStack" component={AuthStack} />
-      <RootStack.Screen name="mainStack" component={MainStack} />
     </RootStack.Navigator>
   );
 };

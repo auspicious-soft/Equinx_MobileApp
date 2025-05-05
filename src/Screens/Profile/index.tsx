@@ -25,9 +25,14 @@ import IMAGES from "../../Assets/Images";
 import { fastsData, FastsDataType } from "../../Seeds/ProfileScreenData";
 
 const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
-  const renderFatsData = ({ item }: { item: FastsDataType }) => {
+  const renderFastsData = ({ item }: { item: FastsDataType }) => {
     return (
-      <TouchableOpacity style={styles.fastsContainer}>
+      <TouchableOpacity
+        style={styles.fastsContainer}
+        onPress={() => {
+          navigation.navigate("FastDetails");
+        }}
+      >
         <View style={styles.dateContainer}>
           <CustomText
             fontSize={14}
@@ -297,7 +302,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
           </CustomText>
           <FlatList
             data={fastsData}
-            renderItem={renderFatsData}
+            renderItem={renderFastsData}
             keyExtractor={({ id }) => id.toString()}
             contentContainerStyle={{
               gap: verticalScale(10),

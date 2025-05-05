@@ -19,7 +19,12 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const Fasts: FC<FastsScreenProps> = ({ navigation }) => {
   const renderFatsData = ({ item }: { item: FastsDataType }) => {
     return (
-      <TouchableOpacity style={styles.fastsContainer}>
+      <TouchableOpacity
+        style={styles.fastsContainer}
+        onPress={() => {
+          navigation.navigate("FastDetails");
+        }}
+      >
         <View style={styles.dateContainer}>
           <CustomText
             fontSize={14}

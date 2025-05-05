@@ -45,6 +45,9 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
     inputRange: [0, 1],
     outputRange: [2, 22], // This depends on your knob/container width
   });
+
+  console.log("wp :", wp(28.9));
+  console.log("hp: ", hp(13.7));
   return (
     <ScrollView
       showsHorizontalScrollIndicator={false}
@@ -75,7 +78,11 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                 gap: horizontalScale(5),
               }}
             >
-              <TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("EditProfile");
+                }}
+              >
                 <CustomText
                   fontSize={14}
                   fontFamily="regular"
@@ -113,7 +120,12 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                 My Profile
               </CustomText>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.profileContainer}>
+            <TouchableOpacity
+              style={styles.profileContainer}
+              onPress={() => {
+                navigation.navigate("ChangePassword");
+              }}
+            >
               <View style={styles.iconBg}>
                 <CustomIcon Icon={ICONS.lockIcon} height={16} width={16} />
               </View>
@@ -121,7 +133,12 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                 Change Password
               </CustomText>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.profileContainer}>
+            <TouchableOpacity
+              style={styles.profileContainer}
+              onPress={() => {
+                navigation.navigate("UserMemberShip");
+              }}
+            >
               <View style={styles.iconBg}>
                 <CustomIcon
                   Icon={ICONS.memberShipIcon}
@@ -180,7 +197,12 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                 </Animated.View>
               </TouchableOpacity>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.profileContainer}>
+            <TouchableOpacity
+              style={styles.profileContainer}
+              onPress={() => {
+                navigation.navigate("LanguageScreen");
+              }}
+            >
               <View style={styles.iconBg}>
                 <CustomIcon Icon={ICONS.networkIcon} height={16} width={16} />
               </View>
@@ -188,7 +210,12 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                 Language
               </CustomText>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.profileContainer}>
+            <TouchableOpacity
+              style={styles.profileContainer}
+              onPress={() => {
+                navigation.navigate("Sync");
+              }}
+            >
               <View style={styles.iconBg}>
                 <CustomIcon Icon={ICONS.heartIcon} height={16} width={16} />
               </View>
@@ -276,16 +303,16 @@ const styles = StyleSheet.create({
   },
   circleView: {
     borderWidth: 1,
-    height: Platform.OS === "ios" ? hp(12.6) : hp(14),
-    width: Platform.OS === "ios" ? wp(27.4) : wp(30),
+    height: Platform.OS === "ios" ? hp(12.6) : hp(14.5),
+    width: Platform.OS === "ios" ? wp(27.4) : wp(30.7),
     borderRadius: 60,
     justifyContent: "center",
     alignItems: "center",
     borderColor: COLORS.green,
   },
   userImg: {
-    height: Platform.OS === "ios" ? hp(11.9) : hp(13),
-    width: Platform.OS === "ios" ? wp(25.9) : wp(27),
+    height: Platform.OS === "ios" ? hp(11.9) : hp(13.7),
+    width: Platform.OS === "ios" ? wp(25.9) : wp(28.9),
     borderRadius: 60,
   },
   headerView: {

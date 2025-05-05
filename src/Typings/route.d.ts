@@ -49,6 +49,12 @@ export type MainStackParams = {
   Recalculate: undefined;
   profile: undefined;
   Fasts: undefined;
+  FastDetails: undefined;
+  EditProfile: undefined;
+  ChangePassword: undefined;
+  UserMemberShip: undefined;
+  LanguageScreen: undefined;
+  Sync: undefined;
 };
 
 export type BottomTabParams = {
@@ -148,4 +154,28 @@ export type ProfileScreenProps = NativeStackScreenProps<
 export type FastsScreenProps = NativeStackScreenProps<
   BottomTabParams & MainStackParams,
   "Fasts"
+>;
+export type FastDetailsScreenProps = NativeStackScreenProps<
+  BottomTabParams & MainStackParams,
+  "FastDetails"
+>;
+export type EditProfileScreenProps = NativeStackScreenProps<
+  BottomTabParams & MainStackParams,
+  "EditProfile"
+>;
+export type ChangePasswordScreenProps = NativeStackScreenProps<
+  BottomTabParams & MainStackParams,
+  "ChangePassword"
+>;
+export type UserMemberShipScreenProps = NativeStackScreenProps<
+  BottomTabParams & MainStackParams,
+  "UserMemberShip"
+>;
+export type LanguageScreenProps = NativeStackScreenProps<
+  BottomTabParams & MainStackParams,
+  "LanguageScreen"
+>;
+export type SyncScreenProps = NativeStackScreenProps<
+  BottomTabParams & MainStackParams,
+  "Sync"
 >;

@@ -28,6 +28,7 @@ const IMAGES = {
   coverMealImg: require("./coverMealImg.png"),
   userImg: require("./userImg.png"),
   appleHealth: require("./appleHealthImg.png"),
+  fastMealImg: require("./fastMealImg.png"),
 };
 
 export default IMAGES;

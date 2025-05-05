@@ -61,6 +61,9 @@ import supportIcon from "./supportIcon.svg";
 import networkIcon from "./networkIcon.svg";
 import heartIcon from "./heartIcon.svg";
 import filterIcon from "./filterIcon.svg";
+import galleryIcon from "./galleryIcon.svg";
+import cameraIcon from "./cameraIcon.svg";
+import greenTick from "./greenTick.svg";
 
 const ICONS = {
   AppLogo,
@@ -126,6 +129,9 @@ const ICONS = {
   networkIcon,
   heartIcon,
   filterIcon,
+  galleryIcon,
+  cameraIcon,
+  greenTick,
 };
 
 export default ICONS;

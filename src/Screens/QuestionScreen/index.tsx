@@ -196,8 +196,15 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
   // Update age based on DOB
   useEffect(() => {
     if (profileForm.dob) {
-      const normalizedDateStr = profileForm.dob.replace(/(st|nd|rd|th)/, "");
-      const birthDate = dayjs(normalizedDateStr, "DD MMM YYYY");
+      // Remove ordinal suffixes (st, nd, rd, th)
+      const normalizedDateStr = profileForm.dob.replace(
+        /(\d{1,2})(st|nd|rd|th)/,
+        "$1"
+      );
+
+      // Ensure day is two digits
+      const formattedDateStr = normalizedDateStr.replace(/^(\d)(?=\s)/, "0$1");
+      const birthDate = dayjs(formattedDateStr, "DD MMM YYYY");
       if (birthDate.isValid()) {
         const today = dayjs();
         const age = today.diff(birthDate, "year");
