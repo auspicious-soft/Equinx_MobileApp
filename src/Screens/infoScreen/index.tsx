@@ -25,6 +25,7 @@ import {
   verticalScale,
   wp,
 } from "../../Utilities/Metrics";
+import { CustomText } from "../../Components/CustomText";
 
 const InfoScreen: FC<InfoScreenProps> = ({ navigation, route }) => {
   const { index: currentIndex, nextQuestion } = route.params;
@@ -120,6 +121,8 @@ const InfoScreen: FC<InfoScreenProps> = ({ navigation, route }) => {
     }
   };
 
+  console.log(currentIndex);
+
   return (
     <ImageBackground
       source={IMAGES.greenBg}
@@ -178,6 +181,20 @@ const InfoScreen: FC<InfoScreenProps> = ({ navigation, route }) => {
                 <View style={styles.textContainer}>
                   <Text style={styles.title}>{screenData.title}</Text>
                   <Text style={styles.subtitle}>{screenData.subTitle}</Text>
+                  {currentIndex === 0 && (
+                    <CustomText
+                      fontSize={12}
+                      color={COLORS.darkBLue}
+                      fontFamily="regular"
+                      style={{
+                        textAlign: "center",
+                        paddingHorizontal: horizontalScale(25),
+                      }}
+                    >
+                      {"\n"}We need to ask you a few quick questions to create a
+                      personalized plan for you. This will only take 1 minute 🙌
+                    </CustomText>
+                  )}
                 </View>
               </Animated.View>
             </View>

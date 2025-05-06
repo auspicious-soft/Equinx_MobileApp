@@ -385,7 +385,7 @@ const styles = StyleSheet.create({
   circleView: {
     borderWidth: 1,
     height: hp(14.5),
-    width: wp(30.7),
+    width: hp(14.5),
     borderRadius: 100,
     justifyContent: "center",
     alignItems: "center",
@@ -394,8 +394,8 @@ const styles = StyleSheet.create({
   },
   userImg: {
     height: hp(13.7),
-    width: wp(28.9),
-    resizeMode: "contain",
+    width: hp(13.7),
+    resizeMode: "cover",
     borderRadius: 100,
   },
   penBtn: {

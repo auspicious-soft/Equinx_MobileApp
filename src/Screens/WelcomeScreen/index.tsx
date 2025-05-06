@@ -52,6 +52,7 @@ const WelcomeScreen: FC<WelcomeScreenProps> = ({ navigation }) => {
       delay: 300, // Delay to stagger animation
     }).start();
   }, [imageAnim, textAnim, buttonAnim]);
+
   return (
     <ImageBackground
       source={IMAGES.greenBg}
@@ -64,6 +65,7 @@ const WelcomeScreen: FC<WelcomeScreenProps> = ({ navigation }) => {
             flex: 1,
             gap: verticalScale(15),
             alignItems: "center",
+            // justifyContent: "center",
           }}
         >
           <Animated.View
@@ -92,8 +94,10 @@ const WelcomeScreen: FC<WelcomeScreenProps> = ({ navigation }) => {
                 fontSize={14}
                 fontFamily="regular"
                 color={COLORS.darkBLue}
+                style={{ textAlign: "center" }}
               >
-                Your intermittent fasting journey awaits you!
+                “Your personalized plan is loading. Are you ready for real
+                change?”
               </CustomText>
             </View>
           </Animated.View>
@@ -132,8 +136,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   imgeStyle: {
-    height: hp(50),
-    width: wp(90),
+    height: hp(45),
+    width: wp(90.9),
     resizeMode: "contain",
   },
   contentContainer: {

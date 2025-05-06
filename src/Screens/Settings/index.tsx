@@ -2,10 +2,8 @@ import {
   Animated,
   Easing,
   Image,
-  Platform,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -15,6 +13,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import {
   horizontalScale,
   hp,
+  isIOS,
   verticalScale,
   wp,
 } from "../../Utilities/Metrics";
@@ -46,8 +45,6 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
     outputRange: [2, 22], // This depends on your knob/container width
   });
 
-  console.log("wp :", wp(27.7));
-  console.log("hp: ", hp(15.6));
   return (
     <ScrollView
       showsHorizontalScrollIndicator={false}
@@ -210,19 +207,21 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                 Language
               </CustomText>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.profileContainer}
-              onPress={() => {
-                navigation.navigate("Sync");
-              }}
-            >
-              <View style={styles.iconBg}>
-                <CustomIcon Icon={ICONS.heartIcon} height={16} width={16} />
-              </View>
-              <CustomText fontSize={14} fontFamily="regular">
-                Sync
-              </CustomText>
-            </TouchableOpacity>
+            {isIOS && (
+              <TouchableOpacity
+                style={styles.profileContainer}
+                onPress={() => {
+                  navigation.navigate("Sync");
+                }}
+              >
+                <View style={styles.iconBg}>
+                  <CustomIcon Icon={ICONS.heartIcon} height={16} width={16} />
+                </View>
+                <CustomText fontSize={14} fontFamily="regular">
+                  Sync
+                </CustomText>
+              </TouchableOpacity>
+            )}
             <TouchableOpacity
               style={styles.profileContainer}
               onPress={() => {
@@ -319,7 +318,7 @@ const styles = StyleSheet.create({
   circleView: {
     borderWidth: 1,
     height: hp(14.5),
-    width: wp(30.8),
+    width: hp(14.5),
     borderRadius: 100,
     justifyContent: "center",
     alignItems: "center",

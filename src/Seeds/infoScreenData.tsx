@@ -1,4 +1,6 @@
+import { Platform } from "react-native";
 import ICONS from "../Assets/Icons";
+import { isIOS } from "../Utilities/Metrics";
 
 const InfoScreenData = [
   {
@@ -46,9 +48,9 @@ const InfoScreenData = [
     title:
       "Users who allow notifications see a 45% increase in their success rate",
     subTitle: "Let’s enable notifications and embark on this journey together.",
-    nextScreen: "infoScreen",
+    nextScreen: isIOS ? "infoScreen" : "planScreen",
   },
-  {
+  isIOS && {
     image: ICONS.Info8,
     title: "Unlock Insights with Apple Health",
     subTitle:

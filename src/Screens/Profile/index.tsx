@@ -14,6 +14,7 @@ import COLORS from "../../Utilities/Colors";
 import {
   horizontalScale,
   hp,
+  isIOS,
   verticalScale,
   wp,
 } from "../../Utilities/Metrics";
@@ -269,32 +270,37 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
             </View>
           </View>
         </View>
-
-        <View style={styles.appleContainer}>
-          <Image source={IMAGES.appleHealth} style={styles.appleImg} />
-          <View style={{ gap: verticalScale(8) }}>
-            <CustomText
-              fontSize={14}
-              fontFamily="medium"
-              color={COLORS.darkBLue}
-            >
-              Connect to Apple Health
-            </CustomText>
-            <TouchableOpacity style={styles.arrowContainer}>
-              <View>
-                <CustomText
-                  fontSize={14}
-                  fontFamily="regular"
-                  color={COLORS.green}
-                >
-                  Connect Now
-                </CustomText>
-                <View style={{ height: 1, backgroundColor: COLORS.green }} />
-              </View>
-              <CustomIcon Icon={ICONS.rightGreenArrow} height={13} width={13} />
-            </TouchableOpacity>
+        {isIOS && (
+          <View style={styles.appleContainer}>
+            <Image source={IMAGES.appleHealth} style={styles.appleImg} />
+            <View style={{ gap: verticalScale(8) }}>
+              <CustomText
+                fontSize={14}
+                fontFamily="medium"
+                color={COLORS.darkBLue}
+              >
+                Connect to Apple Health
+              </CustomText>
+              <TouchableOpacity style={styles.arrowContainer}>
+                <View>
+                  <CustomText
+                    fontSize={14}
+                    fontFamily="regular"
+                    color={COLORS.green}
+                  >
+                    Connect Now
+                  </CustomText>
+                  <View style={{ height: 1, backgroundColor: COLORS.green }} />
+                </View>
+                <CustomIcon
+                  Icon={ICONS.rightGreenArrow}
+                  height={13}
+                  width={13}
+                />
+              </TouchableOpacity>
+            </View>
           </View>
-        </View>
+        )}
 
         <View style={{ gap: verticalScale(5) }}>
           <CustomText fontSize={18} color={COLORS.darkBLue} fontFamily="bold">

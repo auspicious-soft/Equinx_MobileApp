@@ -299,7 +299,7 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
                   }}
                 >
                   <View>
-                    <CustomText fontSize={14} color={COLORS.green}>
+                    <CustomText fontSize={18} color={COLORS.green}>
                       View Plans
                     </CustomText>
                     <View
@@ -311,8 +311,8 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
                   </View>
                   <CustomIcon
                     Icon={ICONS.rightGreenArrow}
-                    height={13}
-                    width={13}
+                    height={15}
+                    width={15}
                   />
                 </TouchableOpacity>
               </View>

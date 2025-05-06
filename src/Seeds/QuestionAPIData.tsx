@@ -217,98 +217,98 @@ const QueastionResponse = {
           $date: "2025-04-11T12:31:44.904Z",
         },
       },
-      {
-        _id: {
-          $oid: "67f90bb08b68fd5c142ff5c4",
-        },
-        text: "What should we focus on together? (Multi-select)",
-        subtitle:
-          "Exploring the key areas where our teamwork can make the biggest impact.",
-        type: "multiSelect",
-        next: "info2",
-        options: [
-          {
-            text: "Strong immune system",
-            value: 18,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff5c5",
-            },
-            hasIcon: false,
-          },
-          {
-            text: "Better digestion",
-            value: 19,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff5c6",
-            },
-            hasIcon: false,
-          },
-          {
-            text: "Boosting energy",
-            value: 20,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff5c7",
-            },
-            hasIcon: false,
-          },
-          {
-            text: "Challenging myself",
-            value: 21,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff5c8",
-            },
-            hasIcon: false,
-          },
-          {
-            text: "Improving sleep quality ",
-            value: 22,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff5c9",
-            },
-            hasIcon: false,
-          },
-          {
-            text: "Mental clarity",
-            value: 23,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff5ca",
-            },
-            hasIcon: false,
-          },
-          {
-            text: "Reducing stress and tension ",
-            value: 24,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff5cb",
-            },
-            hasIcon: false,
-          },
-          {
-            text: "Increasing self-confidence ",
-            value: 25,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff5cc",
-            },
-            hasIcon: false,
-          },
-          {
-            text: "Longer and healthier life",
-            value: 26,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff5cd",
-            },
-            hasIcon: false,
-          },
-        ],
-        order: 5,
-        __v: 0,
-        createdAt: {
-          $date: "2025-04-11T12:31:44.904Z",
-        },
-        updatedAt: {
-          $date: "2025-04-11T12:31:44.904Z",
-        },
-      },
+      // {
+      //   _id: {
+      //     $oid: "67f90bb08b68fd5c142ff5c4",
+      //   },
+      //   text: "What should we focus on together? (Multi-select)",
+      //   subtitle:
+      //     "Exploring the key areas where our teamwork can make the biggest impact.",
+      //   type: "multiSelect",
+      //   next: "info2",
+      //   options: [
+      //     {
+      //       text: "Strong immune system",
+      //       value: 18,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff5c5",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //     {
+      //       text: "Better digestion",
+      //       value: 19,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff5c6",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //     {
+      //       text: "Boosting energy",
+      //       value: 20,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff5c7",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //     {
+      //       text: "Challenging myself",
+      //       value: 21,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff5c8",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //     {
+      //       text: "Improving sleep quality ",
+      //       value: 22,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff5c9",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //     {
+      //       text: "Mental clarity",
+      //       value: 23,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff5ca",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //     {
+      //       text: "Reducing stress and tension ",
+      //       value: 24,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff5cb",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //     {
+      //       text: "Increasing self-confidence ",
+      //       value: 25,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff5cc",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //     {
+      //       text: "Longer and healthier life",
+      //       value: 26,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff5cd",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //   ],
+      //   order: 5,
+      //   __v: 0,
+      //   createdAt: {
+      //     $date: "2025-04-11T12:31:44.904Z",
+      //   },
+      //   updatedAt: {
+      //     $date: "2025-04-11T12:31:44.904Z",
+      //   },
+      // },
       {
         _id: {
           $oid: "67f90bb08b68fd5c142ff5ce",
@@ -481,7 +481,7 @@ const QueastionResponse = {
         subtitle:
           "Knowing when you eat your first and last meals helps analyze your eating habits and daily nutrition patterns.",
         type: "mealTimes",
-        next: "question",
+        next: "info4",
         options: [
           {
             text: "First Meal Time",
@@ -511,94 +511,94 @@ const QueastionResponse = {
           $date: "2025-04-11T12:31:44.904Z",
         },
       },
-      {
-        _id: {
-          $oid: "67f90bb08b68fd5c142ff5e2",
-        },
-        text: "Do you track the nutritional value of your meals?",
-        subtitle:
-          "Your meals can reveal patterns in your eating habits and guide you in making healthier choices throughout the day.",
-        type: "mcq",
-        next: "info4",
-        options: [
-          {
-            text: "Regularly",
-            value: 42,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff5e3",
-            },
-            hasIcon: false,
-          },
-          {
-            text: "Sometimes",
-            value: 43,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff5e4",
-            },
-            hasIcon: false,
-          },
-          {
-            text: "Not Really",
-            value: 44,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff5e5",
-            },
-            hasIcon: false,
-          },
-        ],
-        order: 10,
-        __v: 0,
-        createdAt: {
-          $date: "2025-04-11T12:31:44.904Z",
-        },
-        updatedAt: {
-          $date: "2025-04-11T12:31:44.904Z",
-        },
-      },
-      {
-        _id: {
-          $oid: "67f90bb08b68fd5c142ff5e6",
-        },
-        text: "Do you know what calories are?",
-        subtitle:
-          "Calories measure energy in food. Understanding them helps manage fasting and nutrition goals effectively",
-        type: "mcq",
-        next: "question",
-        options: [
-          {
-            text: "Yes",
-            value: 45,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff5e7",
-            },
-            hasIcon: false,
-          },
-          {
-            text: "No",
-            value: 46,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff5e8",
-            },
-            hasIcon: false,
-          },
-          {
-            text: "A little",
-            value: 47,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff5e9",
-            },
-            hasIcon: false,
-          },
-        ],
-        order: 11,
-        __v: 0,
-        createdAt: {
-          $date: "2025-04-11T12:31:44.904Z",
-        },
-        updatedAt: {
-          $date: "2025-04-11T12:31:44.904Z",
-        },
-      },
+      // {
+      //   _id: {
+      //     $oid: "67f90bb08b68fd5c142ff5e2",
+      //   },
+      //   text: "Do you track the nutritional value of your meals?",
+      //   subtitle:
+      //     "Your meals can reveal patterns in your eating habits and guide you in making healthier choices throughout the day.",
+      //   type: "mcq",
+      //   next: "info4",
+      //   options: [
+      //     {
+      //       text: "Regularly",
+      //       value: 42,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff5e3",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //     {
+      //       text: "Sometimes",
+      //       value: 43,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff5e4",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //     {
+      //       text: "Not Really",
+      //       value: 44,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff5e5",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //   ],
+      //   order: 10,
+      //   __v: 0,
+      //   createdAt: {
+      //     $date: "2025-04-11T12:31:44.904Z",
+      //   },
+      //   updatedAt: {
+      //     $date: "2025-04-11T12:31:44.904Z",
+      //   },
+      // },
+      // {
+      //   _id: {
+      //     $oid: "67f90bb08b68fd5c142ff5e6",
+      //   },
+      //   text: "Do you know what calories are?",
+      //   subtitle:
+      //     "Calories measure energy in food. Understanding them helps manage fasting and nutrition goals effectively",
+      //   type: "mcq",
+      //   next: "question",
+      //   options: [
+      //     {
+      //       text: "Yes",
+      //       value: 45,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff5e7",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //     {
+      //       text: "No",
+      //       value: 46,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff5e8",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //     {
+      //       text: "A little",
+      //       value: 47,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff5e9",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //   ],
+      //   order: 11,
+      //   __v: 0,
+      //   createdAt: {
+      //     $date: "2025-04-11T12:31:44.904Z",
+      //   },
+      //   updatedAt: {
+      //     $date: "2025-04-11T12:31:44.904Z",
+      //   },
+      // },
       {
         _id: {
           $oid: "67f90bb08b68fd5c142ff5ea",
@@ -751,7 +751,7 @@ const QueastionResponse = {
         subtitle:
           "Proper hydration supports fasting, energy levels, and overall well-being.",
         type: "mcq",
-        next: "question",
+        next: "info6",
         options: [
           {
             text: "About 2 glasses ",
@@ -795,110 +795,110 @@ const QueastionResponse = {
           $date: "2025-04-11T12:31:44.905Z",
         },
       },
-      {
-        _id: {
-          $oid: "67f90bb08b68fd5c142ff600",
-        },
-        text: "How often do you exercise? ",
-        subtitle:
-          "Your activity level affects your fasting needs. Let’s align your plan accordingly.",
-        type: "mcq",
-        next: "question",
-        options: [
-          {
-            text: "Never",
-            value: 67,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff601",
-            },
-            hasIcon: false,
-          },
-          {
-            text: "Once a week",
-            value: 68,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff602",
-            },
-            hasIcon: false,
-          },
-          {
-            text: "2-3 times a week",
-            value: 69,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff603",
-            },
-            hasIcon: false,
-          },
-          {
-            text: "Almost every day",
-            value: 70,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff604",
-            },
-            hasIcon: false,
-          },
-        ],
-        order: 15,
-        __v: 0,
-        createdAt: {
-          $date: "2025-04-11T12:31:44.905Z",
-        },
-        updatedAt: {
-          $date: "2025-04-11T12:31:44.905Z",
-        },
-      },
-      {
-        _id: {
-          $oid: "67f90bb08b68fd5c142ff605",
-        },
-        text: "When do you usually exercise? ",
-        subtitle:
-          "Knowing your workout time helps us optimize fasting and energy management.",
-        type: "mcq",
-        next: "info6",
-        options: [
-          {
-            text: "Morning",
-            value: 71,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff606",
-            },
-            hasIcon: false,
-          },
-          {
-            text: "Noon",
-            value: 72,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff607",
-            },
-            hasIcon: false,
-          },
-          {
-            text: "Evening",
-            value: 73,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff608",
-            },
-            hasIcon: false,
-          },
-          {
-            text: "I don’t exercise",
-            value: 74,
-            _id: {
-              $oid: "67f90bb08b68fd5c142ff609",
-            },
-            hasIcon: false,
-          },
-        ],
-        order: 16,
-        __v: 0,
-        createdAt: {
-          $date: "2025-04-11T12:31:44.905Z",
-        },
-        updatedAt: {
-          $date: "2025-04-11T12:31:44.905Z",
-        },
-      },
+      // {
+      //   _id: {
+      //     $oid: "67f90bb08b68fd5c142ff600",
+      //   },
+      //   text: "How often do you exercise? ",
+      //   subtitle:
+      //     "Your activity level affects your fasting needs. Let’s align your plan accordingly.",
+      //   type: "mcq",
+      //   next: "question",
+      //   options: [
+      //     {
+      //       text: "Never",
+      //       value: 67,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff601",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //     {
+      //       text: "Once a week",
+      //       value: 68,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff602",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //     {
+      //       text: "2-3 times a week",
+      //       value: 69,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff603",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //     {
+      //       text: "Almost every day",
+      //       value: 70,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff604",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //   ],
+      //   order: 15,
+      //   __v: 0,
+      //   createdAt: {
+      //     $date: "2025-04-11T12:31:44.905Z",
+      //   },
+      //   updatedAt: {
+      //     $date: "2025-04-11T12:31:44.905Z",
+      //   },
+      // },
+      // {
+      //   _id: {
+      //     $oid: "67f90bb08b68fd5c142ff605",
+      //   },
+      //   text: "When do you usually exercise? ",
+      //   subtitle:
+      //     "Knowing your workout time helps us optimize fasting and energy management.",
+      //   type: "mcq",
+      //   next: "info6",
+      //   options: [
+      //     {
+      //       text: "Morning",
+      //       value: 71,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff606",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //     {
+      //       text: "Noon",
+      //       value: 72,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff607",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //     {
+      //       text: "Evening",
+      //       value: 73,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff608",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //     {
+      //       text: "I don’t exercise",
+      //       value: 74,
+      //       _id: {
+      //         $oid: "67f90bb08b68fd5c142ff609",
+      //       },
+      //       hasIcon: false,
+      //     },
+      //   ],
+      //   order: 16,
+      //   __v: 0,
+      //   createdAt: {
+      //     $date: "2025-04-11T12:31:44.905Z",
+      //   },
+      //   updatedAt: {
+      //     $date: "2025-04-11T12:31:44.905Z",
+      //   },
+      // },
     ],
 
     plans: [
