@@ -35,6 +35,9 @@ import ChangePassword from "../Screens/ChangePassword";
 import UserMemberShip from "../Screens/UserMemberShip";
 import LanguageScreen from "../Screens/LanguageScreen";
 import Sync from "../Screens/Sync";
+import LearnFast from "../Screens/LearnFast";
+import Support from "../Screens/Support";
+import Policy from "../Screens/Policy";
 
 const RootStack = createNativeStackNavigator<RootStackParams>();
 const Auth = createNativeStackNavigator<AuthStackParams>();
@@ -144,6 +147,9 @@ const Routing = () => {
         <Main.Screen name="UserMemberShip" component={UserMemberShip} />
         <Main.Screen name="LanguageScreen" component={LanguageScreen} />
         <Main.Screen name="Sync" component={Sync} />
+        <Main.Screen name="LearnFast" component={LearnFast} />
+        <Main.Screen name="Support" component={Support} />
+        <Main.Screen name="Policy" component={Policy} />
       </Main.Navigator>
     );
   }

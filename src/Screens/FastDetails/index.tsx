@@ -65,13 +65,13 @@ const FastDetail: FC<FastDetailsScreenProps> = ({ navigation }) => {
             <CustomIcon Icon={ICONS.BackArrow} />
           </TouchableOpacity>
           <CustomText fontSize={22} fontFamily="bold" color={COLORS.darkBLue}>
-            23, March 2025
+            23 March 2025
           </CustomText>
         </View>
 
         <View style={{ gap: verticalScale(15) }}>
           <CustomText fontSize={16} fontFamily="bold" color={COLORS.darkBLue}>
-            Log Your Meals
+            Your Meals
           </CustomText>
 
           {mealData.map((item, index) => (

@@ -64,6 +64,10 @@ import filterIcon from "./filterIcon.svg";
 import galleryIcon from "./galleryIcon.svg";
 import cameraIcon from "./cameraIcon.svg";
 import greenTick from "./greenTick.svg";
+import emailIcon from "./emailIcon.svg";
+import callIcon from "./callIcon.svg";
+import incrementIcon from "./incrementIcon.svg";
+import decrementIcon from "./decrementIcon.svg";
 
 const ICONS = {
   AppLogo,
@@ -132,6 +136,10 @@ const ICONS = {
   galleryIcon,
   cameraIcon,
   greenTick,
+  emailIcon,
+  callIcon,
+  incrementIcon,
+  decrementIcon,
 };
 
 export default ICONS;

@@ -29,7 +29,7 @@ const language = [
   },
   {
     id: 4,
-    title: "Portugues",
+    title: "Portuguese",
   },
   {
     id: 5,

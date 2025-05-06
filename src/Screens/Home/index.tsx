@@ -42,263 +42,254 @@ const Home: FC<HomeScreenProps> = () => {
     <ScrollView
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}
-      style={{ flex: 1 }}
+      bounces={false}
+      style={{ flex: 1, backgroundColor: COLORS.white }}
     >
-      <View style={styles.main}>
-        <SafeAreaView
-          style={{
-            flex: 1,
-            backgroundColor: COLORS.white,
-            paddingVertical: verticalScale(15),
-            paddingHorizontal: horizontalScale(20),
-            gap: verticalScale(20),
-          }}
-        >
-          <View style={styles.headerContainer}>
-            <CustomText fontSize={22} color={COLORS.darkBLue} fontFamily="bold">
-              Good Morning{" "}
-              <CustomText fontSize={22} color={COLORS.green} fontFamily="bold">
-                Miley Jones
-              </CustomText>
+      <SafeAreaView
+        style={{
+          flex: 1,
+          backgroundColor: COLORS.white,
+          paddingVertical: verticalScale(15),
+          paddingHorizontal: horizontalScale(20),
+          gap: verticalScale(20),
+        }}
+      >
+        <View style={styles.headerContainer}>
+          <CustomText fontSize={22} color={COLORS.darkBLue} fontFamily="bold">
+            Good Morning{" "}
+            <CustomText fontSize={22} color={COLORS.green} fontFamily="bold">
+              Miley Jones
             </CustomText>
-            <CustomText
-              fontSize={12}
-              color={COLORS.darkBLue}
-              fontFamily="regular"
-            >
-              Ready to crush your fast today?
-            </CustomText>
-          </View>
+          </CustomText>
+          <CustomText
+            fontSize={12}
+            color={COLORS.darkBLue}
+            fontFamily="regular"
+          >
+            Ready to crush your fast today?
+          </CustomText>
+        </View>
 
-          <View style={styles.topBox}>
-            <View
-              style={{
-                gap: verticalScale(25),
-                alignItems: "center",
-              }}
-            >
-              <View style={styles.fastingContainer}>
-                <CustomText
-                  fontSize={12}
-                  color={COLORS.darkBLue}
-                  fontFamily="regular"
-                >
-                  16:8 fasting schedule
-                </CustomText>
-              </View>
-              <CircularProgress
-                color={COLORS.green}
-                backgroundColor={COLORS.white}
-                progress={0.7}
-                radius={100}
-                strokeWidth={20}
-                backgroundStrokeWidth={15}
-                progressStrokeWidth={20}
-              >
-                <CustomText
-                  fontSize={12}
-                  color={COLORS.darkBLue}
-                  fontFamily="regular"
-                >
-                  Time since last fast
-                </CustomText>
-                <CustomText
-                  fontSize={28}
-                  color={COLORS.darkBLue}
-                  fontFamily="bold"
-                >
-                  2 days
-                </CustomText>
-              </CircularProgress>
-              <PrimaryButton
-                title="Start Your 16h fasting"
-                onPress={() => {}}
-                style={{
-                  width: wp(80),
-                }}
-              />
-            </View>
-          </View>
-
-          <View style={{ gap: verticalScale(10) }}>
-            <View style={styles.penContainer}>
-              <CustomText
-                fontSize={18}
-                fontFamily="bold"
-                color={COLORS.darkBLue}
-              >
-                Water Tracker
-              </CustomText>
-              <TouchableOpacity
-                style={styles.penBtn}
-                onPress={() => {
-                  setIsModal(true);
-                }}
-              >
-                <CustomIcon Icon={ICONS.penIcon} height={13} width={13} />
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.waterTarckerInsideWrapper}>
-              <CustomText
-                fontSize={18}
-                color={COLORS.green}
-                style={{ textAlign: "center" }}
-                fontFamily="bold"
-              >
-                0.5 Litres{" "}
-                <CustomText
-                  fontSize={18}
-                  color={COLORS.darkBLue}
-                  fontFamily="regular"
-                >
-                  today
-                </CustomText>
-              </CustomText>
-              <View style={styles.dailyGoalContainer}>
-                <CustomText
-                  fontSize={12}
-                  color={COLORS.darkBLue}
-                  fontFamily="regular"
-                >
-                  Daily Goal
-                </CustomText>
-
-                <CustomText
-                  fontSize={12}
-                  color={COLORS.green}
-                  fontFamily="regular"
-                >
-                  3.6 liters
-                </CustomText>
-              </View>
-              <PrimaryButton
-                title="Record intake"
-                onPress={() => {
-                  setRecordModal(true);
-                }}
-                style={{
-                  width: wp(75),
-                }}
-              />
-            </View>
-          </View>
-
-          <View style={{ gap: 10 }}>
-            <CustomText fontSize={18} color={COLORS.darkBLue} fontFamily="bold">
-              Quick Stats
-            </CustomText>
-            <View style={styles.statsWrapper}>
-              <View style={styles.statsInsideCards}>
-                <View
-                  style={{
-                    gap: verticalScale(8),
-                    paddingHorizontal: horizontalScale(5),
-                  }}
-                >
-                  <CustomText fontSize={12} color={COLORS.darkBLue}>
-                    You've fasted
-                  </CustomText>
-                  <CustomText fontSize={18} color={COLORS.green}>
-                    5 days!
-                  </CustomText>
-                  <CustomText fontSize={12} color={COLORS.darkBLue}>
-                    in a row
-                  </CustomText>
-                </View>
-                {/* <View style={{ position: "absolute", right: 0, bottom: 1 }}> */}
-                <Image
-                  source={IMAGES.homeImage}
-                  style={{
-                    height: 90,
-                    width: 100,
-                    resizeMode: "cover",
-                    position: "absolute",
-                    right: 0,
-                    bottom: 0,
-                  }}
-                />
-                {/* </View> */}
-              </View>
-              <View style={styles.statsInsideCards}>
-                <View
-                  style={{
-                    gap: verticalScale(8),
-                    paddingHorizontal: horizontalScale(5),
-                  }}
-                >
-                  <CustomText fontSize={12} color={COLORS.darkBLue}>
-                    Total Hours Fasted
-                  </CustomText>
-                  <CustomText fontSize={18} color={COLORS.green}>
-                    72 hours
-                  </CustomText>
-                  <CustomText fontSize={12} color={COLORS.darkBLue}>
-                    This Week
-                  </CustomText>
-                </View>
-                <Image
-                  source={IMAGES.homeImag2}
-                  style={{
-                    height: 90,
-                    width: 90,
-                    resizeMode: "cover",
-                    position: "absolute",
-                    right: 0,
-                    bottom: 0,
-                  }}
-                />
-              </View>
-            </View>
-          </View>
-          <View style={{ gap: verticalScale(10) }}>
-            <ImageBackground
-              source={IMAGES.yogaHomeImage}
-              style={{
-                height: hp(30),
-                width: wp(90),
-                paddingBottom: verticalScale(20),
-                paddingHorizontal: horizontalScale(15),
-                gap: verticalScale(10),
-                justifyContent: "flex-end",
-              }}
-              resizeMode="cover"
-              borderRadius={12}
-            >
-              <CustomText fontSize={14} color={COLORS.white} fontFamily="bold">
-                Need Guidance? Ask Your Fasting Coach
-              </CustomText>
+        <View style={styles.topBox}>
+          <View
+            style={{
+              gap: verticalScale(25),
+              alignItems: "center",
+            }}
+          >
+            <View style={styles.fastingContainer}>
               <CustomText
                 fontSize={12}
-                color={COLORS.white}
+                color={COLORS.darkBLue}
                 fontFamily="regular"
               >
-                Get personalized tips, motivation, and fasting insights from our
-                AI coach.
+                16:8 fasting schedule
               </CustomText>
-            </ImageBackground>
-            <PrimaryButton title="Start Chat" onPress={() => {}} />
+            </View>
+            <CircularProgress
+              color={COLORS.green}
+              backgroundColor={COLORS.white}
+              progress={0.7}
+              radius={100}
+              strokeWidth={20}
+              backgroundStrokeWidth={15}
+              progressStrokeWidth={20}
+            >
+              <CustomText
+                fontSize={12}
+                color={COLORS.darkBLue}
+                fontFamily="regular"
+              >
+                Time since last fast
+              </CustomText>
+              <CustomText
+                fontSize={28}
+                color={COLORS.darkBLue}
+                fontFamily="bold"
+              >
+                2 days
+              </CustomText>
+            </CircularProgress>
+            <PrimaryButton
+              title="Start Your 16h fasting"
+              onPress={() => {}}
+              style={{
+                width: wp(80),
+              }}
+            />
           </View>
-          <WaterTrackModal
-            closeModal={closeModal}
-            isVisible={isModal}
-            heading="Water Tracking Options"
-            title="Select Container"
-            size="Set Container Size"
-            ml="250 ml"
-            goal="Set Daily Goal"
-            ml2="3600 ml"
-            reminder="Water Reminder"
-            description="Receive notifications to make drinking water a habit."
-          />
-          <RecordIntakeModal
-            closeModal={closeRecordModal}
-            isVisible={recordModal}
-            heading="Record Intake"
-            title="250 ml"
-          />
-        </SafeAreaView>
-      </View>
+        </View>
+
+        <View style={{ gap: verticalScale(10) }}>
+          <View style={styles.penContainer}>
+            <CustomText fontSize={18} fontFamily="bold" color={COLORS.darkBLue}>
+              Water Tracker
+            </CustomText>
+            <TouchableOpacity
+              style={styles.penBtn}
+              onPress={() => {
+                setIsModal(true);
+              }}
+            >
+              <CustomIcon Icon={ICONS.penIcon} height={13} width={13} />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.waterTarckerInsideWrapper}>
+            <CustomText
+              fontSize={18}
+              color={COLORS.green}
+              style={{ textAlign: "center" }}
+              fontFamily="bold"
+            >
+              0.5 Litres{" "}
+              <CustomText
+                fontSize={18}
+                color={COLORS.darkBLue}
+                fontFamily="regular"
+              >
+                today
+              </CustomText>
+            </CustomText>
+            <View style={styles.dailyGoalContainer}>
+              <CustomText
+                fontSize={12}
+                color={COLORS.darkBLue}
+                fontFamily="regular"
+              >
+                Daily Goal
+              </CustomText>
+
+              <CustomText
+                fontSize={12}
+                color={COLORS.green}
+                fontFamily="regular"
+              >
+                3.6 liters
+              </CustomText>
+            </View>
+            <PrimaryButton
+              title="Record intake"
+              onPress={() => {
+                setRecordModal(true);
+              }}
+              style={{
+                width: wp(75),
+              }}
+            />
+          </View>
+        </View>
+
+        <View style={{ gap: 10 }}>
+          <CustomText fontSize={18} color={COLORS.darkBLue} fontFamily="bold">
+            Quick Stats
+          </CustomText>
+          <View style={styles.statsWrapper}>
+            <View style={styles.statsInsideCards}>
+              <View
+                style={{
+                  gap: verticalScale(8),
+                  paddingHorizontal: horizontalScale(5),
+                }}
+              >
+                <CustomText fontSize={12} color={COLORS.darkBLue}>
+                  You've fasted
+                </CustomText>
+                <CustomText fontSize={18} color={COLORS.green}>
+                  5 days!
+                </CustomText>
+                <CustomText fontSize={12} color={COLORS.darkBLue}>
+                  in a row
+                </CustomText>
+              </View>
+              {/* <View style={{ position: "absolute", right: 0, bottom: 1 }}> */}
+              <Image
+                source={IMAGES.homeImage}
+                style={{
+                  height: 90,
+                  width: 100,
+                  resizeMode: "cover",
+                  position: "absolute",
+                  right: 0,
+                  bottom: 0,
+                }}
+              />
+              {/* </View> */}
+            </View>
+            <View style={styles.statsInsideCards}>
+              <View
+                style={{
+                  gap: verticalScale(8),
+                  paddingHorizontal: horizontalScale(5),
+                }}
+              >
+                <CustomText fontSize={12} color={COLORS.darkBLue}>
+                  Total Hours Fasted
+                </CustomText>
+                <CustomText fontSize={18} color={COLORS.green}>
+                  72 hours
+                </CustomText>
+                <CustomText fontSize={12} color={COLORS.darkBLue}>
+                  This Week
+                </CustomText>
+              </View>
+              <Image
+                source={IMAGES.homeImag2}
+                style={{
+                  height: 90,
+                  width: 90,
+                  resizeMode: "cover",
+                  position: "absolute",
+                  right: 0,
+                  bottom: 0,
+                }}
+              />
+            </View>
+          </View>
+        </View>
+        <View style={{ gap: verticalScale(10) }}>
+          <ImageBackground
+            source={IMAGES.yogaHomeImage}
+            style={{
+              height: hp(30),
+              width: wp(90),
+              paddingBottom: verticalScale(20),
+              paddingHorizontal: horizontalScale(15),
+              gap: verticalScale(10),
+              justifyContent: "flex-end",
+            }}
+            resizeMode="cover"
+            borderRadius={12}
+          >
+            <CustomText fontSize={14} color={COLORS.white} fontFamily="bold">
+              Need Guidance? Ask Your Fasting Coach
+            </CustomText>
+            <CustomText fontSize={12} color={COLORS.white} fontFamily="regular">
+              Get personalized tips, motivation, and fasting insights from our
+              AI coach.
+            </CustomText>
+          </ImageBackground>
+          <PrimaryButton title="Start Chat" onPress={() => {}} />
+        </View>
+        <WaterTrackModal
+          closeModal={closeModal}
+          isVisible={isModal}
+          heading="Water Tracking Options"
+          title="Select Container"
+          size="Set Container Size"
+          ml="250 ml"
+          goal="Set Daily Goal"
+          ml2="3600 ml"
+          reminder="Water Reminder"
+          description="Receive notifications to make drinking water a habit."
+        />
+        <RecordIntakeModal
+          closeModal={closeRecordModal}
+          isVisible={recordModal}
+          heading="Record Intake"
+          title="250 ml"
+        />
+      </SafeAreaView>
     </ScrollView>
   );
 };
@@ -306,10 +297,6 @@ const Home: FC<HomeScreenProps> = () => {
 export default Home;
 
 const styles = StyleSheet.create({
-  main: {
-    flex: 1,
-    backgroundColor: COLORS.white,
-  },
   headerContainer: {
     gap: verticalScale(10),
   },

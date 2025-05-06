@@ -46,8 +46,8 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
     outputRange: [2, 22], // This depends on your knob/container width
   });
 
-  console.log("wp :", wp(28.9));
-  console.log("hp: ", hp(13.7));
+  console.log("wp :", wp(27.7));
+  console.log("hp: ", hp(15.6));
   return (
     <ScrollView
       showsHorizontalScrollIndicator={false}
@@ -171,7 +171,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                   <CustomIcon Icon={ICONS.notifyIcon} height={16} width={16} />
                 </View>
                 <CustomText fontSize={14} fontFamily="regular">
-                  Notification
+                  Notifications
                 </CustomText>
               </View>
               <TouchableOpacity onPress={toggleSwitch} activeOpacity={0.8}>
@@ -223,7 +223,12 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                 Sync
               </CustomText>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.profileContainer}>
+            <TouchableOpacity
+              style={styles.profileContainer}
+              onPress={() => {
+                navigation.navigate("LearnFast");
+              }}
+            >
               <View style={styles.iconBg}>
                 <CustomIcon Icon={ICONS.bookIcon} height={16} width={16} />
               </View>
@@ -239,7 +244,12 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
             Support
           </CustomText>
           <View style={{ gap: verticalScale(4) }}>
-            <TouchableOpacity style={styles.profileContainer}>
+            <TouchableOpacity
+              style={styles.profileContainer}
+              onPress={() => {
+                navigation.navigate("Support");
+              }}
+            >
               <View style={styles.iconBg}>
                 <CustomIcon Icon={ICONS.supportIcon} height={16} width={16} />
               </View>
@@ -263,7 +273,12 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                 Terms & Conditions
               </CustomText>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.profileContainer}>
+            <TouchableOpacity
+              style={styles.profileContainer}
+              onPress={() => {
+                navigation.navigate("Policy");
+              }}
+            >
               <View style={styles.iconBg}>
                 <CustomIcon Icon={ICONS.policyIcon} height={16} width={16} />
               </View>
@@ -276,7 +291,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
 
         <View style={{ gap: verticalScale(6) }}>
           <CustomText fontFamily="bold" fontSize={12}>
-            Support
+            Sign Out
           </CustomText>
           <TouchableOpacity style={styles.profileContainer}>
             <View style={styles.iconBg}>
@@ -303,17 +318,18 @@ const styles = StyleSheet.create({
   },
   circleView: {
     borderWidth: 1,
-    height: Platform.OS === "ios" ? hp(12.6) : hp(14.5),
-    width: Platform.OS === "ios" ? wp(27.4) : wp(30.7),
-    borderRadius: 60,
+    height: hp(14.5),
+    width: wp(30.8),
+    borderRadius: 100,
     justifyContent: "center",
     alignItems: "center",
     borderColor: COLORS.green,
   },
   userImg: {
-    height: Platform.OS === "ios" ? hp(11.9) : hp(13.7),
-    width: Platform.OS === "ios" ? wp(25.9) : wp(28.9),
-    borderRadius: 60,
+    height: hp(13.7),
+    width: wp(28.9),
+    borderRadius: 100,
+    resizeMode: "contain",
   },
   headerView: {
     flexDirection: "row",

@@ -153,6 +153,7 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
       }}
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}
+      bounces={false}
     >
       <View style={styles.main}>
         <SafeAreaView
