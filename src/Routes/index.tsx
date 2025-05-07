@@ -160,10 +160,10 @@ const Routing = () => {
         headerShown: false,
       }}
     >
+      <RootStack.Screen name="mainStack" component={MainStack} />
       <RootStack.Screen name="splash" component={Splash} />
       <RootStack.Screen name="onBoardingStack" component={OnBoardingStack} />
       <RootStack.Screen name="authStack" component={AuthStack} />
-      <RootStack.Screen name="mainStack" component={MainStack} />
     </RootStack.Navigator>
   );
 };

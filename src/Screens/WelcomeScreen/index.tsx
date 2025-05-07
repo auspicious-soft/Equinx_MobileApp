@@ -96,8 +96,8 @@ const WelcomeScreen: FC<WelcomeScreenProps> = ({ navigation }) => {
                 color={COLORS.darkBLue}
                 style={{ textAlign: "center" }}
               >
-                “Your personalized plan is loading. Are you ready for real
-                change?”
+                Your personalized plan is loading. Are you ready for real
+                change?
               </CustomText>
             </View>
           </Animated.View>
