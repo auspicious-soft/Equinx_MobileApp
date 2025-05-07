@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { HomeScreenProps } from "../../Typings/route";
 import COLORS from "../../Utilities/Colors";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -25,18 +25,114 @@ import ICONS from "../../Assets/Icons";
 import IMAGES from "../../Assets/Images";
 import WaterTrackModal from "../../Components/Modals/WaterTrackModal";
 import RecordIntakeModal from "../../Components/Modals/RecordIntakeModal";
+import moment from "moment-timezone";
+
+interface FastingMethod {
+  type: "16:8" | "5:2";
+  fastingDays?: number[]; // For 5:2, e.g., [1, 4] for Monday and Thursday (0 = Sunday)
+}
 
 const Home: FC<HomeScreenProps> = () => {
   const [isModal, setIsModal] = useState(false);
   const [recordModal, setRecordModal] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState("");
+  const [isFasting, setIsFasting] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [fastingStatus, setFastingStatus] = useState<
+    "Fasting" | "Eating" | "Low-Calorie"
+  >("Eating");
 
-  const closeModal = () => {
-    setIsModal(false);
-  };
+  // Assume this comes from onboarding, stored in state or context
+  const [fastingMethod, setFastingMethod] = useState<FastingMethod>({
+    type: "16:8", // or "5:2"
+    fastingDays: [1, 4], // For 5:2, Monday and Thursday
+  });
 
-  const closeRecordModal = () => {
-    setRecordModal(false);
-  };
+  const closeModal = () => setIsModal(false);
+  const closeRecordModal = () => setRecordModal(false);
+
+  useEffect(() => {
+    const updateTimer = () => {
+      const now = moment().tz(moment.tz.guess());
+      let diff: number;
+      let totalDuration: number;
+
+      if (fastingMethod.type === "16:8") {
+        const eatingWindowStart = moment()
+          .tz(moment.tz.guess())
+          .set({ hour: 12, minute: 0, second: 0 });
+        const fastingWindowStart = moment()
+          .tz(moment.tz.guess())
+          .set({ hour: 20, minute: 0, second: 0 });
+
+        if (now.isBetween(eatingWindowStart, fastingWindowStart, null, "[)")) {
+          // Eating window
+          setIsFasting(false);
+          setFastingStatus("Eating");
+          diff = fastingWindowStart.diff(now);
+          totalDuration = moment.duration(8, "hours").asMilliseconds();
+          setProgress(1 - diff / totalDuration);
+        } else {
+          // Fasting window
+          setIsFasting(true);
+          setFastingStatus("Fasting");
+          let nextEatingWindow = eatingWindowStart.clone();
+          if (now.isSameOrAfter(fastingWindowStart)) {
+            nextEatingWindow.add(1, "day");
+          }
+          diff = nextEatingWindow.diff(now);
+          totalDuration = moment.duration(16, "hours").asMilliseconds();
+          setProgress(1 - diff / totalDuration);
+        }
+      } else if (fastingMethod.type === "5:2") {
+        const currentDay = now.day(); // 0 = Sunday, 1 = Monday, etc.
+        const isFastingDay = fastingMethod.fastingDays?.includes(currentDay);
+
+        if (isFastingDay) {
+          // Fasting (low-calorie) day
+          setIsFasting(true);
+          setFastingStatus("Low-Calorie");
+          const endOfDay = moment().tz(moment.tz.guess()).endOf("day");
+          diff = endOfDay.diff(now);
+          totalDuration = moment.duration(24, "hours").asMilliseconds();
+          setProgress(1 - diff / totalDuration);
+        } else {
+          // Regular eating day
+          setIsFasting(false);
+          setFastingStatus("Eating");
+          const nextFastingDay = moment()
+            .tz(moment.tz.guess())
+            .day(
+              fastingMethod.fastingDays![0] < currentDay
+                ? fastingMethod.fastingDays![1]
+                : fastingMethod.fastingDays![0]
+            )
+            .startOf("day");
+          if (nextFastingDay.isBefore(now)) {
+            nextFastingDay.add(7, "days");
+          }
+          diff = nextFastingDay.diff(now);
+          totalDuration = moment
+            .duration(
+              nextFastingDay.diff(moment().tz(moment.tz.guess()).startOf("day"))
+            )
+            .asMilliseconds();
+          setProgress(1 - diff / totalDuration);
+        }
+      }
+
+      const duration = moment.duration(diff);
+      const hours = duration.hours().toString().padStart(2, "0");
+      const minutes = duration.minutes().toString().padStart(2, "0");
+      const seconds = duration.seconds().toString().padStart(2, "0");
+      setTimeRemaining(`${hours}:${minutes}:${seconds}`);
+    };
+
+    const intervalId = setInterval(updateTimer, 1000);
+    updateTimer();
+
+    return () => clearInterval(intervalId);
+  }, [fastingMethod]);
 
   return (
     <ScrollView
@@ -77,19 +173,33 @@ const Home: FC<HomeScreenProps> = () => {
               alignItems: "center",
             }}
           >
-            <View style={styles.fastingContainer}>
+            <View
+              style={[
+                styles.fastingContainer,
+                fastingMethod.type === "5:2" &&
+                  fastingStatus === "Low-Calorie" && {
+                    backgroundColor: COLORS.orange,
+                  },
+              ]}
+            >
               <CustomText
                 fontSize={12}
                 color={COLORS.darkBLue}
                 fontFamily="regular"
               >
-                16:8 fasting schedule
+                {fastingMethod.type} fasting schedule
               </CustomText>
+              {fastingMethod.type === "5:2" &&
+                fastingStatus === "Low-Calorie" && (
+                  <CustomIcon Icon={ICONS.FastingIcon} height={16} width={16} />
+                )}
             </View>
             <CircularProgress
-              color={COLORS.green}
+              color={
+                fastingStatus === "Low-Calorie" ? COLORS.orange : COLORS.green
+              }
               backgroundColor={COLORS.white}
-              progress={0.7}
+              progress={progress}
               radius={100}
               strokeWidth={20}
               backgroundStrokeWidth={15}
@@ -100,18 +210,20 @@ const Home: FC<HomeScreenProps> = () => {
                 color={COLORS.darkBLue}
                 fontFamily="regular"
               >
-                Time since last fast
+                {fastingStatus} Time Remaining
               </CustomText>
               <CustomText
                 fontSize={28}
                 color={COLORS.darkBLue}
                 fontFamily="bold"
               >
-                2 days
+                {timeRemaining}
               </CustomText>
             </CircularProgress>
             <PrimaryButton
-              title="Start Your 16h fasting"
+              title={`Start Your ${fastingMethod.type} ${
+                isFasting ? "Fasting" : "Eating"
+              }`}
               onPress={() => {}}
               style={{
                 width: wp(80),
@@ -127,9 +239,7 @@ const Home: FC<HomeScreenProps> = () => {
             </CustomText>
             <TouchableOpacity
               style={styles.penBtn}
-              onPress={() => {
-                setIsModal(true);
-              }}
+              onPress={() => setIsModal(true)}
             >
               <CustomIcon Icon={ICONS.penIcon} height={13} width={13} />
             </TouchableOpacity>
@@ -159,7 +269,6 @@ const Home: FC<HomeScreenProps> = () => {
               >
                 Daily Goal
               </CustomText>
-
               <CustomText
                 fontSize={12}
                 color={COLORS.green}
@@ -170,12 +279,8 @@ const Home: FC<HomeScreenProps> = () => {
             </View>
             <PrimaryButton
               title="Record intake"
-              onPress={() => {
-                setRecordModal(true);
-              }}
-              style={{
-                width: wp(75),
-              }}
+              onPress={() => setRecordModal(true)}
+              style={{ width: wp(75) }}
             />
           </View>
         </View>
@@ -202,7 +307,6 @@ const Home: FC<HomeScreenProps> = () => {
                   in a row
                 </CustomText>
               </View>
-              {/* <View style={{ position: "absolute", right: 0, bottom: 1 }}> */}
               <Image
                 source={IMAGES.homeImage}
                 style={{
@@ -214,7 +318,6 @@ const Home: FC<HomeScreenProps> = () => {
                   bottom: 0,
                 }}
               />
-              {/* </View> */}
             </View>
             <View style={styles.statsInsideCards}>
               <View
@@ -313,6 +416,8 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(10),
     alignItems: "center",
     paddingHorizontal: horizontalScale(15),
+    flexDirection: "row",
+    gap: horizontalScale(5),
   },
   penBtn: {
     backgroundColor: COLORS.greyishWhite,

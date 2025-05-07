@@ -68,6 +68,7 @@ import emailIcon from "./emailIcon.svg";
 import callIcon from "./callIcon.svg";
 import incrementIcon from "./incrementIcon.svg";
 import decrementIcon from "./decrementIcon.svg";
+import FastingIcon from "./fastingIcon.svg";
 
 const ICONS = {
   AppLogo,
@@ -140,6 +141,7 @@ const ICONS = {
   callIcon,
   incrementIcon,
   decrementIcon,
+  FastingIcon,
 };
 
 export default ICONS;
