@@ -29,6 +29,8 @@ const IMAGES = {
   userImg: require("./userImg.png"),
   appleHealth: require("./appleHealthImg.png"),
   fastMealImg: require("./fastMealImg.png"),
+  taskCompleteImg: require("./taskCompleteImg.png"),
+  achievementImg: require("./achiementImg.png"),
 };
 
 export default IMAGES;

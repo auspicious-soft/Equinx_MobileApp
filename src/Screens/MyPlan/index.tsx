@@ -102,7 +102,14 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
                   fontFamily="medium"
                 >{`${item.kcal} Kcal`}</CustomText>
               </View>
-              <CustomText fontSize={10} color={COLORS.green}>
+              <CustomText
+                fontSize={10}
+                color={
+                  item.completed === "completed"
+                    ? COLORS.green
+                    : COLORS.darkBLue
+                }
+              >
                 {item.completed}
               </CustomText>
             </View>

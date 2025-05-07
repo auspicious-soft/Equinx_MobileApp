@@ -4,6 +4,7 @@ import { horizontalScale, verticalScale } from "../../Utilities/Metrics";
 import COLORS from "../../Utilities/Colors";
 import { CustomText } from "../CustomText";
 import PrimaryButton from "../PrimaryButton";
+import { useNavigation } from "@react-navigation/native";
 
 type MacroBalanceModalProps = {
   isVisible: boolean;
@@ -14,6 +15,7 @@ const MacroBalanceModal: FC<MacroBalanceModalProps> = ({
   isVisible,
   closeModal,
 }) => {
+  const navigation = useNavigation();
   return (
     <Modal
       visible={isVisible}
@@ -83,7 +85,13 @@ const MacroBalanceModal: FC<MacroBalanceModalProps> = ({
                 1540 Kcal
               </CustomText>
             </View>
-            <PrimaryButton title="Recalculate" onPress={() => {}} />
+            <PrimaryButton
+              title="Recalculate"
+              onPress={() => {
+                closeModal();
+                navigation.navigate("Recalculate");
+              }}
+            />
           </View>
 
           <View

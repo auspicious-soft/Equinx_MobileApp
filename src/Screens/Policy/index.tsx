@@ -53,34 +53,72 @@ const Policy: FC<PolicyScreenProps> = ({ navigation }) => {
             We may collect the following types of information:
           </CustomText>
           <View style={{ gap: verticalScale(6) }}>
-            <CustomText
-              fontSize={12}
-              fontFamily="regular"
-              color={COLORS.darkBLue}
-            >
-              {` •  Personal Information: Name, email, age, gender, and other details provided during onboarding.`}
-            </CustomText>
-            <CustomText
-              fontSize={12}
-              fontFamily="regular"
-              color={COLORS.darkBLue}
-            >
-              {` •  Health Data: With your permission, we may collect data from Apple Health or Google Fit for tracking fasting and nutrition.`}
-            </CustomText>
-            <CustomText
-              fontSize={12}
-              fontFamily="regular"
-              color={COLORS.darkBLue}
-            >
-              {` •  Usage Data: Information on how you interact with the app, such as features used and time spent.`}
-            </CustomText>
-            <CustomText
-              fontSize={12}
-              fontFamily="regular"
-              color={COLORS.darkBLue}
-            >
-              {` •  Device Information: IP address, device type, and app version for performance monitoring.`}
-            </CustomText>
+            <View style={{ flexDirection: "row" }}>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` • `}
+              </CustomText>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` Personal Information: Name, email, age, gender, and other details provided during onboarding.`}
+              </CustomText>
+            </View>
+            <View style={{ flexDirection: "row" }}>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` • `}
+              </CustomText>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` Health Data: With your permission, we may collect data from Apple Health or Google Fit for tracking fasting and nutrition.`}
+              </CustomText>
+            </View>
+
+            <View style={{ flexDirection: "row" }}>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` • `}
+              </CustomText>
+
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` Usage Data: Information on how you interact with the app, such as features used and time spent.`}
+              </CustomText>
+            </View>
+            <View style={{ flexDirection: "row" }}>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` • `}
+              </CustomText>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` Device Information: IP address, device type, and app version for performance monitoring.`}
+              </CustomText>
+            </View>
           </View>
         </View>
         <View style={{ gap: verticalScale(8) }}>
@@ -95,34 +133,74 @@ const Policy: FC<PolicyScreenProps> = ({ navigation }) => {
             We use your data to:
           </CustomText>
           <View style={{ gap: verticalScale(6) }}>
-            <CustomText
-              fontSize={12}
-              fontFamily="regular"
-              color={COLORS.darkBLue}
-            >
-              {`•  Personalize your fasting and nutrition plans.`}
-            </CustomText>
-            <CustomText
-              fontSize={12}
-              fontFamily="regular"
-              color={COLORS.darkBLue}
-            >
-              {`•  Improve app functionality and user experience.`}
-            </CustomText>
-            <CustomText
-              fontSize={12}
-              fontFamily="regular"
-              color={COLORS.darkBLue}
-            >
-              {`•  Provide customer support and respond to inquiries.`}
-            </CustomText>
-            <CustomText
-              fontSize={12}
-              fontFamily="regular"
-              color={COLORS.darkBLue}
-            >
-              {`•  Send important notifications related to fasting and meal plans (if enabled).`}
-            </CustomText>
+            <View style={{ flexDirection: "row" }}>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` • `}
+              </CustomText>
+
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` Personalize your fasting and nutrition plans.`}
+              </CustomText>
+            </View>
+
+            <View style={{ flexDirection: "row" }}>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` • `}
+              </CustomText>
+
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` Improve app functionality and user experience.`}
+              </CustomText>
+            </View>
+            <View style={{ flexDirection: "row" }}>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` • `}
+              </CustomText>
+
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` Provide customer support and respond to inquiries.`}
+              </CustomText>
+            </View>
+            <View style={{ flexDirection: "row" }}>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` • `}
+              </CustomText>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` Send important notifications related to fasting and meal plans (if enabled).`}
+              </CustomText>
+            </View>
           </View>
         </View>
         <View style={{ gap: verticalScale(8) }}>
@@ -130,27 +208,58 @@ const Policy: FC<PolicyScreenProps> = ({ navigation }) => {
             3. Data Sharing & Security
           </CustomText>
           <View style={{ gap: verticalScale(6) }}>
-            <CustomText
-              fontSize={12}
-              fontFamily="regular"
-              color={COLORS.darkBLue}
-            >
-              {` • We do not sell your personal data to third parties.`}
-            </CustomText>
-            <CustomText
-              fontSize={12}
-              fontFamily="regular"
-              color={COLORS.darkBLue}
-            >
-              {` •  Data is securely stored and encrypted to protect your privacy.`}
-            </CustomText>
-            <CustomText
-              fontSize={12}
-              fontFamily="regular"
-              color={COLORS.darkBLue}
-            >
-              {` •  If using third-party services (e.g., Apple Health), their privacy policies apply.`}
-            </CustomText>
+            <View style={{ flexDirection: "row" }}>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` • `}
+              </CustomText>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` We do not sell your personal data to third parties.`}
+              </CustomText>
+            </View>
+
+            <View style={{ flexDirection: "row" }}>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` • `}
+              </CustomText>
+
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` Data is securely stored and encrypted to protect your privacy.`}
+              </CustomText>
+            </View>
+
+            <View style={{ flexDirection: "row" }}>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` • `}
+              </CustomText>
+
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` If using third-party services (e.g., Apple Health), their privacy policies apply.`}
+              </CustomText>
+            </View>
           </View>
         </View>
         <View style={{ gap: verticalScale(8) }}>
@@ -158,27 +267,54 @@ const Policy: FC<PolicyScreenProps> = ({ navigation }) => {
             4. Your Choices & Rights
           </CustomText>
           <View style={{ gap: verticalScale(6) }}>
-            <CustomText
-              fontSize={12}
-              fontFamily="regular"
-              color={COLORS.darkBLue}
-            >
-              {` • You can update or delete your account in the app settings.`}
-            </CustomText>
-            <CustomText
-              fontSize={12}
-              fontFamily="regular"
-              color={COLORS.darkBLue}
-            >
-              {` •  You may disable data collection through your device settings.`}
-            </CustomText>
-            <CustomText
-              fontSize={12}
-              fontFamily="regular"
-              color={COLORS.darkBLue}
-            >
-              {` •  You can opt out of notifications anytime.`}
-            </CustomText>
+            <View style={{ flexDirection: "row" }}>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` • `}
+              </CustomText>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` You can update or delete your account in the app settings.`}
+              </CustomText>
+            </View>
+            <View style={{ flexDirection: "row" }}>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` • `}
+              </CustomText>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` You may disable data collection through your device settings.`}
+              </CustomText>
+            </View>
+            <View style={{ flexDirection: "row" }}>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` • `}
+              </CustomText>
+              <CustomText
+                fontSize={12}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {` You can opt out of notifications anytime.`}
+              </CustomText>
+            </View>
           </View>
         </View>
 

@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { View, Animated, Easing } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import ICONS from "../../Assets/Icons";
@@ -7,9 +7,23 @@ import { SplashProps } from "../../Typings/route";
 import COLORS from "../../Utilities/Colors";
 import { verticalScale } from "../../Utilities/Metrics";
 import styles from "./styles";
+import DeviceInfo from "react-native-device-info";
 
 const Splash: FC<SplashProps> = ({ navigation }) => {
   const fadeAnim = React.useRef(new Animated.Value(0)).current; // Initial opacity
+
+  const [deviceId, setDeviceId] = useState("");
+
+  useEffect(() => {
+    const fetchUniqueId = async () => {
+      const id = await DeviceInfo.getDeviceId();
+      setDeviceId(id);
+    };
+
+    fetchUniqueId();
+  }, []);
+
+  console.log("unquieId: ", deviceId);
 
   useEffect(() => {
     // Fade in animation
@@ -29,20 +43,20 @@ const Splash: FC<SplashProps> = ({ navigation }) => {
         easing: Easing.ease,
         useNativeDriver: true,
       }).start(() => {
-        navigation.replace("onBoardingStack", {
-          screen: "planScreen",
-          // params: {
-          //   index: 0,
-          //   nextQuestion: 0,
-          // },
-        });
         // navigation.replace("onBoardingStack", {
-        //   screen: "infoScreen",
-        //   params: {
-        //     index: 0,
-        //     nextQuestion: 0,
-        //   },
+        //   screen: "planScreen",
+        //   // params: {
+        //   //   index: 0,
+        //   //   nextQuestion: 0,
+        //   // },
         // });
+        navigation.replace("onBoardingStack", {
+          screen: "infoScreen",
+          params: {
+            index: 0,
+            nextQuestion: 0,
+          },
+        });
       });
     }, 3000);
 

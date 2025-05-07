@@ -25,11 +25,17 @@ import ICONS from "../../Assets/Icons";
 import PrimaryButton from "../../Components/PrimaryButton";
 import MacroBalanceModal from "../../Components/Modals/MacroBalanceModal";
 import RecordMealModal from "../../Components/Modals/RecordMealModal";
+import AchivementModal from "../../Components/Modals/AchivementModal";
 
 const Nutrition = () => {
   const [isMacroModal, setIsMacroModal] = useState(false);
   const [recordMealModal, setRecordMealModal] = useState(false);
   const [mealType, setMealType] = useState<string | null>(null);
+  const [achievementModal, setAchievementModal] = useState(false);
+
+  const closeAchivementModal = () => {
+    setAchievementModal(false);
+  };
 
   const closeRecordMealModal = () => {
     setRecordMealModal(false);
@@ -280,7 +286,11 @@ const Nutrition = () => {
                   <CustomText
                     fontFamily="medium"
                     fontSize={10}
-                    color={COLORS.green}
+                    color={
+                      item.inProgress === "Completed"
+                        ? COLORS.green
+                        : COLORS.darkBLue
+                    }
                   >
                     {item.inProgress}
                   </CustomText>
@@ -312,7 +322,10 @@ const Nutrition = () => {
               AI coach.
             </CustomText>
           </ImageBackground>
-          <PrimaryButton title="Start Chat" onPress={() => {}} />
+          <PrimaryButton
+            title="Start Chat"
+            onPress={() => setAchievementModal(true)}
+          />
         </View>
 
         <View style={{ gap: verticalScale(15) }}>
@@ -429,6 +442,11 @@ const Nutrition = () => {
           isVisible={recordMealModal}
           closeModal={closeRecordMealModal}
           mealType={mealType}
+        />
+
+        <AchivementModal
+          closeModal={closeAchivementModal}
+          isVisible={achievementModal}
         />
       </SafeAreaView>
     </ScrollView>

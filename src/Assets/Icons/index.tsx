@@ -69,6 +69,9 @@ import callIcon from "./callIcon.svg";
 import incrementIcon from "./incrementIcon.svg";
 import decrementIcon from "./decrementIcon.svg";
 import FastingIcon from "./fastingIcon.svg";
+import sendIcon from "./sendIcon.svg";
+import chatBotIcon from "./chatBotIcon.svg";
+import shareIcon from "./shareIcon.svg";
 
 const ICONS = {
   AppLogo,
@@ -142,6 +145,9 @@ const ICONS = {
   incrementIcon,
   decrementIcon,
   FastingIcon,
+  sendIcon,
+  chatBotIcon,
+  shareIcon,
 };
 
 export default ICONS;

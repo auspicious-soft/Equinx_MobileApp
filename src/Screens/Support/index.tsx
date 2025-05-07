@@ -17,43 +17,43 @@ import ICONS from "../../Assets/Icons";
 const questionData = [
   {
     id: 1,
-    title: "How do I start my first fasting session?",
+    title: "1.  How do I start my first fasting session?",
     description:
       'Simply select your fasting schedule from the home screen and tap "Start Fast." The timer will track your progress.',
   },
   {
     id: 2,
-    title: "Can I change my fasting schedule?",
+    title: "2.  Can I change my fasting schedule?",
     description:
       'Simply select your fasting schedule from the home screen and tap "Start Fast." The timer will track your progress.',
   },
   {
     id: 3,
-    title: "How are my meal plans personalized?",
+    title: "3.  How are my meal plans personalized?",
     description:
       'Simply select your fasting schedule from the home screen and tap "Start Fast." The timer will track your progress.',
   },
   {
     id: 4,
-    title: "Do I need a subscription to access meal plans?",
+    title: "4.  Do I need a subscription to access meal plans?",
     description:
       'Simply select your fasting schedule from the home screen and tap "Start Fast." The timer will track your progress.',
   },
   {
     id: 5,
-    title: "How do I manage or cancel my subscription?",
+    title: "5.  How do I manage or cancel my subscription?",
     description:
       'Simply select your fasting schedule from the home screen and tap "Start Fast." The timer will track your progress.',
   },
   {
     id: 6,
-    title: "Is there a free version of the app?",
+    title: "6.  Is there a free version of the app?",
     description:
       'Simply select your fasting schedule from the home screen and tap "Start Fast." The timer will track your progress.',
   },
   {
     id: 7,
-    title: "How do I sync Apple Health with the app?",
+    title: "7.  How do I sync Apple Health with the app?",
     description:
       'Simply select your fasting schedule from the home screen and tap "Start Fast." The timer will track your progress.',
   },

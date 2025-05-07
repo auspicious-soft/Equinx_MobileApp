@@ -105,7 +105,11 @@ const FastDetail: FC<FastDetailsScreenProps> = ({ navigation }) => {
                   <CustomText
                     fontFamily="medium"
                     fontSize={10}
-                    color={COLORS.green}
+                    color={
+                      item.inProgress === "Completed"
+                        ? COLORS.green
+                        : COLORS.darkBLue
+                    }
                   >
                     {item.inProgress}
                   </CustomText>
