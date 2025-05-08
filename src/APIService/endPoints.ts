@@ -1,5 +1,5 @@
 const ENDPOINTS = {
-  referal: `api/referal/validate`,
+  questions: `api/get-questions`,
 };
 
 export default ENDPOINTS;

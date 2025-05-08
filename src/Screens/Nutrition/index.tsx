@@ -77,7 +77,7 @@ const Nutrition = () => {
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: COLORS.white }}
+      style={{ flex: 1, backgroundColor: "fff4e5" }}
       bounces={false}
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}
@@ -100,7 +100,7 @@ const Nutrition = () => {
             <View style={styles.greenProgressContainer}>
               <CircularProgress
                 color={COLORS.green}
-                backgroundColor={COLORS.white}
+                backgroundColor={COLORS.greyishWhite}
                 progress={0.7}
                 radius={50}
                 strokeWidth={20}
@@ -145,7 +145,7 @@ const Nutrition = () => {
                   progress={0.8}
                   height={14}
                   borderRadius={6}
-                  backgroundColor="#E0E0E0"
+                  backgroundColor="white"
                   progressColor={COLORS.slateGrey}
                 />
               </View>
@@ -170,7 +170,7 @@ const Nutrition = () => {
                   progress={0.8}
                   height={14}
                   borderRadius={6}
-                  backgroundColor="#E0E0E0"
+                  backgroundColor="white"
                   progressColor={COLORS.slateGrey}
                 />
               </View>
@@ -195,7 +195,7 @@ const Nutrition = () => {
                   progress={0.8}
                   height={14}
                   borderRadius={6}
-                  backgroundColor="#E0E0E0"
+                  backgroundColor="white"
                   progressColor={COLORS.slateGrey}
                 />
               </View>
@@ -461,12 +461,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: horizontalScale(20),
     paddingVertical: verticalScale(20),
     gap: verticalScale(25),
+    backgroundColor: "fff4e5",
   },
   header: {
     gap: verticalScale(5),
   },
   greenProgressContainer: {
-    backgroundColor: COLORS.greyishWhite,
+    backgroundColor: COLORS.white,
     borderRadius: 12,
     alignItems: "center",
     gap: verticalScale(5),
@@ -500,7 +501,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   mealCard: {
-    backgroundColor: COLORS.greyishWhite,
+    backgroundColor: COLORS.white,
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: horizontalScale(10),

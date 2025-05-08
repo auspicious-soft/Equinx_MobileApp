@@ -8,6 +8,7 @@ import ICONS from "../../Assets/Icons";
 import COLORS from "../../Utilities/Colors";
 import { CustomText } from "../../Components/CustomText";
 import PrimaryButton from "../../Components/PrimaryButton";
+import CalorieCalculator from "../../Components/Modals/CalorieCalculator";
 
 const kcalData = [
   {
@@ -34,6 +35,13 @@ const kcalData = [
 
 const Recalculate: FC<RecalculateScreenProps> = ({ navigation }) => {
   const [isSelected, setIsSelected] = useState<number | null>(null);
+  const [selectedKcal, setSelectedKcal] = useState<string | null>(null);
+
+  const [isModal, setIsModal] = useState(false);
+
+  const closeModal = () => {
+    setIsModal(false);
+  };
 
   const handleKcal = (id: number) => {
     setIsSelected((prev) => (prev === id ? null : id));
@@ -85,7 +93,19 @@ const Recalculate: FC<RecalculateScreenProps> = ({ navigation }) => {
                     isSelected === item.id ? COLORS.greyishWhite : COLORS.white,
                 },
               ]}
-              onPress={() => handleKcal(item.id)}
+              onPress={() => {
+                handleKcal(item.id);
+
+                if (item.kcal !== "I’m not sure") {
+                  setSelectedKcal(
+                    item.kcal.split(" ")[item.kcal.split(" ").length - 2] +
+                      " " +
+                      item.kcal.split(" ")[item.kcal.split(" ").length - 1]
+                  );
+                } else {
+                  setSelectedKcal(item.kcal);
+                }
+              }}
             >
               <CustomText fontSize={14} fontFamily="regular">
                 {item.kcal}
@@ -100,7 +120,18 @@ const Recalculate: FC<RecalculateScreenProps> = ({ navigation }) => {
             </TouchableOpacity>
           ))}
         </View>
-        <PrimaryButton title="Next" onPress={() => {}} />
+        <PrimaryButton
+          title="Next"
+          onPress={() => {
+            setIsModal(true);
+          }}
+          disabled={isSelected === null}
+        />
+        <CalorieCalculator
+          closeModal={closeModal}
+          isVisible={isModal}
+          kcal={selectedKcal}
+        />
       </View>
     </SafeAreaView>
   );

@@ -1,5 +1,6 @@
 import {
   FlatList,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -13,6 +14,7 @@ import COLORS from "../../Utilities/Colors";
 import { CustomText } from "../../Components/CustomText";
 import CustomIcon from "../../Components/CustomIcon";
 import ICONS from "../../Assets/Icons";
+import { KeyboardAvoidingContainer } from "../../Components/KeyboardAvoidingComponent";
 
 const chatData = [
   {
@@ -38,6 +40,32 @@ const chatData = [
   },
   {
     id: "4",
+    sender: "user",
+    icon: false,
+    message: "Yes, please!",
+  },
+  {
+    id: "5",
+    sender: "bot",
+    icon: true,
+
+    message: `Perfect! Here's a recommended plan for you:\n✨ Fasting Schedule: 16:8 (Fast from 8 PM – 12 PM)\n✨ Meal Timing: Eat at 12 PM, 4 PM, and 7:30 PM\n✨ Suggested Foods: High-protein meals with healthy fats & fiber\n✨ Hydration Goal: 2.5 liters of water per day`,
+  },
+  {
+    id: "6",
+    sender: "user",
+    icon: false,
+    message: "Yes, please!",
+  },
+  {
+    id: "7",
+    sender: "bot",
+    icon: true,
+
+    message: `Perfect! Here's a recommended plan for you:\n✨ Fasting Schedule: 16:8 (Fast from 8 PM – 12 PM)\n✨ Meal Timing: Eat at 12 PM, 4 PM, and 7:30 PM\n✨ Suggested Foods: High-protein meals with healthy fats & fiber\n✨ Hydration Goal: 2.5 liters of water per day`,
+  },
+  {
+    id: "8",
     sender: "user",
     icon: false,
     message: "Yes, please!",
@@ -79,32 +107,42 @@ const Chat = () => {
 
   return (
     <SafeAreaView style={styles.safeAreaContainer} edges={["top"]}>
-      <View>
-        <CustomText fontSize={22} fontFamily="bold" color={COLORS.darkBLue}>
-          AI Life Coach Assistant
-        </CustomText>
-      </View>
-      <FlatList
-        data={chatData}
-        keyExtractor={(item) => item.id}
-        renderItem={renderchatData}
-        contentContainerStyle={{
-          gap: verticalScale(20),
+      <CustomText
+        fontSize={22}
+        fontFamily="bold"
+        color={COLORS.darkBLue}
+        style={{
+          marginBottom: verticalScale(20),
         }}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-      />
-      <View style={styles.inputWrapper}>
-        <TextInput
-          placeholder="Type your text here"
-          value={sendMessage}
-          onChangeText={setSendMessage}
-          style={styles.inputStyle}
+      >
+        AI Life Coach Assistant
+      </CustomText>
+      <KeyboardAvoidingContainer style={{ flex: 1 }}>
+        <FlatList
+          data={chatData}
+          keyExtractor={(item) => item.id}
+          renderItem={renderchatData}
+          inverted
+          contentContainerStyle={{
+            gap: verticalScale(20),
+            flexDirection: "column-reverse",
+          }}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
         />
-        <TouchableOpacity>
-          <CustomIcon Icon={ICONS.sendIcon} height={16} width={16} />
-        </TouchableOpacity>
-      </View>
+
+        <View style={styles.inputWrapper}>
+          <TextInput
+            placeholder="Type your text here"
+            value={sendMessage}
+            onChangeText={setSendMessage}
+            style={styles.inputStyle}
+          />
+          <TouchableOpacity>
+            <CustomIcon Icon={ICONS.sendIcon} height={16} width={16} />
+          </TouchableOpacity>
+        </View>
+      </KeyboardAvoidingContainer>
     </SafeAreaView>
   );
 };

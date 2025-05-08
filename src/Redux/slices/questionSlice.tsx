@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Question } from "../../Typings/apiResponse";
 
 interface ProfileForm {
   gender: string;
@@ -21,6 +22,7 @@ interface QuestionState {
   weightGoal: string;
   firstMmealTime: string;
   lastMealTime: string;
+  questionsData: Question[];
 }
 
 const initialState: QuestionState = {
@@ -37,6 +39,7 @@ const initialState: QuestionState = {
   weightGoal: "",
   firstMmealTime: "",
   lastMealTime: "",
+  questionsData: [],
 };
 
 const questionSlice = createSlice({
@@ -88,6 +91,9 @@ const questionSlice = createSlice({
       state.firstMmealTime = initialState.firstMmealTime;
       state.lastMealTime = initialState.lastMealTime;
     },
+    setQuestionsData(state, action: PayloadAction<Question[]>) {
+      state.questionsData = action.payload;
+    },
   },
 });
 
@@ -100,6 +106,7 @@ export const {
   setFirstMealTime,
   setLastMealTime,
   resetQuestionState,
+  setQuestionsData,
 } = questionSlice.actions;
 
 export default questionSlice.reducer;

@@ -8,22 +8,33 @@ import COLORS from "../../Utilities/Colors";
 import { verticalScale } from "../../Utilities/Metrics";
 import styles from "./styles";
 import DeviceInfo from "react-native-device-info";
+import ENDPOINTS from "../../APIService/endPoints";
+import { fetchData } from "../../APIService/api";
+import { GetQuestionDataResponse } from "../../Typings/apiResponse";
+import { useAppDispatch } from "../../Redux/store";
+import { setQuestionsData } from "../../Redux/slices/questionSlice";
 
 const Splash: FC<SplashProps> = ({ navigation }) => {
+  const dispatch = useAppDispatch();
   const fadeAnim = React.useRef(new Animated.Value(0)).current; // Initial opacity
 
-  const [deviceId, setDeviceId] = useState("");
+  const getQuestionsData = async () => {
+    const response = await fetchData<GetQuestionDataResponse>(
+      ENDPOINTS.questions,
+      {
+        params: {
+          deviceId: DeviceInfo.getDeviceId(),
+        },
+      }
+    );
 
+    if (response.data.success) {
+      dispatch(setQuestionsData(response.data.data.questions));
+    }
+  };
   useEffect(() => {
-    const fetchUniqueId = async () => {
-      const id = await DeviceInfo.getDeviceId();
-      setDeviceId(id);
-    };
-
-    fetchUniqueId();
-  }, []);
-
-  console.log("unquieId: ", deviceId);
+    getQuestionsData();
+  });
 
   useEffect(() => {
     // Fade in animation

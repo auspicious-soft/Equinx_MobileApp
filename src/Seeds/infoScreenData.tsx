@@ -14,7 +14,7 @@ const InfoScreenData = [
     image: ICONS.Info2,
     title: "",
     subTitle: "",
-    nextScreen: "questionScreen",
+    nextScreen: "infoScreen",
   },
   {
     image: ICONS.Info3,

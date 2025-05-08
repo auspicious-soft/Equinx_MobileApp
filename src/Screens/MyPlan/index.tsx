@@ -51,7 +51,7 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
         style={[
           styles.dayBtn,
           {
-            backgroundColor: isActive ? COLORS.darkBLue : COLORS.greyishWhite,
+            backgroundColor: isActive ? COLORS.darkBLue : COLORS.white,
           },
         ]}
       >
@@ -370,7 +370,7 @@ export default MyPlan;
 const styles = StyleSheet.create({
   main: {
     flex: 1,
-    backgroundColor: COLORS.white,
+    backgroundColor: "fff4e5",
   },
   mainImage: {
     width: wp(100),
@@ -386,14 +386,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: COLORS.greyishWhite,
+    backgroundColor: COLORS.white,
     paddingVertical: verticalScale(15),
     paddingHorizontal: horizontalScale(15),
     borderRadius: 12,
   },
   dayBtn: {
-    borderWidth: 0.9,
-    borderColor: COLORS.greyishWhite,
+    borderWidth: 0.2,
+    borderColor: COLORS.oldGrey,
     borderRadius: 12,
     // paddingVertical: verticalScale(10),
     paddingHorizontal: horizontalScale(10),
@@ -408,7 +408,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   foodWrapper: {
-    backgroundColor: COLORS.greyishWhite,
+    backgroundColor: COLORS.white,
     borderRadius: 12,
     paddingHorizontal: horizontalScale(10),
     paddingVertical: verticalScale(8),
