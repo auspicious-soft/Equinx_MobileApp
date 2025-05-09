@@ -7,7 +7,8 @@ const COLORS = {
   oldGrey: "#797A7C",
   orange: "#FF9500",
   lightGrey: "#777689",
-  skyBlue: '#4D81E7',
+  skyBlue: "#4D81E7",
+  greenBg: "#D4EACF",
   lightGreenGradient: {
     start: "#CCFFD5",
     end: "#BAFFA9",

@@ -158,10 +158,10 @@ const styles = StyleSheet.create({
     gap: verticalScale(15),
   },
   kcalWrapper: {
-    backgroundColor: COLORS.lightGreenGradient.start,
-    paddingVertical: verticalScale(10),
+    backgroundColor: COLORS.greenBg,
+    paddingVertical: verticalScale(8),
     borderRadius: 8,
-    width: verticalScale(90),
+    width: verticalScale(85),
     justifyContent: "center",
     alignItems: "center",
   },

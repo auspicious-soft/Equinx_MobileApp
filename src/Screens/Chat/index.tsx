@@ -1,5 +1,6 @@
 import {
   FlatList,
+  Keyboard,
   Platform,
   StyleSheet,
   Text,
@@ -7,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { horizontalScale, verticalScale } from "../../Utilities/Metrics";
 import COLORS from "../../Utilities/Colors";
@@ -16,7 +17,14 @@ import CustomIcon from "../../Components/CustomIcon";
 import ICONS from "../../Assets/Icons";
 import { KeyboardAvoidingContainer } from "../../Components/KeyboardAvoidingComponent";
 
-const chatData = [
+type chatDataType = {
+  id: string;
+  sender: string;
+  icon: boolean;
+  message: string;
+};
+
+const chatData: chatDataType[] = [
   {
     id: "1",
     sender: "bot",
@@ -74,7 +82,14 @@ const chatData = [
 
 const Chat = () => {
   const [sendMessage, setSendMessage] = useState("");
-  const renderchatData = ({ item }) => {
+
+  const renderchatData = ({
+    item,
+    index,
+  }: {
+    item: chatDataType;
+    index: number;
+  }) => {
     const isUser = item.sender === "user";
     return (
       <View
@@ -112,12 +127,12 @@ const Chat = () => {
         fontFamily="bold"
         color={COLORS.darkBLue}
         style={{
-          marginBottom: verticalScale(20),
+          marginBottom: verticalScale(10),
         }}
       >
         AI Life Coach Assistant
       </CustomText>
-      <KeyboardAvoidingContainer style={{ flex: 1 }}>
+      <KeyboardAvoidingContainer style={{ flex: 1, gap: verticalScale(10) }}>
         <FlatList
           data={chatData}
           keyExtractor={(item) => item.id}
@@ -137,6 +152,7 @@ const Chat = () => {
             value={sendMessage}
             onChangeText={setSendMessage}
             style={styles.inputStyle}
+            placeholderTextColor={COLORS.lightGrey}
           />
           <TouchableOpacity>
             <CustomIcon Icon={ICONS.sendIcon} height={16} width={16} />
@@ -173,7 +189,7 @@ const styles = StyleSheet.create({
   },
   botContainer: {
     alignSelf: "flex-start",
-    backgroundColor: COLORS.lightGreenGradient.start,
+    backgroundColor: "#F0F8F0",
     borderTopRightRadius: 8,
     borderBottomLeftRadius: 8,
     borderBottomRightRadius: 8,

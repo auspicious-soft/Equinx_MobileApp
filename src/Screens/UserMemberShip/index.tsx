@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     gap: horizontalScale(15),
   },
   headerContainer: {
-    backgroundColor: COLORS.lightGreenGradient.start,
+    backgroundColor: "#EFFFF3",
     borderWidth: 1,
     borderColor: COLORS.green,
     borderRadius: 10,

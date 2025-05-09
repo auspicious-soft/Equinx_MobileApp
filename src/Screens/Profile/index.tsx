@@ -378,7 +378,7 @@ const styles = StyleSheet.create({
     gap: verticalScale(15),
   },
   textContainer: {
-    backgroundColor: COLORS.lightGreenGradient.start,
+    backgroundColor: COLORS.greenBg,
     paddingVertical: verticalScale(8),
     paddingHorizontal: horizontalScale(8),
     borderRadius: 6,
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
     gap: horizontalScale(8),
   },
   dateContainer: {
-    backgroundColor: COLORS.lightGreenGradient.start,
+    backgroundColor: "#F0F8F0",
     paddingVertical: verticalScale(15),
     paddingHorizontal: horizontalScale(15),
     borderRadius: 10,

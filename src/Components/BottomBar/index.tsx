@@ -1,23 +1,25 @@
-import {BottomTabBarProps} from '@react-navigation/bottom-tabs';
-import React, {FC, useCallback, useRef} from 'react';
+import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 import {
   Animated,
   FlatList,
+  Keyboard,
   Share,
   StyleSheet,
   TouchableOpacity,
   View,
-} from 'react-native';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
-import ICONS from '../../Assets/Icons';
-import COLORS from '../../Utilities/Colors';
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import ICONS from "../../Assets/Icons";
+import COLORS from "../../Utilities/Colors";
 import {
   horizontalScale,
   isAndroid,
   verticalScale,
-} from '../../Utilities/Metrics';
-import CustomIcon from '../CustomIcon';
-import {CustomText} from '../CustomText';
+} from "../../Utilities/Metrics";
+import CustomIcon from "../CustomIcon";
+import { CustomText } from "../CustomText";
+import { useAppSelector } from "../../Redux/store";
 type Tab = {
   name: string;
   icon: any;
@@ -26,39 +28,42 @@ type Tab = {
 };
 const tabs: Tab[] = [
   {
-    name: 'Home',
+    name: "Home",
     icon: ICONS.homeTabIcon,
     activIcon: ICONS.homeActiveIcon,
-    route: 'home',
+    route: "home",
   },
   {
-    name: 'My Plan',
+    name: "My Plan",
     icon: ICONS.myPlanTabIcon,
     activIcon: ICONS.myPlanActiveIcon,
-    route: 'myPlan',
+    route: "myPlan",
   },
   {
-    name: 'Nutrition',
+    name: "Nutrition",
     icon: ICONS.nutritonTabIcon,
     activIcon: ICONS.nutritonActiveIcon,
-    route: 'nutrition',
+    route: "nutrition",
   },
   {
-    name: 'Chat',
+    name: "Chat",
     icon: ICONS.chatTabIcon,
     activIcon: ICONS.chatActiveIcon,
-    route: 'chats',
+    route: "chats",
   },
   {
-    name: 'Settings',
+    name: "Settings",
     icon: ICONS.settingsTabIcon,
     activIcon: ICONS.settingsActiveIcon,
-    route: 'settings',
+    route: "settings",
   },
 ];
-const BottomTabBar: FC<BottomTabBarProps> = props => {
+const BottomTabBar: FC<BottomTabBarProps> = (props) => {
+  const [isKeyBoard, setIsKeyBoard] = useState(false);
+  // const { currentRoute } = useAppSelector((state) => state.initial);
+
   const insets = useSafeAreaInsets();
-  const {state, navigation, descriptors} = props;
+  const { state, navigation, descriptors } = props;
   const currentRoute = state.routes[state.index].name;
   const scaleValue = useRef(new Animated.Value(1)).current;
   const handleTabPress = useCallback(
@@ -67,16 +72,17 @@ const BottomTabBar: FC<BottomTabBarProps> = props => {
         navigation.navigate(tab.route as never);
       }
     },
-    [navigation, currentRoute],
+    [navigation, currentRoute]
   );
   const renderTab = useCallback(
-    ({item, index}: {item: Tab; index: number}) => {
+    ({ item, index }: { item: Tab; index: number }) => {
       const isActive = currentRoute === item.route;
       return (
         <TouchableOpacity
           style={styles.tab}
           onPress={() => handleTabPress(item)}
-          activeOpacity={0.7}>
+          activeOpacity={0.7}
+        >
           <CustomIcon
             Icon={isActive ? item.activIcon : item.icon}
             height={20}
@@ -84,45 +90,69 @@ const BottomTabBar: FC<BottomTabBarProps> = props => {
           />
           <CustomText
             fontSize={10}
-            fontWeight={isActive ? '500' : '400'}
-            color={isActive ? '#000000' : COLORS.oldGrey}>
+            fontWeight={isActive ? "500" : "400"}
+            color={isActive ? "#000000" : COLORS.oldGrey}
+          >
             {item.name}
           </CustomText>
         </TouchableOpacity>
       );
     },
-    [handleTabPress, currentRoute, scaleValue],
+    [handleTabPress, currentRoute, scaleValue]
   );
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => {
+        setIsKeyBoard(true);
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => {
+        setIsKeyBoard(false);
+      }
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
+
+  if (isKeyBoard && currentRoute === "chats") {
+    return null;
+  }
+
   return (
-    // <View style={{backgroundColor: Colors.darkBLue}}>
-      <View style={styles.container}>
-        <View style={styles.tabWrapper}>
-          <FlatList
-            data={tabs}
-            renderItem={renderTab}
-            keyExtractor={item => item.route}
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={[styles.tabBar, {}]}
-            contentContainerStyle={styles.tabContent}
-          />
-        </View>
+    <View style={styles.container}>
+      <View style={styles.tabWrapper}>
+        <FlatList
+          data={tabs}
+          renderItem={renderTab}
+          keyExtractor={(item) => item.route}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={[styles.tabBar, {}]}
+          contentContainerStyle={styles.tabContent}
+        />
       </View>
-    // </View>
+    </View>
   );
 };
 export default BottomTabBar;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: COLORS.white,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: verticalScale(15),
     borderTopLeftRadius: verticalScale(15),
     borderTopRightRadius: verticalScale(15),
     borderColor: "#E0E0E0",
-    borderWidth: 1.2
+    borderWidth: 1.2,
   },
   tabWrapper: {
     flex: 1,
@@ -134,24 +164,24 @@ const styles = StyleSheet.create({
   },
   tabContent: {
     flexGrow: 1,
-    justifyContent: 'space-around',
+    justifyContent: "space-around",
   },
   tab: {
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    alignSelf: 'center',
+    alignItems: "center",
+    justifyContent: "flex-end",
+    alignSelf: "center",
     zIndex: 99,
     gap: verticalScale(5),
   },
   middleButton: {
-    position: 'absolute',
+    position: "absolute",
     backgroundColor: COLORS.white,
     borderRadius: 30,
     height: 48,
     width: 48,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     zIndex: 1001, // Ensure it’s above the tab bar
-    boxShadow: '0px 4px 12px 0px #FF003B80',
+    boxShadow: "0px 4px 12px 0px #FF003B80",
   },
 });

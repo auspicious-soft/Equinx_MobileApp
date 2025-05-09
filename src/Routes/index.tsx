@@ -1,6 +1,6 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import CreatePassword from "../Screens/CreatePassword";
 import ForgotPassword from "../Screens/ForgotPassword";
 import InfoScreen from "../Screens/infoScreen";
@@ -38,6 +38,7 @@ import Sync from "../Screens/Sync";
 import LearnFast from "../Screens/LearnFast";
 import Support from "../Screens/Support";
 import Policy from "../Screens/Policy";
+import { Keyboard } from "react-native";
 
 const RootStack = createNativeStackNavigator<RootStackParams>();
 const Auth = createNativeStackNavigator<AuthStackParams>();

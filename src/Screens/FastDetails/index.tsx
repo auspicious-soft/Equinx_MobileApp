@@ -189,7 +189,7 @@ const styles = StyleSheet.create({
     gap: horizontalScale(10),
   },
   kcalContainer: {
-    backgroundColor: COLORS.lightGreenGradient.start,
+    backgroundColor: COLORS.greenBg,
     paddingVertical: verticalScale(5),
     paddingHorizontal: horizontalScale(8),
     borderRadius: 8,
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.green,
     borderRadius: 10,
-    backgroundColor: COLORS.lightGreenGradient.start,
+    backgroundColor: "#EFFFF3",
     paddingHorizontal: horizontalScale(15),
     paddingVertical: verticalScale(10),
     gap: verticalScale(10),

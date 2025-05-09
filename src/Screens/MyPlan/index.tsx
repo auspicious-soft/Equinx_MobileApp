@@ -157,123 +157,53 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
     <ScrollView
       style={{
         flex: 1,
+        backgroundColor: "fff4e5",
       }}
       showsHorizontalScrollIndicator={false}
       showsVerticalScrollIndicator={false}
       bounces={false}
     >
-      <View style={styles.main}>
-        <SafeAreaView
-          style={{
-            flex: 1,
-          }}
+      <SafeAreaView
+        style={{
+          flex: 1,
+        }}
+      >
+        <ImageBackground
+          source={IMAGES.myPlanImage}
+          style={styles.mainImage}
+          resizeMode="cover"
         >
-          <ImageBackground
-            source={IMAGES.myPlanImage}
-            style={styles.mainImage}
-            resizeMode="cover"
-          >
-            {" "}
-            <TouchableOpacity
-              onPress={() => {
-                setIsPlan("plan");
-              }}
-            >
-              <CustomText>pruchased</CustomText>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => {
-                setIsPlan("notPlan");
-              }}
-            >
-              <CustomText>Not pruchased</CustomText>
-            </TouchableOpacity>
-          </ImageBackground>
-          <View
-            style={{
-              flex: 1,
-              paddingVertical: verticalScale(15),
-              paddingHorizontal: horizontalScale(20),
-              gap: verticalScale(15),
+          {" "}
+          <TouchableOpacity
+            onPress={() => {
+              setIsPlan("plan");
             }}
           >
-            {isPlan === "plan" ? (
-              <View
-                style={{
-                  gap: verticalScale(15),
-                }}
-              >
-                <View
-                  style={{
-                    gap: verticalScale(15),
-                  }}
-                >
-                  <View
-                    style={{
-                      gap: verticalScale(8),
-                    }}
-                  >
-                    <CustomText
-                      fontSize={22}
-                      color={COLORS.darkBLue}
-                      fontFamily="bold"
-                    >
-                      Stay on track{" "}
-                      <CustomText
-                        fontSize={22}
-                        color={COLORS.green}
-                        fontFamily="bold"
-                      >
-                        Miley Jones
-                      </CustomText>
-                    </CustomText>
-                    <CustomText fontSize={12} color={COLORS.darkBLue}>
-                      Here's your plan for today.
-                    </CustomText>
-                  </View>
-                  <View style={styles.progressContainer}>
-                    <CustomText fontSize={16} color={COLORS.lightGrey}>
-                      Today, March 25
-                    </CustomText>
-
-                    <CircularProgress
-                      color={COLORS.green}
-                      backgroundColor={COLORS.white}
-                      progress={0.7}
-                      radius={30}
-                      strokeWidth={20}
-                      // backgroundStrokeWidth={15}
-                      progressStrokeWidth={8}
-                    >
-                      <CustomText fontSize={10} color={COLORS.darkBLue}>
-                        65%
-                      </CustomText>
-                    </CircularProgress>
-                  </View>
-                </View>
-                <FlatList
-                  renderItem={renderDates}
-                  data={DateData}
-                  keyExtractor={({ id }) => id.toString()}
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  showsVerticalScrollIndicator={false}
-                  contentContainerStyle={{
-                    gap: horizontalScale(5),
-                  }}
-                />
-                <FlatList
-                  renderItem={renderFoodData}
-                  data={foodData}
-                  keyExtractor={({ id }) => id.toString()}
-                  showsHorizontalScrollIndicator={false}
-                  showsVerticalScrollIndicator={false}
-                  contentContainerStyle={{
-                    gap: verticalScale(15),
-                  }}
-                />
-              </View>
-            ) : (
+            <CustomText>pruchased</CustomText>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              setIsPlan("notPlan");
+            }}
+          >
+            <CustomText>Not pruchased</CustomText>
+          </TouchableOpacity>
+        </ImageBackground>
+        <View
+          style={{
+            flex: 1,
+            paddingVertical: verticalScale(15),
+            paddingHorizontal: horizontalScale(20),
+            gap: verticalScale(15),
+            backgroundColor: "fff4e5",
+          }}
+        >
+          {isPlan === "plan" ? (
+            <View
+              style={{
+                gap: verticalScale(15),
+              }}
+            >
               <View
                 style={{
                   gap: verticalScale(15),
@@ -289,78 +219,146 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
                     color={COLORS.darkBLue}
                     fontFamily="bold"
                   >
-                    Buy a plan to stay on track
+                    Stay on track{" "}
+                    <CustomText
+                      fontSize={22}
+                      color={COLORS.green}
+                      fontFamily="bold"
+                    >
+                      Miley Jones
+                    </CustomText>
                   </CustomText>
                   <CustomText fontSize={12} color={COLORS.darkBLue}>
-                    Check out a membership plan that suits your needs.
+                    Here's your plan for today.
                   </CustomText>
                 </View>
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate("MemberShip");
-                  }}
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    gap: verticalScale(8),
-                  }}
-                >
-                  <View>
-                    <CustomText fontSize={18} color={COLORS.green}>
-                      View Plans
-                    </CustomText>
-                    <View
-                      style={{
-                        height: 1,
-                        backgroundColor: COLORS.green,
-                      }}
-                    />
-                  </View>
-                  <CustomIcon
-                    Icon={ICONS.rightGreenArrow}
-                    height={15}
-                    width={15}
-                  />
-                </TouchableOpacity>
-              </View>
-            )}
+                <View style={styles.progressContainer}>
+                  <CustomText fontSize={16} color={COLORS.lightGrey}>
+                    Today, March 25
+                  </CustomText>
 
-            <View
-              style={{ gap: verticalScale(10), marginTop: verticalScale(12) }}
-            >
-              <CustomText
-                fontSize={18}
-                color={COLORS.darkBLue}
-                fontFamily="bold"
-              >
-                Essential Tips for Success
-              </CustomText>
+                  <CircularProgress
+                    color={COLORS.green}
+                    backgroundColor={COLORS.white}
+                    progress={0.7}
+                    radius={30}
+                    strokeWidth={20}
+                    // backgroundStrokeWidth={15}
+                    progressStrokeWidth={8}
+                  >
+                    <CustomText fontSize={10} color={COLORS.darkBLue}>
+                      65%
+                    </CustomText>
+                  </CircularProgress>
+                </View>
+              </View>
               <FlatList
-                renderItem={renderTipsData}
-                data={TipsData}
+                renderItem={renderDates}
+                data={DateData}
+                keyExtractor={({ id }) => id.toString()}
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                  gap: horizontalScale(5),
+                }}
+                scrollEnabled={false}
+              />
+              <FlatList
+                renderItem={renderFoodData}
+                data={foodData}
                 keyExtractor={({ id }) => id.toString()}
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{
-                  gap: verticalScale(8),
+                  gap: verticalScale(15),
                 }}
+                scrollEnabled={false}
               />
             </View>
+          ) : (
+            <View
+              style={{
+                gap: verticalScale(15),
+              }}
+            >
+              <View
+                style={{
+                  gap: verticalScale(8),
+                }}
+              >
+                <CustomText
+                  fontSize={22}
+                  color={COLORS.darkBLue}
+                  fontFamily="bold"
+                >
+                  Buy a plan to stay on track
+                </CustomText>
+                <CustomText fontSize={12} color={COLORS.darkBLue}>
+                  Check out a membership plan that suits your needs.
+                </CustomText>
+              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate("MemberShip");
+                }}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: verticalScale(8),
+                }}
+              >
+                <View>
+                  <CustomText fontSize={18} color={COLORS.green}>
+                    View Plans
+                  </CustomText>
+                  <View
+                    style={{
+                      height: 1,
+                      backgroundColor: COLORS.green,
+                    }}
+                  />
+                </View>
+                <CustomIcon
+                  Icon={ICONS.rightGreenArrow}
+                  height={15}
+                  width={15}
+                />
+              </TouchableOpacity>
+            </View>
+          )}
+
+          <View
+            style={{ gap: verticalScale(10), marginTop: verticalScale(12) }}
+          >
+            <CustomText fontSize={18} color={COLORS.darkBLue} fontFamily="bold">
+              Essential Tips for Success
+            </CustomText>
+            <FlatList
+              renderItem={renderTipsData}
+              data={TipsData}
+              keyExtractor={({ id }) => id.toString()}
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{
+                gap: verticalScale(8),
+              }}
+            />
           </View>
-          <MealModal
-            closeModal={closeModal}
-            isVisible={isVisibleModal}
-            heading="Meal Plan"
-            mealType="Breakfast"
-            timing="12:00"
-            kcal="500-600 kcal"
-            title1="1 cup cooked gluten-free oats (50 g, low-fat milk)"
-            title2="1 tbsp peanut butter"
-            title3="1 small banana"
-            onpress={() => {}}
-          />
-        </SafeAreaView>
-      </View>
+        </View>
+        <MealModal
+          closeModal={closeModal}
+          isVisible={isVisibleModal}
+          heading="Meal Plan"
+          mealType="Breakfast"
+          timing="12:00"
+          kcal="500-600 kcal"
+          title1="1 cup cooked gluten-free oats (50 g, low-fat milk)"
+          title2="1 tbsp peanut butter"
+          title3="1 small banana"
+          onpress={() => {}}
+        />
+      </SafeAreaView>
     </ScrollView>
   );
 };
@@ -417,9 +415,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   KcalContainer: {
-    backgroundColor: COLORS.lightGreenGradient.start,
-    paddingVertical: verticalScale(8),
-    paddingHorizontal: horizontalScale(5),
+    backgroundColor: COLORS.greenBg,
+    paddingVertical: verticalScale(7),
+    paddingHorizontal: horizontalScale(8),
     borderRadius: 8,
   },
   tipsWrapper: {

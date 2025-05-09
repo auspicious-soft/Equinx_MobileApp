@@ -491,7 +491,7 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(12),
     paddingHorizontal: horizontalScale(15),
     borderRadius: 10,
-    backgroundColor: COLORS.lightGreenGradient.start,
+    backgroundColor: "#EFFFF3",
     gap: verticalScale(12),
   },
   mealImgStyle: {
@@ -510,8 +510,8 @@ const styles = StyleSheet.create({
     gap: horizontalScale(10),
   },
   kcalContainer: {
-    backgroundColor: COLORS.lightGreenGradient.start,
-    paddingVertical: verticalScale(5),
+    backgroundColor: COLORS.greenBg,
+    paddingVertical: verticalScale(6),
     paddingHorizontal: horizontalScale(8),
     borderRadius: 8,
   },

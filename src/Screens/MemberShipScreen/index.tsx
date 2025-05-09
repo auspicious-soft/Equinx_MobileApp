@@ -211,7 +211,6 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
             <CustomIcon Icon={ICONS.BackArrow} height={30} width={30} />
           </TouchableOpacity>
           <Image source={IMAGES.noteBookImg} style={styles.imgStyle} />
-
           <View
             style={{
               gap: verticalScale(30),
@@ -317,7 +316,7 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
                     </View>
                     <View
                       style={{
-                        backgroundColor: COLORS.lightGreenGradient.start,
+                        backgroundColor: COLORS.greenBg,
                         paddingHorizontal: horizontalScale(15),
                         justifyContent: "center",
                         alignItems: "center",
