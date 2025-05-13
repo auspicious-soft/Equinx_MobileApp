@@ -4,6 +4,7 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -200,7 +201,7 @@ const Home: FC<HomeScreenProps> = () => {
               }
               backgroundColor={COLORS.white}
               progress={progress}
-              radius={100}
+              radius={140}
               strokeWidth={20}
               backgroundStrokeWidth={15}
               progressStrokeWidth={20}

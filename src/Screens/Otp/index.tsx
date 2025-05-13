@@ -23,10 +23,12 @@ const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
   const [isModalVisible, setModalVisible] = React.useState(false);
 
   const handleNavigation = () => {
-    if (isFrom === "register") {
-      setModalVisible(true);
-    } else {
-      navigation.navigate("createNewPassword");
+    if (validateInputs()) {
+      if (isFrom === "register") {
+        setModalVisible(true);
+      } else {
+        navigation.navigate("createNewPassword");
+      }
     }
   };
 
@@ -68,6 +70,25 @@ const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
 
       setOtp(newOtp);
     }
+  };
+
+  const [error, setError] = useState({
+    otp: "",
+  });
+
+  const validateInputs = () => {
+    let isValid = true;
+    let newError = {
+      otp: "",
+    };
+
+    if (otp.some((digit) => digit.trim() === "")) {
+      newError.otp = "OTP is required";
+      isValid = false;
+    }
+
+    setError(newError);
+    return isValid;
   };
   return (
     <KeyboardAvoidingContainer>
@@ -124,6 +145,11 @@ const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
                   />
                 ))}
               </View>
+              {error.otp && (
+                <CustomText fontSize={12} color="red">
+                  {error.otp}
+                </CustomText>
+              )}
 
               <View
                 style={{ marginTop: verticalScale(10), gap: verticalScale(10) }}

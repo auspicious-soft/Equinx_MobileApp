@@ -14,6 +14,41 @@ import COLORS from "../../Utilities/Colors";
 import { horizontalScale, hp, verticalScale } from "../../Utilities/Metrics";
 
 const Login: FC<LoginScreenProps> = ({ navigation }) => {
+  const [errors, setErrors] = useState({
+    phoneNumber: "",
+    password: "",
+  });
+
+  const validateInputs = () => {
+    let isValid = true;
+    let newErrors = {
+      phoneNumber: "",
+      password: "",
+    };
+
+    if (!phoneNumber.trim()) {
+      newErrors.phoneNumber = "Phone or Email is required";
+      isValid = false;
+    } else if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(phoneNumber) &&
+      !/^[0-9]{10,}$/.test(phoneNumber)
+    ) {
+      newErrors.phoneNumber = "Enter a valid email or phone number";
+      isValid = false;
+    }
+
+    if (!password.trim()) {
+      newErrors.password = "Password is required";
+      isValid = false;
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const [activeCheckBox, setActiveCheckBox] = useState<
     "ActiveBox" | "nonActive"
   >("nonActive");
@@ -68,6 +103,12 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
                 }}
               />
 
+              {errors.phoneNumber && (
+                <CustomText fontSize={12} color="red">
+                  {errors.phoneNumber}
+                </CustomText>
+              )}
+
               <CustomInput
                 label="Password"
                 value={password}
@@ -78,6 +119,11 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
                   paddingVertical: verticalScale(15),
                 }}
               />
+              {errors.password && (
+                <CustomText fontSize={12} color="red">
+                  {errors.password}
+                </CustomText>
+              )}
             </View>
 
             <View style={styles.remember_forgotContainer}>
@@ -111,15 +157,13 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
 
             <PrimaryButton
               title="Log in"
-              onPress={() =>
-                // navigation.replace("mainStack", {
-                //   screen: "tabs",
-                //   params: { screen: "home" },
-                // })
-                navigation.navigate("mainStack", {
-                  screen: "Welcome",
-                })
-              }
+              onPress={() => {
+                if (validateInputs()) {
+                  navigation.navigate("mainStack", {
+                    screen: "Welcome",
+                  });
+                }
+              }}
               textSize={20}
             />
 

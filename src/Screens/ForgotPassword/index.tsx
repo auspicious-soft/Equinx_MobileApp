@@ -14,11 +14,37 @@ import { KeyboardAvoidingContainer } from "../../Components/KeyboardAvoidingComp
 
 const ForgotPassword: FC<ForgotPasswordScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState("");
+  const [errors, setErrors] = useState({
+    email: "",
+  });
+
+  const validateInputs = () => {
+    let isValid = true;
+    let newError = {
+      email: "",
+    };
+
+    if (!email.trim()) {
+      newError.email = "Email is required";
+      isValid = false;
+    } else if (
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) &&
+      !/^[0-9]{10,}$/.test(email)
+    ) {
+      newError.email = "Enter a valid email";
+      isValid = false;
+    }
+
+    setErrors(newError);
+    return isValid;
+  };
 
   const handleNavigaion = () => {
-    navigation.navigate("otp", {
-      isFrom: "forgotpassword",
-    });
+    if (validateInputs()) {
+      navigation.navigate("otp", {
+        isFrom: "forgotpassword",
+      });
+    }
   };
   return (
     <KeyboardAvoidingContainer scrollEnabled={true}>
@@ -67,6 +93,11 @@ const ForgotPassword: FC<ForgotPasswordScreenProps> = ({ navigation }) => {
                   paddingVertical: verticalScale(15),
                 }}
               />
+               {errors.email && (
+                              <CustomText fontSize={12} color="red">
+                                {errors.email}
+                              </CustomText>
+                            )}
               <PrimaryButton onPress={handleNavigaion} title="Confirm" />
               <View style={styles.rememberPasswordContainer}>
                 <CustomText fontSize={12} color={COLORS.oldGrey}>

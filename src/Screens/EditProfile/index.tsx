@@ -40,7 +40,7 @@ import {
   launchCamera,
   launchImageLibrary,
 } from "react-native-image-picker";
-import ImageViewer from "../../Components/Modals/ImageViewer";
+
 
 type ProfileForm = {
   gender: string;

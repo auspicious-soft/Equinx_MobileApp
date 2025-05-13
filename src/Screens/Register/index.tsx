@@ -29,6 +29,35 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [showCountryPicker, setShowCountryPicker] = useState(false);
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    phone: "",
+  });
+
+  const validateInputs = () => {
+    let isValid = true;
+    let newError = {
+      name: "",
+      email: "",
+      phone: "",
+    };
+
+    if (!name.trim()) {
+      newError.name = "Name is required";
+      isValid = false;
+    }
+    if (!email.trim()) {
+      newError.email = "Email is required";
+      isValid = false;
+    }
+    if (!/^[0-5]{10,}$/.test(phone)) {
+      newError.phone = "Phone number is required";
+      isValid = false;
+    }
+    setErrors(newError);
+    return isValid;
+  };
 
   const [countryCode, setCountryCode] = useState<CountryCode>("US");
   const [country, setCountry] = useState<Country | null>(null);
@@ -39,9 +68,11 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
   };
 
   const handleNavigation = () => {
-    navigation.navigate("otp", {
-      isFrom: "register",
-    });
+    if (validateInputs()) {
+      navigation.navigate("otp", {
+        isFrom: "register",
+      });
+    }
   };
 
   return (
@@ -86,6 +117,11 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                     paddingVertical: verticalScale(15),
                   }}
                 />
+                {errors.name && (
+                  <CustomText fontSize={12} color="red">
+                    {errors.name}
+                  </CustomText>
+                )}
                 <CustomInput
                   label="Email Address"
                   value={email}
@@ -95,7 +131,11 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                     paddingVertical: verticalScale(15),
                   }}
                 />
-
+                {errors.email && (
+                  <CustomText fontSize={12} color="red">
+                    {errors.email}
+                  </CustomText>
+                )}
                 <View style={{ gap: verticalScale(5) }}>
                   <CustomText fontSize={12} color={COLORS.oldGrey}>
                     Phone Number (optional)
@@ -142,6 +182,11 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                     </View>
                   </View>
                 </View>
+                {errors.phone && (
+                  <CustomText fontSize={12} color="red">
+                    {errors.phone}
+                  </CustomText>
+                )}
               </View>
 
               <PrimaryButton title="Register" onPress={handleNavigation} />

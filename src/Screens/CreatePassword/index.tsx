@@ -23,6 +23,29 @@ const CreatePassword: FC<CreatePasswordScreenProps> = ({ navigation }) => {
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [errors, setErrors] = useState({
+    newPassword: '',
+    confirmPassword: ''
+  });
+
+  const validateInputs = ()=> {
+    let isValid = true;
+    let newErrors = {
+      newPassword: "",
+      confirmPassword: "",
+    };
+
+    if(!newPassword.trim()){
+      newErrors.newPassword = "Password is required";
+      isValid = false;
+    }
+    if(confirmPassword.trim() !== newPassword.trim()){
+      newErrors.confirmPassword = "Password does not match";
+      isValid = false;
+    }
+    setErrors(newErrors);
+    return isValid
+  }
 
   const handleNavigation = () => {
     navigation.replace("login");
@@ -69,6 +92,12 @@ const CreatePassword: FC<CreatePasswordScreenProps> = ({ navigation }) => {
                     paddingVertical: verticalScale(15),
                   }}
                 />
+                 {errors.newPassword && (
+                                <CustomText fontSize={12} color="red">
+                                  {errors.newPassword}
+                                </CustomText>
+                              )}
+                
                 <CustomInput
                   label="Confirm Password"
                   placeholder="********"
@@ -79,11 +108,20 @@ const CreatePassword: FC<CreatePasswordScreenProps> = ({ navigation }) => {
                     paddingVertical: verticalScale(15),
                   }}
                 />
+                 {errors.confirmPassword && (
+                                <CustomText fontSize={12} color="red">
+                                  {errors.confirmPassword}
+                                </CustomText>
+                              )}
               </View>
 
               <PrimaryButton
                 title="Create New Password"
-                onPress={() => setModalVisible(true)}
+                onPress={() => {
+                  if(validateInputs()){
+                    setModalVisible(true)
+                  }
+                }}
               />
               <View style={styles.footerContainer}>
                 <CustomText fontSize={12} color={COLORS.oldGrey}>
