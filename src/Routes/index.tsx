@@ -86,7 +86,7 @@ const Routing = () => {
       <Tabs.Navigator
         screenOptions={{
           headerShown: false,
-          tabBarHideOnKeyboard:true
+          tabBarHideOnKeyboard: true,
         }}
         tabBar={(props) => <BottomTabBar {...props} />}
       >

@@ -51,7 +51,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
       newError.email = "Email is required";
       isValid = false;
     }
-    if (!/^[0-5]{10,}$/.test(phone)) {
+    if (!/^[0-9]{10,}$/.test(phone)) {
       newError.phone = "Phone number is required";
       isValid = false;
     }

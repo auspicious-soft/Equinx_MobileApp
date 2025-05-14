@@ -202,9 +202,9 @@ const Home: FC<HomeScreenProps> = () => {
               backgroundColor={COLORS.white}
               progress={progress}
               radius={140}
-              strokeWidth={20}
-              backgroundStrokeWidth={15}
-              progressStrokeWidth={20}
+              strokeWidth={30}
+              backgroundStrokeWidth={22}
+              progressStrokeWidth={30}
             >
               <CustomText
                 fontSize={12}
