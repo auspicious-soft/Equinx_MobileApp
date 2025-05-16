@@ -42,7 +42,11 @@ const MealModal: FC<MealModalProps> = ({
         activeOpacity={1}
         style={styles.container}
       >
-        <View style={styles.modalContent}>
+        <View
+          style={styles.modalContent}
+          onStartShouldSetResponder={() => true} // Capture touch events
+          onResponderRelease={(e) => e.stopPropagation()} // Prevent propagation
+        >
           <View style={styles.headingContainer}>
             <CustomText
               fontFamily={"semiBold"}

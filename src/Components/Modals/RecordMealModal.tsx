@@ -26,7 +26,7 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
 
   const [isType, setIsType] = useState(false);
   const [selectedType, setSelectedType] = useState<
-    "breakfast" | "dinner" | "lunch" | "other" | string
+    "Breakfast" | "Dinner" | "Lunch" | "Other" | string
   >(mealType!);
 
   useEffect(() => {
@@ -41,16 +41,26 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
     <Modal
       visible={isVisible}
       transparent
-      onRequestClose={closeModal}
+      onRequestClose={() => {
+        closeModal();
+        setIsType(false);
+      }}
       animationType="fade"
     >
       <KeyboardAvoidingContainer>
         <TouchableOpacity
-          // onPress={closeModal}
+          onPress={() => {
+            closeModal();
+            setIsType(false);
+          }}
           activeOpacity={1}
           style={styles.container}
         >
-          <View style={styles.modalContent}>
+          <View
+            style={styles.modalContent}
+            onStartShouldSetResponder={() => true} // Capture touch events
+            onResponderRelease={(e) => e.stopPropagation()} // Prevent propagation
+          >
             <View style={styles.headingContainer}>
               <CustomText
                 fontFamily={"semiBold"}
@@ -332,6 +342,7 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
               <PrimaryButton
                 onPress={() => {
                   closeModal();
+                  setIsType(false);
                 }}
                 title="Record"
               />

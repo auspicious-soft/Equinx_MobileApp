@@ -1,4 +1,4 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -12,43 +12,19 @@ import PrimaryButton from "../../Components/PrimaryButton";
 import { LoginScreenProps } from "../../Typings/route";
 import COLORS from "../../Utilities/Colors";
 import { horizontalScale, hp, verticalScale } from "../../Utilities/Metrics";
+import { postData } from "../../APIService/api";
+import ENDPOINTS from "../../APIService/endPoints";
+import Toast from "react-native-toast-message";
+import {
+  getLocalStorageData,
+  storeLocalStorageData,
+} from "../../Utilities/Storage";
+import STORAGE_KEYS from "../../Utilities/Constants";
+import { loginAPiResponse } from "../../Typings/apiResponse";
 
 const Login: FC<LoginScreenProps> = ({ navigation }) => {
-  const [errors, setErrors] = useState({
-    phoneNumber: "",
-    password: "",
-  });
-
-  const validateInputs = () => {
-    let isValid = true;
-    let newErrors = {
-      phoneNumber: "",
-      password: "",
-    };
-
-    if (!phoneNumber.trim()) {
-      newErrors.phoneNumber = "Phone or Email is required";
-      isValid = false;
-    } else if (
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(phoneNumber) &&
-      !/^[0-9]{10,}$/.test(phoneNumber)
-    ) {
-      newErrors.phoneNumber = "Enter a valid email or phone number";
-      isValid = false;
-    }
-
-    if (!password.trim()) {
-      newErrors.password = "Password is required";
-      isValid = false;
-    } else if (password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-      isValid = false;
-    }
-
-    setErrors(newErrors);
-    return isValid;
-  };
-
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [activeCheckBox, setActiveCheckBox] = useState<
     "ActiveBox" | "nonActive"
   >("nonActive");
@@ -59,8 +35,47 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
     );
   };
 
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [password, setPassword] = useState("");
+  const handleNavigation = async () => {
+    const data = {
+      email: email,
+      password: password,
+      authType: "Email",
+    };
+
+    try {
+      const response = await postData<loginAPiResponse>(ENDPOINTS.signin, data);
+      console.log(response.data);
+      if (response.data.success) {
+        await storeLocalStorageData(
+          STORAGE_KEYS.token,
+          response.data.data.token
+        );
+
+        Toast.show({
+          type: "success",
+          text1: response.data.message,
+        });
+        navigation.replace("mainStack", {
+          screen: "Welcome",
+        });
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    }
+  };
+
+  // const getToken = async () => {
+  //   const token = await getLocalStorageData(STORAGE_KEYS.token);
+  //   console.log(token);
+  // };
+
+  // useEffect(() => {
+  //   getToken();
+  // }, []);
+
   return (
     <KeyboardAvoidingContainer>
       <LinearGradient
@@ -94,20 +109,14 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
             <View style={styles.inputContainer}>
               <CustomInput
                 label="Email/Phone"
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
+                value={email}
+                onChangeText={setEmail}
                 leftIcon={ICONS.profileIcon}
                 placeholder="Enter your email"
                 inputStyle={{
                   paddingVertical: verticalScale(15),
                 }}
               />
-
-              {errors.phoneNumber && (
-                <CustomText fontSize={12} color="red">
-                  {errors.phoneNumber}
-                </CustomText>
-              )}
 
               <CustomInput
                 label="Password"
@@ -119,11 +128,6 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
                   paddingVertical: verticalScale(15),
                 }}
               />
-              {errors.password && (
-                <CustomText fontSize={12} color="red">
-                  {errors.password}
-                </CustomText>
-              )}
             </View>
 
             <View style={styles.remember_forgotContainer}>
@@ -157,13 +161,7 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
 
             <PrimaryButton
               title="Log in"
-              onPress={() => {
-                if (validateInputs()) {
-                  navigation.navigate("mainStack", {
-                    screen: "Welcome",
-                  });
-                }
-              }}
+              onPress={handleNavigation}
               textSize={20}
             />
 

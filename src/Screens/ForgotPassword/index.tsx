@@ -11,38 +11,36 @@ import CustomInput from "../../Components/CustomInput";
 import PrimaryButton from "../../Components/PrimaryButton";
 import { ForgotPasswordScreenProps } from "../../Typings/route";
 import { KeyboardAvoidingContainer } from "../../Components/KeyboardAvoidingComponent";
+import { postData } from "../../APIService/api";
+import ENDPOINTS from "../../APIService/endPoints";
+import Toast from "react-native-toast-message";
 
 const ForgotPassword: FC<ForgotPasswordScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState("");
-  const [errors, setErrors] = useState({
-    email: "",
-  });
 
-  const validateInputs = () => {
-    let isValid = true;
-    let newError = {
-      email: "",
+  const handleNavigaion = async () => {
+    const data = {
+      email: email,
     };
 
-    if (!email.trim()) {
-      newError.email = "Email is required";
-      isValid = false;
-    } else if (
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) &&
-      !/^[0-9]{10,}$/.test(email)
-    ) {
-      newError.email = "Enter a valid email";
-      isValid = false;
-    }
+    const response = await postData(ENDPOINTS.forgotPassword, data);
+    console.log(response.data);
 
-    setErrors(newError);
-    return isValid;
-  };
-
-  const handleNavigaion = () => {
-    if (validateInputs()) {
-      navigation.navigate("otp", {
-        isFrom: "forgotpassword",
+    try {
+      if (response.data.success) {
+        Toast.show({
+          type: "success",
+          text1: response.data.message,
+        });
+        navigation.navigate("otp", {
+          isFrom: "forgotpassword",
+          email,
+        });
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
       });
     }
   };
@@ -93,11 +91,6 @@ const ForgotPassword: FC<ForgotPasswordScreenProps> = ({ navigation }) => {
                   paddingVertical: verticalScale(15),
                 }}
               />
-               {errors.email && (
-                              <CustomText fontSize={12} color="red">
-                                {errors.email}
-                              </CustomText>
-                            )}
               <PrimaryButton onPress={handleNavigaion} title="Confirm" />
               <View style={styles.rememberPasswordContainer}>
                 <CustomText fontSize={12} color={COLORS.oldGrey}>

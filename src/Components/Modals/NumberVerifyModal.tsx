@@ -35,13 +35,17 @@ const NumberVerifyModal: FC<NumberVerifyModalProps> = ({
         activeOpacity={1}
         style={styles.container}
       >
-        <View style={styles.modalContent}>
+        <View
+          style={styles.modalContent}
+          onStartShouldSetResponder={() => true} // Capture touch events
+          onResponderRelease={(e) => e.stopPropagation()} // Prevent propagation
+        >
           <CustomIcon Icon={ICONS.AppLogo} height={60} width={60} />
 
           <View
             style={{
               gap: verticalScale(10),
-            
+
               paddingHorizontal: horizontalScale(15),
             }}
           >

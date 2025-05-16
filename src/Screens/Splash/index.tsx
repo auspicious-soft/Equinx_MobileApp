@@ -13,10 +13,24 @@ import { fetchData } from "../../APIService/api";
 import { GetQuestionDataResponse } from "../../Typings/apiResponse";
 import { useAppDispatch } from "../../Redux/store";
 import { setQuestionsData } from "../../Redux/slices/questionSlice";
+import { getLocalStorageData } from "../../Utilities/Storage";
+import STORAGE_KEYS from "../../Utilities/Constants";
 
 const Splash: FC<SplashProps> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const fadeAnim = React.useRef(new Animated.Value(0)).current; // Initial opacity
+  const [token, setToken] = useState(null);
+  const getToken = async () => {
+    const token = await getLocalStorageData(STORAGE_KEYS.token);
+    if (token) {
+      setToken(token);
+    }
+    console.log(token);
+  };
+
+  useEffect(() => {
+    getToken();
+  }, []);
 
   const getQuestionsData = async () => {
     const response = await fetchData<GetQuestionDataResponse>(
@@ -32,9 +46,12 @@ const Splash: FC<SplashProps> = ({ navigation }) => {
       dispatch(setQuestionsData(response.data.data.questions));
     }
   };
+
   useEffect(() => {
-    getQuestionsData();
-  });
+    if (!token) {
+      getQuestionsData();
+    }
+  }, [token]);
 
   useEffect(() => {
     // Fade in animation
@@ -54,25 +71,27 @@ const Splash: FC<SplashProps> = ({ navigation }) => {
         easing: Easing.ease,
         useNativeDriver: true,
       }).start(() => {
-        // navigation.replace("onBoardingStack", {
-        //   screen: "planScreen",
-        //   // params: {
-        //   //   index: 0,
-        //   //   nextQuestion: 0,
-        //   // },
-        // });
-        navigation.replace("onBoardingStack", {
-          screen: "infoScreen",
-          params: {
-            index: 0,
-            nextQuestion: 0,
-          },
-        });
+        if (token) {
+          navigation.replace("mainStack", {
+            screen: "tabs",
+            params: {
+              screen: "home",
+            },
+          });
+        } else {
+          navigation.replace("onBoardingStack", {
+            screen: "infoScreen",
+            params: {
+              index: 0,
+              nextQuestion: 0,
+            },
+          });
+        }
       });
     }, 3000);
 
     return () => clearTimeout(timeout);
-  }, [fadeAnim, navigation]);
+  }, [fadeAnim, navigation, token]);
 
   return (
     <LinearGradient

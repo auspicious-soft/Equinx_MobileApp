@@ -27,9 +27,12 @@ export type AuthStackParams = {
   register: undefined;
   otp: {
     isFrom: "register" | "forgotpassword";
+    email?: string;
   };
   forgotpassword: undefined;
-  createNewPassword: undefined;
+  createNewPassword: {
+    otp?: string;
+  };
 };
 
 export type MainStackParams = {
@@ -69,7 +72,10 @@ export type BottomTabParams = {
 };
 
 // Splash Screens
-export type SplashProps = NativeStackScreenProps<RootStackParams, "splash">;
+export type SplashProps = NativeStackScreenProps<
+  RootStackParams & BottomTabParams,
+  "splash"
+>;
 export type InfoScreenProps = NativeStackScreenProps<
   RootStackParams & OnBoardingStackParams,
   "infoScreen"

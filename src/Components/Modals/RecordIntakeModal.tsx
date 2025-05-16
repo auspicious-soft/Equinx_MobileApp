@@ -1,45 +1,106 @@
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { FC } from "react";
+import React, { Dispatch, FC, SetStateAction, useState } from "react";
 import { horizontalScale, verticalScale } from "../../Utilities/Metrics";
 import COLORS from "../../Utilities/Colors";
 import { CustomText } from "../CustomText";
 import CustomIcon from "../CustomIcon";
 import ICONS from "../../Assets/Icons";
 import PrimaryButton from "../PrimaryButton";
+import { postData } from "../../APIService/api";
+import ENDPOINTS from "../../APIService/endPoints";
+import Toast from "react-native-toast-message";
+
+const recordData = [
+  {
+    id: 1,
+    size: 250,
+  },
+  {
+    id: 1,
+    size: 500,
+  },
+  {
+    id: 1,
+    size: 800,
+  },
+  {
+    id: 1,
+    size: 1000,
+  },
+];
 
 type RecordIntakeModalProps = {
   isVisible: boolean;
   closeModal: () => void;
-  heading: string;
-  title: string;
+  selectedRecord: string | number;
+  setSelectedRecord: Dispatch<SetStateAction<string | number>>;
+  getHomeData: () => void;
 };
 
 const RecordIntakeModal: FC<RecordIntakeModalProps> = ({
   isVisible,
   closeModal,
-  heading,
-  title,
+  selectedRecord,
+  setSelectedRecord,
+  getHomeData,
 }) => {
+  const [showRecordData, setShowRecordData] = useState(false);
+
+  const handleSave = async () => {
+    const data = {
+      waterIntake: selectedRecord,
+    };
+
+    try {
+      const response = await postData(ENDPOINTS.waterIntake, data);
+      console.log(response.data);
+      if (response.data.success) {
+        Toast.show({
+          type: "success",
+          text1: response.data.message,
+        });
+        closeModal();
+        setShowRecordData(false);
+        getHomeData();
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    }
+  };
+
   return (
     <Modal
       visible={isVisible}
       transparent
-      onRequestClose={closeModal}
+      onRequestClose={() => {
+        closeModal();
+        setShowRecordData(false);
+      }}
       animationType="fade"
     >
       <TouchableOpacity
-        onPress={closeModal}
+        onPress={() => {
+          closeModal();
+          setShowRecordData(false);
+        }}
         activeOpacity={1}
         style={styles.container}
       >
-        <View style={styles.modalContent}>
+        <View
+          style={styles.modalContent}
+          onStartShouldSetResponder={() => true} // Capture touch events
+          onResponderRelease={(e) => e.stopPropagation()} // Prevent propagation
+        >
           <View style={styles.headingContainer}>
             <CustomText
               fontFamily={"semiBold"}
               fontSize={14}
               style={{ textAlign: "center" }}
             >
-              {heading}
+              Record Intake
             </CustomText>
           </View>
 
@@ -49,16 +110,44 @@ const RecordIntakeModal: FC<RecordIntakeModalProps> = ({
               gap: verticalScale(20),
             }}
           >
-            <TouchableOpacity style={styles.titleContainer}>
-              <CustomText>{title}</CustomText>
+            <TouchableOpacity
+              style={styles.titleContainer}
+              onPress={() => {
+                setShowRecordData(!showRecordData);
+              }}
+            >
+              <CustomText fontSize={16} color={COLORS.darkBLue}>
+                {selectedRecord} ml
+              </CustomText>
               <CustomIcon Icon={ICONS.DropdownIcon} height={8} width={8} />
             </TouchableOpacity>
-            <PrimaryButton
-              title="Save"
-              onPress={() => {
-                closeModal();
-              }}
-            />
+
+            {showRecordData && (
+              <View>
+                {recordData.map((item, index) => (
+                  <TouchableOpacity
+                    style={styles.optionContainer}
+                    key={index}
+                    onPress={() => {
+                      setSelectedRecord(item.size);
+                      setShowRecordData(false);
+                    }}
+                  >
+                    <CustomText
+                      fontSize={16}
+                      color={
+                        selectedRecord === item.size
+                          ? COLORS.green
+                          : COLORS.darkBLue
+                      }
+                    >
+                      {item.size} ml
+                    </CustomText>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+            <PrimaryButton title="Save" onPress={handleSave} />
           </View>
         </View>
       </TouchableOpacity>
@@ -103,5 +192,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     gap: horizontalScale(8),
+  },
+  optionContainer: {
+    borderWidth: 1,
+    borderColor: COLORS.greyishWhite,
+    borderRadius: 12,
+    paddingVertical: verticalScale(10),
+    paddingHorizontal: horizontalScale(10),
+    alignItems: "center",
+    justifyContent: "center",
+    gap: verticalScale(8),
+    marginBottom: verticalScale(20),
   },
 });

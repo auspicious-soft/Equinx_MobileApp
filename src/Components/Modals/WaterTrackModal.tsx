@@ -8,7 +8,7 @@ import {
   Animated,
   Easing,
 } from "react-native";
-import React, { FC, useState, useRef } from "react";
+import React, { FC, useState, useRef, Dispatch, SetStateAction } from "react";
 import {
   horizontalScale,
   hp,
@@ -21,38 +21,79 @@ import IMAGES from "../../Assets/Images";
 import CustomIcon from "../CustomIcon";
 import ICONS from "../../Assets/Icons";
 import PrimaryButton from "../PrimaryButton";
+import { postData } from "../../APIService/api";
+import ENDPOINTS from "../../APIService/endPoints";
+import Toast from "react-native-toast-message";
+
+const containerSizeData = [
+  {
+    id: 1,
+    size: 250,
+  },
+  {
+    id: 2,
+    size: 500,
+  },
+  {
+    id: 3,
+    size: 800,
+  },
+  {
+    id: 4,
+    size: 1000,
+  },
+];
+
+const dailGoalData = [
+  {
+    id: 1,
+    size: 2800,
+  },
+  {
+    id: 2,
+    size: 3600,
+  },
+  {
+    id: 3,
+    size: 4200,
+  },
+  {
+    id: 4,
+    size: 5000,
+  },
+];
 
 type WaterTrackModalProps = {
   isVisible: boolean;
   closeModal: () => void;
-  heading: string;
-  title: string;
-  size: string;
-  goal: string;
-  reminder: string;
-  description: string;
-  ml: string;
-  ml2: string;
+  selectedConatinerValue: string | number;
+  setSelectedContainerValue: Dispatch<SetStateAction<string | number>>;
+  selectedDailyGoal: string | number;
+  setSelectedDailyGoal: Dispatch<SetStateAction<string | number>>;
+  selectedContainer: string;
+  setSelectedContainer: Dispatch<SetStateAction<string>>;
+  isToggled: boolean;
+  setIsToggled: Dispatch<SetStateAction<boolean>>;
+  getHomeData: () => void;
 };
 
 const WaterTrackModal: FC<WaterTrackModalProps> = ({
   isVisible,
   closeModal,
-  heading,
-  title,
-  size,
-  goal,
-  reminder,
-  description,
-  ml,
-  ml2,
+  selectedConatinerValue,
+  setSelectedContainerValue,
+  selectedDailyGoal,
+  setSelectedDailyGoal,
+  selectedContainer,
+  setSelectedContainer,
+  isToggled,
+  setIsToggled,
+  getHomeData,
 }) => {
-  const [selectedContainer, setSelectedContainer] = useState<
-    "bottle" | "glass"
-  >("bottle");
-
-  const [isToggled, setIsToggled] = useState(false);
   const toggleAnim = useRef(new Animated.Value(0)).current;
+
+  const [containerSize, setContainerSize] = useState<boolean>(false);
+  const [dailyGoal, setDailyGoal] = useState<boolean>(false);
 
   const toggleSwitch = () => {
     const toValue = isToggled ? 0 : 1;
@@ -72,26 +113,67 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
     outputRange: [2, 22], // This depends on your knob/container width
   });
 
+  const handleSave = async () => {
+    const data = {
+      containerType: selectedContainer,
+      containerSize: selectedConatinerValue,
+      dailyGoal: selectedDailyGoal,
+      waterReminder: isToggled,
+    };
+
+    try {
+      const response = await postData(ENDPOINTS.waterTracking, data);
+      console.log(response.data);
+      if (response.data.success) {
+        Toast.show({
+          type: "success",
+          text1: response.data.message,
+        });
+        closeModal();
+        setContainerSize(false);
+        setDailyGoal(false);
+        getHomeData();
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    }
+  };
+
   return (
     <Modal
       visible={isVisible}
       transparent
-      onRequestClose={closeModal}
+      onRequestClose={() => {
+        closeModal();
+        setContainerSize(false);
+        setDailyGoal(false);
+      }}
       animationType="fade"
     >
       <TouchableOpacity
-        onPress={closeModal}
+        onPress={() => {
+          closeModal();
+          setContainerSize(false);
+          setDailyGoal(false);
+        }}
         activeOpacity={1}
         style={styles.container}
       >
-        <View style={styles.modalContent}>
+        <View
+          style={styles.modalContent}
+          onStartShouldSetResponder={() => true} // Capture touch events
+          onResponderRelease={(e) => e.stopPropagation()} // Prevent propagation
+        >
           <View style={styles.headingContainer}>
             <CustomText
               fontFamily={"semiBold"}
               fontSize={14}
               style={{ textAlign: "center" }}
             >
-              {heading}
+              Water Tracking Options
             </CustomText>
           </View>
 
@@ -106,7 +188,7 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
                 fontFamily="regular"
                 color={COLORS.darkBLue}
               >
-                {title}
+                Select Container
               </CustomText>
               <View
                 style={{
@@ -203,9 +285,14 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
                   fontFamily="regular"
                   color={COLORS.darkBLue}
                 >
-                  {size}
+                  Set Container Size
                 </CustomText>
-                <View
+                <TouchableOpacity
+                  onPress={() => {
+                    setDailyGoal(false);
+
+                    setContainerSize(!containerSize);
+                  }}
                   style={{
                     flexDirection: "row",
                     alignItems: "center",
@@ -217,31 +304,50 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
                     fontFamily="regular"
                     color={COLORS.darkBLue}
                   >
-                    {ml}
+                    {selectedConatinerValue} ml
                   </CustomText>
-                  <CustomIcon Icon={ICONS.rightArrow} height={13} width={13} />
-                </View>
+                  <CustomIcon
+                    Icon={
+                      containerSize === false
+                        ? ICONS.ArrowDownIcon
+                        : ICONS.ArrowUpIcon
+                    }
+                    height={8}
+                    width={8}
+                  />
+                </TouchableOpacity>
               </View>
 
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <CustomText
-                  fontSize={12}
-                  fontFamily="regular"
-                  color={COLORS.darkBLue}
-                >
-                  {goal}
-                </CustomText>
+              {containerSize && (
+                <View style={styles.sizeMlContainer}>
+                  {containerSizeData.map((item, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => {
+                        setSelectedContainerValue(item.size);
+                        setContainerSize(false);
+                      }}
+                    >
+                      <CustomText
+                        fontSize={12}
+                        fontFamily="regular"
+                        color={
+                          selectedConatinerValue === item.size
+                            ? COLORS.green
+                            : COLORS.darkBLue
+                        }
+                      >{`${item.size} ml`}</CustomText>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+
+              <View>
                 <View
                   style={{
                     flexDirection: "row",
                     alignItems: "center",
-                    gap: horizontalScale(5),
+                    justifyContent: "space-between",
                   }}
                 >
                   <CustomText
@@ -249,10 +355,60 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
                     fontFamily="regular"
                     color={COLORS.darkBLue}
                   >
-                    {ml2}
+                    Set Daily Goal
                   </CustomText>
-                  <CustomIcon Icon={ICONS.rightArrow} height={13} width={13} />
+                  <TouchableOpacity
+                    onPress={() => {
+                      setContainerSize(false);
+                      setDailyGoal(!dailyGoal);
+                    }}
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "center",
+                      gap: horizontalScale(5),
+                    }}
+                  >
+                    <CustomText
+                      fontSize={12}
+                      fontFamily="regular"
+                      color={COLORS.darkBLue}
+                    >
+                      {selectedDailyGoal} ml
+                    </CustomText>
+                    <CustomIcon
+                      Icon={
+                        dailyGoal === false
+                          ? ICONS.ArrowDownIcon
+                          : ICONS.ArrowUpIcon
+                      }
+                      height={8}
+                      width={8}
+                    />
+                  </TouchableOpacity>
                 </View>
+                {dailyGoal && (
+                  <View style={styles.dailyGoal}>
+                    {dailGoalData.map((item, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => {
+                          setSelectedDailyGoal(item.size);
+                          setDailyGoal(false);
+                        }}
+                      >
+                        <CustomText
+                          fontSize={12}
+                          fontFamily="regular"
+                          color={
+                            selectedDailyGoal === item.size
+                              ? COLORS.green
+                              : COLORS.darkBLue
+                          }
+                        >{`${item.size} ml`}</CustomText>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )}
               </View>
 
               <View style={{ gap: verticalScale(5) }}>
@@ -268,7 +424,7 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
                     fontFamily="regular"
                     color={COLORS.darkBLue}
                   >
-                    {reminder}
+                    Water Reminder
                   </CustomText>
 
                   <TouchableOpacity onPress={toggleSwitch} activeOpacity={0.8}>
@@ -287,7 +443,10 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
                           width: 16,
                           height: 16,
                           borderRadius: 8,
-                          backgroundColor: COLORS.green,
+                          backgroundColor:
+                            isToggled === true
+                              ? COLORS.green
+                              : COLORS.lightGrey,
                           transform: [{ translateX }],
                         }}
                       />
@@ -299,13 +458,13 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
                   fontFamily="regular"
                   color={COLORS.darkBLue}
                 >
-                  {description}
+                  Receive notifications to make drinking water a habit.
                 </CustomText>
               </View>
               <PrimaryButton
                 title="Save"
                 onPress={() => {
-                  closeModal();
+                  handleSave();
                 }}
               />
             </View>
@@ -352,5 +511,31 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: verticalScale(10),
     borderRadius: 12,
+  },
+  sizeMlContainer: {
+    borderWidth: 1,
+    borderColor: COLORS.greyishWhite,
+    borderRadius: 6,
+    alignSelf: "flex-end",
+    paddingHorizontal: horizontalScale(15),
+    paddingVertical: verticalScale(3),
+    position: "absolute",
+    backgroundColor: COLORS.white,
+    zIndex: 1,
+    top: verticalScale(20),
+    gap: verticalScale(3),
+  },
+  dailyGoal: {
+    borderWidth: 1,
+    borderColor: COLORS.greyishWhite,
+    borderRadius: 6,
+    alignSelf: "flex-end",
+    paddingHorizontal: horizontalScale(15),
+    paddingVertical: verticalScale(3),
+    position: "absolute",
+    backgroundColor: COLORS.white,
+    zIndex: 1,
+    top: verticalScale(20),
+    gap: verticalScale(3),
   },
 });

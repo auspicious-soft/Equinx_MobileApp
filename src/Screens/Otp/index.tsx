@@ -17,31 +17,93 @@ import PrimaryButton from "../../Components/PrimaryButton";
 import { OTPScreenProps } from "../../Typings/route";
 import NumberVerifyModal from "../../Components/Modals/NumberVerifyModal";
 import { KeyboardAvoidingContainer } from "../../Components/KeyboardAvoidingComponent";
+import Toast from "react-native-toast-message";
+import { postData } from "../../APIService/api";
+import ENDPOINTS from "../../APIService/endPoints";
+
+const initialSeconds = 5;
 
 const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
-  const { isFrom } = route.params;
+  const { isFrom, email } = route.params;
   const [isModalVisible, setModalVisible] = React.useState(false);
+  const [timeInSeconds, setTimeInSeconds] = useState<number>(initialSeconds);
+  const [otp, setOtp] = useState(["", "", "", "", "", ""]);
+  const inputs = useRef<(TextInput | null)[]>([]);
 
-  const handleNavigation = () => {
-    if (validateInputs()) {
-      if (isFrom === "register") {
-        setModalVisible(true);
-      } else {
-        navigation.navigate("createNewPassword");
+  const handleNavigation = async () => {
+    const data =
+      isFrom === "register"
+        ? {
+            otp: otp.map((otp) => otp).join(""),
+            email: email,
+          }
+        : {
+            token: otp.map((otp) => otp).join(""),
+            email: email,
+          };
+
+    try {
+      const response = await postData(
+        isFrom === "register" ? ENDPOINTS.otp : ENDPOINTS.forgotPasswordOtp,
+        data
+      );
+      console.log(response.data);
+      if (response.data.success) {
+        Toast.show({
+          type: "success",
+          text1: response.data.message,
+        });
+
+        if (isFrom === "register") {
+          setModalVisible(true);
+        } else {
+          navigation.navigate("createNewPassword", {
+            otp: otp.map((otp) => otp).join(""),
+          });
+        }
       }
+    } catch (error: any) {
+      console.log(error, "API ERROR");
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    }
+  };
+
+  const handleResendOtp = async () => {
+    const data =
+      isFrom === "register"
+        ? {
+            email: email,
+          }
+        : {
+            email: email,
+          };
+
+    try {
+      const response = await postData(
+        isFrom === "register" ? ENDPOINTS.resendOtp : ENDPOINTS.forgotPassword,
+        data
+      );
+      if (response.data.success) {
+        Toast.show({
+          type: "success",
+          text1: "OTP Sent successfully.",
+        });
+      }
+    } catch (error: any) {
+      console.log(error, "API ERROR");
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
     }
   };
 
   const closeModal = () => {
     setModalVisible(false);
   };
-
-  useEffect(() => {
-    console.log(route, "agv");
-  }, []);
-
-  const [otp, setOtp] = useState(["", "", "", "", ""]);
-  const inputs = useRef<(TextInput | null)[]>([]);
 
   const handleChangeText = (text: string, index: number) => {
     const newOtp = [...otp];
@@ -72,24 +134,32 @@ const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
     }
   };
 
-  const [error, setError] = useState({
-    otp: "",
-  });
+  useEffect(() => {
+    if (timeInSeconds <= 0) return; // Stop when timer reaches 0
 
-  const validateInputs = () => {
-    let isValid = true;
-    let newError = {
-      otp: "",
-    };
+    const interval = setInterval(() => {
+      setTimeInSeconds((prev) => {
+        if (prev <= 1) {
+          clearInterval(interval); // Clear interval when timer reaches 0
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
 
-    if (otp.some((digit) => digit.trim() === "")) {
-      newError.otp = "OTP is required";
-      isValid = false;
-    }
+    // Cleanup interval on unmount
+    return () => clearInterval(interval);
+  }, [timeInSeconds]);
 
-    setError(newError);
-    return isValid;
+  // Format time in seconds to MM:SS
+  const formatTime = (seconds: number): string => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`;
   };
+
   return (
     <KeyboardAvoidingContainer>
       <LinearGradient
@@ -145,26 +215,34 @@ const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
                   />
                 ))}
               </View>
-              {error.otp && (
-                <CustomText fontSize={12} color="red">
-                  {error.otp}
-                </CustomText>
-              )}
 
               <View
                 style={{ marginTop: verticalScale(10), gap: verticalScale(10) }}
               >
                 <PrimaryButton title="Verify" onPress={handleNavigation} />
-                <View style={styles.footerContainer}>
-                  <CustomText fontSize={12} color={COLORS.oldGrey}>
-                    Remember Password?
-                  </CustomText>
-                  <TouchableOpacity onPress={() => navigation.replace("login")}>
-                    <CustomText fontSize={12} color={COLORS.skyBlue}>
-                      Login
+
+                {timeInSeconds !== 0 ? (
+                  <View style={styles.footerContainer}>
+                    <CustomText fontSize={12} color={COLORS.oldGrey}>
+                      Resend Otp in
+                    </CustomText>
+                    <CustomText fontSize={12} color={COLORS.green}>
+                      {formatTime(timeInSeconds)}
+                    </CustomText>
+                  </View>
+                ) : (
+                  <TouchableOpacity
+                    style={{ alignSelf: "center" }}
+                    onPress={() => {
+                      setTimeInSeconds(initialSeconds);
+                      handleResendOtp();
+                    }}
+                  >
+                    <CustomText fontSize={12} color={COLORS.green}>
+                      Resend Otp
                     </CustomText>
                   </TouchableOpacity>
-                </View>
+                )}
               </View>
             </View>
 
@@ -219,7 +297,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.greyishWhite,
     paddingVertical: verticalScale(12),
-    paddingHorizontal: horizontalScale(20),
+    paddingHorizontal: horizontalScale(18),
     borderRadius: 14,
   },
   footerContainer: {

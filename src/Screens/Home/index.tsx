@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Image,
   ImageBackground,
   ScrollView,
@@ -27,6 +28,12 @@ import IMAGES from "../../Assets/Images";
 import WaterTrackModal from "../../Components/Modals/WaterTrackModal";
 import RecordIntakeModal from "../../Components/Modals/RecordIntakeModal";
 import moment from "moment-timezone";
+import { fetchData } from "../../APIService/api";
+import ENDPOINTS from "../../APIService/endPoints";
+import { HomeDataResponse } from "../../Typings/apiResponse";
+import { useAppDispatch, useAppSelector } from "../../Redux/store";
+import Toast from "react-native-toast-message";
+import { setHomeData } from "../../Redux/slices/homeDataSlice";
 
 interface FastingMethod {
   type: "16:8" | "5:2";
@@ -34,6 +41,8 @@ interface FastingMethod {
 }
 
 const Home: FC<HomeScreenProps> = () => {
+  const dispatch = useAppDispatch();
+  const { homeData } = useAppSelector((state) => state.homeData);
   const [isModal, setIsModal] = useState(false);
   const [recordModal, setRecordModal] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState("");
@@ -42,6 +51,22 @@ const Home: FC<HomeScreenProps> = () => {
   const [fastingStatus, setFastingStatus] = useState<
     "Fasting" | "Eating" | "Low-Calorie"
   >("Eating");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isToggled, setIsToggled] = useState(false);
+
+  // Record Intake Modal
+  const [selectedRecord, setSelectedRecord] = useState<string | number>(250);
+
+  // Water INtake Modal
+  const [selectedConatinerValue, setSelectedContainerValue] = useState<
+    string | number
+  >(250);
+  const [selectedDailyGoal, setSelectedDailyGoal] = useState<string | number>(
+    3600
+  );
+  const [selectedContainer, setSelectedContainer] = useState<
+    "bottle" | "glass" | string
+  >(homeData?.waterIntake.containerType || "bottle");
 
   // Assume this comes from onboarding, stored in state or context
   const [fastingMethod, setFastingMethod] = useState<FastingMethod>({
@@ -134,6 +159,40 @@ const Home: FC<HomeScreenProps> = () => {
 
     return () => clearInterval(intervalId);
   }, [fastingMethod]);
+
+  const getHomeData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetchData<HomeDataResponse>(ENDPOINTS.home);
+      console.log(response);
+
+      if (response.data.success) {
+        dispatch(setHomeData(response.data.data));
+        setSelectedContainer(response.data.data.waterIntake.containerType);
+        setSelectedContainerValue(response.data.data.waterIntake.containerSize);
+        setSelectedDailyGoal(response.data.data.waterIntake.goal);
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getHomeData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator color={COLORS.green} size={30} />
+      </View>
+    );
+  }
 
   return (
     <ScrollView
@@ -253,7 +312,7 @@ const Home: FC<HomeScreenProps> = () => {
               style={{ textAlign: "center" }}
               fontFamily="bold"
             >
-              0.5 Litres{" "}
+              {Number(homeData?.waterIntake.today) / 1000} Litres{" "}
               <CustomText
                 fontSize={18}
                 color={COLORS.darkBLue}
@@ -275,7 +334,7 @@ const Home: FC<HomeScreenProps> = () => {
                 color={COLORS.green}
                 fontFamily="regular"
               >
-                3.6 liters
+                {homeData?.waterIntake.goal} liters
               </CustomText>
             </View>
             <PrimaryButton
@@ -302,7 +361,7 @@ const Home: FC<HomeScreenProps> = () => {
                   You've fasted
                 </CustomText>
                 <CustomText fontSize={18} color={COLORS.green}>
-                  5 days!
+                  {homeData?.thisWeekFastingDays}
                 </CustomText>
                 <CustomText fontSize={12} color={COLORS.darkBLue}>
                   in a row
@@ -331,7 +390,7 @@ const Home: FC<HomeScreenProps> = () => {
                   Total Hours Fasted
                 </CustomText>
                 <CustomText fontSize={18} color={COLORS.green}>
-                  72 hours
+                  {homeData?.thisWeekFastingHours}
                 </CustomText>
                 <CustomText fontSize={12} color={COLORS.darkBLue}>
                   This Week
@@ -378,20 +437,22 @@ const Home: FC<HomeScreenProps> = () => {
         <WaterTrackModal
           closeModal={closeModal}
           isVisible={isModal}
-          heading="Water Tracking Options"
-          title="Select Container"
-          size="Set Container Size"
-          ml="250 ml"
-          goal="Set Daily Goal"
-          ml2="3600 ml"
-          reminder="Water Reminder"
-          description="Receive notifications to make drinking water a habit."
+          selectedConatinerValue={selectedConatinerValue}
+          setSelectedContainerValue={setSelectedContainerValue}
+          selectedDailyGoal={selectedDailyGoal}
+          setSelectedDailyGoal={setSelectedDailyGoal}
+          selectedContainer={selectedContainer}
+          setSelectedContainer={setSelectedContainer}
+          isToggled={isToggled}
+          setIsToggled={setIsToggled}
+          getHomeData={getHomeData}
         />
         <RecordIntakeModal
           closeModal={closeRecordModal}
           isVisible={recordModal}
-          heading="Record Intake"
-          title="250 ml"
+          selectedRecord={selectedRecord}
+          setSelectedRecord={setSelectedRecord}
+          getHomeData={getHomeData}
         />
       </SafeAreaView>
     </ScrollView>

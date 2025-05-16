@@ -1,5 +1,6 @@
 import {
   Image,
+  ScrollView,
   StyleSheet,
   Text,
   TextInput,
@@ -23,41 +24,18 @@ import CountryPicker, {
   CountryCode,
 } from "react-native-country-picker-modal";
 import { KeyboardAvoidingContainer } from "../../Components/KeyboardAvoidingComponent";
+import { postData } from "../../APIService/api";
+import ENDPOINTS from "../../APIService/endPoints";
+import DeviceInfo, { getDeviceId } from "react-native-device-info";
+import Toast from "react-native-toast-message";
 
 const Register: FC<RegisterScreenProps> = ({ navigation }) => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [showCountryPicker, setShowCountryPicker] = useState(false);
-  const [errors, setErrors] = useState({
-    name: "",
-    email: "",
-    phone: "",
-  });
-
-  const validateInputs = () => {
-    let isValid = true;
-    let newError = {
-      name: "",
-      email: "",
-      phone: "",
-    };
-
-    if (!name.trim()) {
-      newError.name = "Name is required";
-      isValid = false;
-    }
-    if (!email.trim()) {
-      newError.email = "Email is required";
-      isValid = false;
-    }
-    if (!/^[0-9]{10,}$/.test(phone)) {
-      newError.phone = "Phone number is required";
-      isValid = false;
-    }
-    setErrors(newError);
-    return isValid;
-  };
+  const [password, setpassword] = useState("");
+  const [confirmPassword, setconfirmPassword] = useState("");
 
   const [countryCode, setCountryCode] = useState<CountryCode>("US");
   const [country, setCountry] = useState<Country | null>(null);
@@ -67,10 +45,33 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
     setCountry(country);
   };
 
-  const handleNavigation = () => {
-    if (validateInputs()) {
-      navigation.navigate("otp", {
-        isFrom: "register",
+  const handleNavigation = async () => {
+    const data = {
+      fullName: name,
+      email: email,
+      countryCode: countryCode,
+      phoneNumber: phone,
+      deviceId: DeviceInfo.getDeviceId(),
+      password: password,
+      authType: "Email",
+    };
+    try {
+      const response = await postData(ENDPOINTS.signUp, data);
+      if (response.data.success) {
+        Toast.show({
+          type: "success",
+          text1: response.data.message,
+        });
+        navigation.navigate("otp", {
+          isFrom: "register",
+          email,
+        });
+      }
+    } catch (error: any) {
+      console.log(error, "API ERROR");
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
       });
     }
   };
@@ -84,10 +85,9 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
         end={{ x: 0.3, y: 1 }}
       >
         <SafeAreaView style={styles.container}>
-          <View
+          <ScrollView
             style={{
               gap: verticalScale(10),
-              height: hp(100),
               paddingBottom: verticalScale(20),
               paddingTop: verticalScale(40),
               paddingHorizontal: horizontalScale(20),
@@ -117,11 +117,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                     paddingVertical: verticalScale(15),
                   }}
                 />
-                {errors.name && (
-                  <CustomText fontSize={12} color="red">
-                    {errors.name}
-                  </CustomText>
-                )}
+
                 <CustomInput
                   label="Email Address"
                   value={email}
@@ -131,11 +127,29 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                     paddingVertical: verticalScale(15),
                   }}
                 />
-                {errors.email && (
-                  <CustomText fontSize={12} color="red">
-                    {errors.email}
-                  </CustomText>
-                )}
+
+                <CustomInput
+                  label="Create Password"
+                  type="password"
+                  value={password}
+                  onChangeText={setpassword}
+                  placeholder="********"
+                  inputStyle={{
+                    paddingVertical: verticalScale(15),
+                  }}
+                />
+
+                <CustomInput
+                  label="Confirm Password"
+                  type="password"
+                  value={confirmPassword}
+                  onChangeText={setconfirmPassword}
+                  placeholder="********"
+                  inputStyle={{
+                    paddingVertical: verticalScale(15),
+                  }}
+                />
+
                 <View style={{ gap: verticalScale(5) }}>
                   <CustomText fontSize={12} color={COLORS.oldGrey}>
                     Phone Number (optional)
@@ -182,11 +196,6 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                     </View>
                   </View>
                 </View>
-                {errors.phone && (
-                  <CustomText fontSize={12} color="red">
-                    {errors.phone}
-                  </CustomText>
-                )}
               </View>
 
               <PrimaryButton title="Register" onPress={handleNavigation} />
@@ -201,7 +210,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                 </TouchableOpacity>
               </View>
             </View>
-          </View>
+          </ScrollView>
         </SafeAreaView>
       </LinearGradient>
     </KeyboardAvoidingContainer>

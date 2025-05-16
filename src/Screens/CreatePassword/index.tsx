@@ -2,8 +2,6 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { FC, useState } from "react";
 import LinearGradient from "react-native-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
-import CustomIcon from "../../Components/CustomIcon";
-import ICONS from "../../Assets/Icons";
 import { horizontalScale, hp, verticalScale } from "../../Utilities/Metrics";
 import IMAGES from "../../Assets/Images";
 import { CustomText } from "../../Components/CustomText";
@@ -13,9 +11,18 @@ import PrimaryButton from "../../Components/PrimaryButton";
 import { CreatePasswordScreenProps } from "../../Typings/route";
 import NumberVerifyModal from "../../Components/Modals/NumberVerifyModal";
 import { KeyboardAvoidingContainer } from "../../Components/KeyboardAvoidingComponent";
+import { postData } from "../../APIService/api";
+import ENDPOINTS from "../../APIService/endPoints";
+import Toast from "react-native-toast-message";
 
-const CreatePassword: FC<CreatePasswordScreenProps> = ({ navigation }) => {
+const CreatePassword: FC<CreatePasswordScreenProps> = ({
+  navigation,
+  route,
+}) => {
   const [isModalVisible, setModalVisible] = React.useState(false);
+  const { otp } = route.params;
+
+  console.log(otp);
 
   const closeModal = () => {
     setModalVisible(false);
@@ -23,32 +30,30 @@ const CreatePassword: FC<CreatePasswordScreenProps> = ({ navigation }) => {
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [errors, setErrors] = useState({
-    newPassword: '',
-    confirmPassword: ''
-  });
 
-  const validateInputs = ()=> {
-    let isValid = true;
-    let newErrors = {
-      newPassword: "",
-      confirmPassword: "",
+  const handleNavigation = async () => {
+    const data = {
+      password: newPassword,
+      otp: otp,
     };
 
-    if(!newPassword.trim()){
-      newErrors.newPassword = "Password is required";
-      isValid = false;
-    }
-    if(confirmPassword.trim() !== newPassword.trim()){
-      newErrors.confirmPassword = "Password does not match";
-      isValid = false;
-    }
-    setErrors(newErrors);
-    return isValid
-  }
+    const response = await postData(ENDPOINTS.createPassword, data);
+    console.log(response.data);
 
-  const handleNavigation = () => {
-    navigation.replace("login");
+    try {
+      if (response.data.success) {
+        Toast.show({
+          type: "success",
+          text1: response.data.message,
+        });
+        setModalVisible(true);
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    }
   };
   return (
     <KeyboardAvoidingContainer>
@@ -92,12 +97,7 @@ const CreatePassword: FC<CreatePasswordScreenProps> = ({ navigation }) => {
                     paddingVertical: verticalScale(15),
                   }}
                 />
-                 {errors.newPassword && (
-                                <CustomText fontSize={12} color="red">
-                                  {errors.newPassword}
-                                </CustomText>
-                              )}
-                
+
                 <CustomInput
                   label="Confirm Password"
                   placeholder="********"
@@ -108,26 +108,17 @@ const CreatePassword: FC<CreatePasswordScreenProps> = ({ navigation }) => {
                     paddingVertical: verticalScale(15),
                   }}
                 />
-                 {errors.confirmPassword && (
-                                <CustomText fontSize={12} color="red">
-                                  {errors.confirmPassword}
-                                </CustomText>
-                              )}
               </View>
 
               <PrimaryButton
                 title="Create New Password"
-                onPress={() => {
-                  if(validateInputs()){
-                    setModalVisible(true)
-                  }
-                }}
+                onPress={handleNavigation}
               />
               <View style={styles.footerContainer}>
                 <CustomText fontSize={12} color={COLORS.oldGrey}>
                   Remember Password?
                 </CustomText>
-                <TouchableOpacity onPress={handleNavigation}>
+                <TouchableOpacity onPress={() => navigation.replace("login")}>
                   <CustomText fontSize={12} color={COLORS.skyBlue}>
                     Login
                   </CustomText>
@@ -137,7 +128,7 @@ const CreatePassword: FC<CreatePasswordScreenProps> = ({ navigation }) => {
               <NumberVerifyModal
                 isVisible={isModalVisible}
                 closeModal={closeModal}
-                onpress={() => navigation.navigate("login")}
+                onpress={() => navigation.replace("login")}
                 title="Password Updated Successfully!"
                 subTitle="Your password has been updated successfully. Please login to continue."
               />
