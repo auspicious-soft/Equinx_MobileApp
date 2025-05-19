@@ -1,5 +1,6 @@
 const ENDPOINTS = {
   questions: `api/get-questions`,
+  saveAnswers: `api/save-answers`,
   signUp: `api/user-signup`,
   otp: `api/verify-otp`,
   signin: `api/user-signIn`,

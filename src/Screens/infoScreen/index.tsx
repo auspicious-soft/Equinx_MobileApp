@@ -79,12 +79,12 @@ const InfoScreen: FC<InfoScreenProps> = ({ navigation, route }) => {
   };
 
   const handleNext = () => {
-    if (screenData?.nextScreen === "questionScreen") {
+    if (screenData && screenData?.nextScreen === "questionScreen") {
       navigation.replace("questionScreen", {
         questionId: nextQuestion || 0,
         totalQuestions: QueastionResponse.data.questions.length,
       });
-    } else if (screenData?.nextScreen === "planScreen") {
+    } else if (screenData && screenData?.nextScreen === "planScreen") {
       navigation.replace("planScreen");
     } else {
       navigation.navigate("infoScreen", {
@@ -120,8 +120,6 @@ const InfoScreen: FC<InfoScreenProps> = ({ navigation, route }) => {
       );
     }
   };
-
-  console.log(currentIndex);
 
   return (
     <ImageBackground

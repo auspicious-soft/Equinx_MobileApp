@@ -3,6 +3,7 @@ import React, { useEffect, useMemo } from "react";
 import { Appearance, Platform, StatusBar, StatusBarStyle } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
+import NetworkLogger from "./src/Components/NetworkLogger";
 import { setCurrentRoute } from "./src/Redux/slices/initialSlice";
 import { useAppDispatch, useAppSelector } from "./src/Redux/store";
 import Routing from "./src/Routes";
@@ -46,8 +47,6 @@ const App = () => {
     "MemberShip",
   ];
 
-  console.log(currentRoute);
-
   const statusBarConfig = useMemo(() => {
     const isAuthRoute = currentRoute && greenRoutes.includes(currentRoute);
 
@@ -86,6 +85,7 @@ const App = () => {
         />
         <NavigationContainer onStateChange={handleNavigationStateChange}>
           <Routing />
+          {__DEV__ && <NetworkLogger />}
         </NavigationContainer>
       </SafeAreaProvider>
       <Toast />

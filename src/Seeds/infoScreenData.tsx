@@ -1,4 +1,3 @@
-import { Platform } from "react-native";
 import ICONS from "../Assets/Icons";
 import { isIOS } from "../Utilities/Metrics";
 

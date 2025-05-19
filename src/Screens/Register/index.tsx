@@ -1,33 +1,32 @@
+import React, { FC, useState } from "react";
 import {
   Image,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { FC, useState } from "react";
-import LinearGradient from "react-native-linear-gradient";
-import { SafeAreaView } from "react-native-safe-area-context";
-import CustomIcon from "../../Components/CustomIcon";
-import ICONS from "../../Assets/Icons";
-import { horizontalScale, hp, verticalScale } from "../../Utilities/Metrics";
-import IMAGES from "../../Assets/Images";
-import { CustomText } from "../../Components/CustomText";
-import COLORS from "../../Utilities/Colors";
-import CustomInput from "../../Components/CustomInput";
-import PrimaryButton from "../../Components/PrimaryButton";
-import { RegisterScreenProps } from "../../Typings/route";
 import CountryPicker, {
   Country,
   CountryCode,
 } from "react-native-country-picker-modal";
-import { KeyboardAvoidingContainer } from "../../Components/KeyboardAvoidingComponent";
+import DeviceInfo from "react-native-device-info";
+import LinearGradient from "react-native-linear-gradient";
+import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
 import { postData } from "../../APIService/api";
 import ENDPOINTS from "../../APIService/endPoints";
-import DeviceInfo, { getDeviceId } from "react-native-device-info";
-import Toast from "react-native-toast-message";
+import ICONS from "../../Assets/Icons";
+import IMAGES from "../../Assets/Images";
+import CustomIcon from "../../Components/CustomIcon";
+import CustomInput from "../../Components/CustomInput";
+import { CustomText } from "../../Components/CustomText";
+import { KeyboardAvoidingContainer } from "../../Components/KeyboardAvoidingComponent";
+import PrimaryButton from "../../Components/PrimaryButton";
+import { RegisterScreenProps } from "../../Typings/route";
+import COLORS from "../../Utilities/Colors";
+import { horizontalScale, hp, verticalScale } from "../../Utilities/Metrics";
 
 const Register: FC<RegisterScreenProps> = ({ navigation }) => {
   const [name, setName] = useState("");
@@ -51,7 +50,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
       email: email,
       countryCode: countryCode,
       phoneNumber: phone,
-      deviceId: DeviceInfo.getDeviceId(),
+      deviceId: DeviceInfo.getUniqueId(),
       password: password,
       authType: "Email",
     };

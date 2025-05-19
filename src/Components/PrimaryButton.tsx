@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ViewStyle,
   Vibration,
+  ActivityIndicator,
 } from "react-native";
 import COLORS from "../Utilities/Colors";
 import { horizontalScale, verticalScale, wp } from "../Utilities/Metrics";
@@ -22,6 +23,7 @@ type PrimaryButtonProps = {
   bgColor?: string[];
   gradientStyle?: ViewStyle;
   textStyle?: TextStyle;
+  isLoading?: boolean;
 };
 
 const PrimaryButton: FC<PrimaryButtonProps> = ({
@@ -35,6 +37,7 @@ const PrimaryButton: FC<PrimaryButtonProps> = ({
   bgColor = [COLORS.darkGreenGradient.start, COLORS.darkGreenGradient.end],
   gradientStyle,
   textStyle,
+  isLoading = false,
 }) => {
   return (
     <LinearGradient
@@ -59,14 +62,18 @@ const PrimaryButton: FC<PrimaryButtonProps> = ({
           onPress();
         }}
       >
-        <CustomText
-          fontFamily="bold"
-          fontSize={textSize}
-          color={textColor}
-          style={textStyle}
-        >
-          {title}
-        </CustomText>
+        {isLoading ? (
+          <ActivityIndicator color={COLORS.white} />
+        ) : (
+          <CustomText
+            fontFamily="bold"
+            fontSize={textSize}
+            color={textColor}
+            style={textStyle}
+          >
+            {title}
+          </CustomText>
+        )}
       </TouchableOpacity>
     </LinearGradient>
   );

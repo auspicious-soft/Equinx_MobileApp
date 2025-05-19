@@ -20,12 +20,12 @@ const Splash: FC<SplashProps> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const fadeAnim = React.useRef(new Animated.Value(0)).current; // Initial opacity
   const [token, setToken] = useState(null);
+
   const getToken = async () => {
     const token = await getLocalStorageData(STORAGE_KEYS.token);
     if (token) {
       setToken(token);
     }
-    console.log(token);
   };
 
   useEffect(() => {
