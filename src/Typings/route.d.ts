@@ -11,12 +11,12 @@ export type RootStackParams = {
 
 export type OnBoardingStackParams = {
   questionScreen: {
-    questionId: number;
+    questionId: string;
     totalQuestions: number;
   };
   infoScreen: {
     index: number;
-    nextQuestion: number;
+    nextQuestion: string;
   };
   planScreen: undefined;
   notificationTest: undefined;

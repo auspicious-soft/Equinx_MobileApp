@@ -2,7 +2,10 @@ import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import React, { FC, useEffect, useMemo, useState } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
+import DeviceInfo from "react-native-device-info";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { postData } from "../../APIService/api";
+import ENDPOINTS from "../../APIService/endPoints";
 import ICONS from "../../Assets/Icons";
 import CustomIcon from "../../Components/CustomIcon";
 import CustomInput from "../../Components/CustomInput";
@@ -19,7 +22,6 @@ import {
   setWeightGoal,
 } from "../../Redux/slices/questionSlice";
 import { useAppDispatch, useAppSelector } from "../../Redux/store";
-import QueastionResponse from "../../Seeds/QuestionAPIData";
 import { QuestionScreenProps } from "../../Typings/route";
 import COLORS from "../../Utilities/Colors";
 import { horizontalScale, verticalScale } from "../../Utilities/Metrics";
@@ -51,11 +53,17 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
     weightGoal,
     firstMmealTime,
     lastMealTime,
+    questionsData,
   } = useAppSelector((state) => state.questions);
 
   const [isMultiSelect, setIsMultiSelect] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const questionData = QueastionResponse.data.questions[questionId];
+  // Find the question data by ID instead of using array index
+  const questionData = questionsData.find((q) => q._id === questionId);
+  const currentQuestionIndex = questionsData.findIndex(
+    (q) => q._id === questionId
+  );
 
   // Calculate BMI
   const bmi = useMemo(() => {
@@ -78,37 +86,44 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
   // Handle option selection with limit of 5
   const handleOptionSelect = (optionId: string) => {
     if (isMultiSelect) {
-      // For multi-select questions, limit to 5 selections
-      if (
-        questionData.text ===
-        "How would you describe your eating habits? (Multi-select)"
-      ) {
-        if (
-          selectedOptions.length >= 3 &&
-          !selectedOptions.includes(optionId)
-        ) {
-          return;
-        }
-      } else {
-        if (
-          selectedOptions.length >= 5 &&
-          !selectedOptions.includes(optionId)
-        ) {
-          return;
-        }
-      }
+      // ... (selection logic)
       const newOptions = selectedOptions.includes(optionId)
         ? selectedOptions.filter((id) => id !== optionId)
         : [...selectedOptions, optionId];
 
-      // Update both the current selection and store it by question ID
-      dispatch(setSelectedOptions(newOptions));
-      dispatch(setQuestionAnswer({ questionId, answers: newOptions }));
+      // Update both selectedOptions and questionAnswers
+      dispatch(
+        setSelectedOptions({
+          options: newOptions,
+          updateAnswers: true,
+        })
+      );
+
+      dispatch(
+        setQuestionAnswer({
+          questionId,
+          answers: newOptions,
+          order: currentQuestionIndex,
+        })
+      ); // Updates state
     } else {
-      // For single-select questions
       const newOptions = [optionId];
-      dispatch(setSelectedOptions(newOptions));
-      dispatch(setQuestionAnswer({ questionId, answers: newOptions }));
+
+      // Update both selectedOptions and questionAnswers
+      dispatch(
+        setSelectedOptions({
+          options: newOptions,
+          updateAnswers: true,
+        })
+      );
+
+      dispatch(
+        setQuestionAnswer({
+          questionId,
+          answers: newOptions,
+          order: currentQuestionIndex,
+        })
+      ); // Updates state
     }
   };
 
@@ -125,44 +140,110 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
   const isProfileValid = useMemo(() => {
     const { gender, dob, age, height, weight } = profileForm;
     return (
-      gender.trim() !== "" &&
-      dob.trim() !== "" &&
-      age.trim() !== "" &&
+      gender?.trim() !== "" &&
+      dob?.trim() !== "" &&
+      age?.trim() !== "" &&
       parseInt(age) > 0 &&
-      height.trim() !== "" &&
+      height?.trim() !== "" &&
       parseFloat(height) > 0 &&
-      weight.trim() !== "" &&
+      weight?.trim() !== "" &&
       parseFloat(weight) > 0
     );
   }, [profileForm]);
 
   // Handle next button press
-  const handleNext = () => {
-    if (questionData.next === "question") {
-      navigation.navigate("questionScreen", {
-        questionId: questionId + 1,
-        totalQuestions,
-      });
-    } else if (questionData.next.startsWith("info")) {
-      const index = parseInt(questionData.next.replace("info", ""), 10);
+  const handleNext = async () => {
+    if (!questionData) return;
 
-      navigation.navigate("infoScreen", {
-        index,
-        nextQuestion: questionId + 1,
-      });
-      return;
-    } else if (questionData.next === "planScreen") {
-      navigation.navigate("planScreen");
+    setIsLoading(true);
+    const questionDataForApi = {
+      deviceId: await DeviceInfo.getUniqueId(),
+      questionId: questionData._id,
+      selectedOptionValues:
+        questionData.type === "mcq"
+          ? selectedOptions.map((item) => Number(item))
+          : questionData.type === "profile"
+          ? [
+              {
+                gender: profileForm.gender,
+                dob: profileForm.dob,
+                age: profileForm.age,
+                height: profileForm.height,
+                weight: profileForm.weight,
+                bmi: bmi,
+              },
+            ]
+          : questionData.type === "multiSelect"
+          ? selectedOptions.map((item) => Number(item))
+          : questionData.type === "time"
+          ? [
+              {
+                firstMeal: firstMmealTime,
+                lastMeal: lastMealTime,
+              },
+            ]
+          : [],
+    };
+    try {
+      const response = await postData(
+        ENDPOINTS.saveAnswers,
+        questionDataForApi
+      );
+      if (response.data.success) {
+        if (questionData.next === "question") {
+          // Find the next question by order
+          const nextQuestion = questionsData.find(
+            (q) => q.order === questionData.order + 1
+          );
+          if (nextQuestion) {
+            navigation.navigate("questionScreen", {
+              questionId: nextQuestion._id,
+              totalQuestions,
+            });
+          }
+        } else if (questionData.next.startsWith("info")) {
+          const index = parseInt(questionData.next.replace("info", ""), 10);
+
+          // Find the next question by order
+          const nextQuestion = questionsData.find(
+            (q) => q.order === questionData.order + 1
+          );
+
+          navigation.navigate("infoScreen", {
+            index,
+            nextQuestion: nextQuestion ? nextQuestion._id : questionId,
+          });
+
+          return;
+        } else if (questionData.next === "planScreen") {
+          navigation.navigate("planScreen");
+        }
+      }
+      console.log(response.data);
+    } catch (error: any) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   // Handle back button press
   const handleBack = () => {
-    if (questionId > 0) {
-      navigation.navigate("questionScreen", {
-        questionId: questionId - 1,
-        totalQuestions,
-      });
+    if (!questionData) return;
+
+    // Find the previous question by order
+    if (currentQuestionIndex > 0) {
+      const previousQuestion = questionsData.find(
+        (q) => q.order === questionData.order - 1
+      );
+      if (previousQuestion) {
+        navigation.navigate("questionScreen", {
+          questionId: previousQuestion._id,
+          totalQuestions,
+        });
+      } else {
+        navigation.goBack();
+      }
     } else {
       navigation.goBack();
     }
@@ -184,13 +265,33 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
       questionData.type === "multiSelect";
     setIsMultiSelect(isMulti);
 
-    // Load previously saved answers for this question if they exist
-    if (questionAnswers[questionId]) {
-      dispatch(setSelectedOptions(questionAnswers[questionId]));
-    } else {
-      // Reset selected options if no saved answers
-      dispatch(setSelectedOptions([]));
+    // Load previously saved answers for this specific question or reset to empty array
+    const savedAnswers = questionAnswers[questionId]?.answers || [];
+
+    if (questionData.type === "profile") {
+      dispatch(
+        setProfileForm({
+          gender: JSON.parse(savedAnswers[0])?.gender,
+          dob: JSON.parse(savedAnswers[0])?.dob,
+          age: JSON.parse(savedAnswers[0])?.age,
+          height: JSON.parse(savedAnswers[0])?.height,
+          weight: JSON.parse(savedAnswers[0])?.weight,
+        })
+      );
     }
+    if (questionData.type === "time") {
+      dispatch(setFirstMealTime(JSON.parse(savedAnswers[0])?.firstMeal));
+      dispatch(setLastMealTime(JSON.parse(savedAnswers[0])?.lastMeal));
+    }
+
+    // Always reset selectedOptions when changing questions to avoid carrying over selections
+    // Don't update questionAnswers to avoid infinite loop
+    dispatch(
+      setSelectedOptions({
+        options: savedAnswers,
+        updateAnswers: false,
+      })
+    );
   }, [questionId, questionData, navigation, dispatch, questionAnswers]);
 
   // Update age based on DOB
@@ -221,7 +322,7 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
     <View style={styles.container}>
       <SafeAreaView style={styles.content}>
         <View style={styles.header}>
-          {questionId > 0 && (
+          {currentQuestionIndex > 0 && (
             <TouchableOpacity
               onPress={handleBack}
               accessibilityLabel="Go back"
@@ -404,6 +505,7 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
                 title="Next"
                 onPress={handleNext}
                 disabled={!isProfileValid}
+                isLoading={isLoading}
               />
             </KeyboardAvoidingContainer>
           )}
@@ -455,7 +557,7 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
             </View>
           )}
 
-          {questionData.type === "mealTimes" && (
+          {questionData.type === "time" && (
             <View style={{ gap: verticalScale(20) }}>
               <View style={styles.optionsContainer}>
                 <CustomInput

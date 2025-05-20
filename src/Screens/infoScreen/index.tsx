@@ -81,7 +81,7 @@ const InfoScreen: FC<InfoScreenProps> = ({ navigation, route }) => {
   const handleNext = () => {
     if (screenData && screenData?.nextScreen === "questionScreen") {
       navigation.replace("questionScreen", {
-        questionId: nextQuestion || 0,
+        questionId: nextQuestion || "",
         totalQuestions: QueastionResponse.data.questions.length,
       });
     } else if (screenData && screenData?.nextScreen === "planScreen") {

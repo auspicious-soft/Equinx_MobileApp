@@ -9,15 +9,20 @@ interface ProfileForm {
   weight: string;
 }
 
-// Define a type for storing answers by question ID
+// Define a type for storing answers and order by question ID
+interface QuestionAnswerEntry {
+  answers: string[];
+  order: number; // Store the question order
+}
+
 interface QuestionAnswers {
-  [questionId: number]: string[];
+  [questionId: string]: QuestionAnswerEntry;
 }
 
 interface QuestionState {
   selectedOptions: string[];
   questionAnswers: QuestionAnswers;
-  currentQuestionId: number | null;
+  currentQuestionId: string | null;
   profileForm: ProfileForm;
   weightGoal: string;
   firstMmealTime: string;
@@ -46,24 +51,47 @@ const questionSlice = createSlice({
   name: "question",
   initialState,
   reducers: {
-    setCurrentQuestionId(state, action: PayloadAction<number>) {
+    setCurrentQuestionId(state, action: PayloadAction<string>) {
       state.currentQuestionId = action.payload;
     },
-    setSelectedOptions(state, action: PayloadAction<string[]>) {
-      state.selectedOptions = action.payload;
+    setSelectedOptions(
+      state,
+      action: PayloadAction<{
+        options: string[];
+        updateAnswers?: boolean;
+      }>
+    ) {
+      state.selectedOptions = action.payload.options;
 
-      // If we have a current question ID, also store the answer for that specific question
-      if (state.currentQuestionId !== null) {
-        state.questionAnswers[state.currentQuestionId] = action.payload;
+      // Only update questionAnswers if explicitly requested
+      if (action.payload.updateAnswers && state.currentQuestionId !== null) {
+        state.questionAnswers[state.currentQuestionId] = {
+          answers: action.payload.options,
+          order: state.questionsData.findIndex(
+            (q) => q._id === state.currentQuestionId
+          ),
+        };
       }
     },
     // Set answers for a specific question ID
     setQuestionAnswer(
       state,
-      action: PayloadAction<{ questionId: number; answers: string[] }>
+      action: PayloadAction<{
+        questionId: string;
+        answers: string[];
+        order?: number; // Optional order parameter
+      }>
     ) {
-      const { questionId, answers } = action.payload;
-      state.questionAnswers[questionId] = answers;
+      const { questionId, answers, order } = action.payload;
+      const questionOrder =
+        order !== undefined
+          ? order
+          : state.questionsData.findIndex((q) => q._id === questionId);
+
+      state.questionAnswers[questionId] = {
+        answers,
+        order: questionOrder,
+      };
 
       // If this is the current question, also update selectedOptions
       if (state.currentQuestionId === questionId) {
