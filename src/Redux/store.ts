@@ -4,6 +4,9 @@ import initialReducer from "./slices/initialSlice";
 import modalReducer from "./slices/modalSlice";
 import questionReducer from "./slices/questionSlice";
 import homeDataReducer from "./slices/homeDataSlice";
+import PlanPricesReducer from "./slices/planPrices";
+import MyPlanReducer from "./slices/MyPlan";
+import chatDataReducer from "./slices/ChatSlice";
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +14,9 @@ export const store = configureStore({
     modals: modalReducer,
     questions: questionReducer,
     homeData: homeDataReducer,
+    planPrices: PlanPricesReducer,
+    myPlan: MyPlanReducer,
+    chatData: chatDataReducer,
   },
 });
 

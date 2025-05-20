@@ -1,4 +1,5 @@
 import {
+  Alert,
   Animated,
   Easing,
   Image,
@@ -22,6 +23,8 @@ import { CustomText } from "../../Components/CustomText";
 import CustomIcon from "../../Components/CustomIcon";
 import ICONS from "../../Assets/Icons";
 import { SettingsScreenProps } from "../../Typings/route";
+import { deleteLocalStorageData } from "../../Utilities/Storage";
+import STORAGE_KEYS from "../../Utilities/Constants";
 
 const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
   const [isToggled, setIsToggled] = useState(false);
@@ -45,6 +48,23 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
     outputRange: [2, 22], // This depends on your knob/container width
   });
 
+  const handleLogOut = () => {
+    Alert.alert("Logout", "Are you sure you want to log out?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Confirm",
+        onPress: () => {
+          deleteLocalStorageData(STORAGE_KEYS.token);
+          navigation.replace("authStack", {
+            screen: "login",
+          });
+        },
+      },
+    ]);
+  };
   return (
     <ScrollView
       showsHorizontalScrollIndicator={false}
@@ -292,7 +312,10 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
           <CustomText fontFamily="bold" fontSize={12}>
             Sign Out
           </CustomText>
-          <TouchableOpacity style={styles.profileContainer}>
+          <TouchableOpacity
+            style={styles.profileContainer}
+            onPress={handleLogOut}
+          >
             <View style={styles.iconBg}>
               <CustomIcon Icon={ICONS.supportIcon} height={16} width={16} />
             </View>

@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { horizontalScale, verticalScale } from "../../Utilities/Metrics";
 import COLORS from "../../Utilities/Colors";
@@ -16,81 +16,116 @@ import { CustomText } from "../../Components/CustomText";
 import CustomIcon from "../../Components/CustomIcon";
 import ICONS from "../../Assets/Icons";
 import { KeyboardAvoidingContainer } from "../../Components/KeyboardAvoidingComponent";
-
-type chatDataType = {
-  id: string;
-  sender: string;
-  icon: boolean;
-  message: string;
-};
-
-const chatData: chatDataType[] = [
-  {
-    id: "1",
-    sender: "bot",
-    icon: true,
-    message: `- How many meals do you usually eat per day? (2, 3, or more?)\n- Do you exercise regularly? (Yes/No)\n- What's your main goal? (Weight loss, muscle gain, better health?)`,
-  },
-  {
-    id: "2",
-    sender: "user",
-    icon: false,
-
-    message:
-      "I eat 3 meals, exercise 3 times a week, and my goal is weight loss.",
-  },
-  {
-    id: "3",
-    sender: "bot",
-    icon: true,
-
-    message: `Perfect! Here's a recommended plan for you:\n✨ Fasting Schedule: 16:8 (Fast from 8 PM – 12 PM)\n✨ Meal Timing: Eat at 12 PM, 4 PM, and 7:30 PM\n✨ Suggested Foods: High-protein meals with healthy fats & fiber\n✨ Hydration Goal: 2.5 liters of water per day`,
-  },
-  {
-    id: "4",
-    sender: "user",
-    icon: false,
-    message: "Yes, please!",
-  },
-  {
-    id: "5",
-    sender: "bot",
-    icon: true,
-
-    message: `Perfect! Here's a recommended plan for you:\n✨ Fasting Schedule: 16:8 (Fast from 8 PM – 12 PM)\n✨ Meal Timing: Eat at 12 PM, 4 PM, and 7:30 PM\n✨ Suggested Foods: High-protein meals with healthy fats & fiber\n✨ Hydration Goal: 2.5 liters of water per day`,
-  },
-  {
-    id: "6",
-    sender: "user",
-    icon: false,
-    message: "Yes, please!",
-  },
-  {
-    id: "7",
-    sender: "bot",
-    icon: true,
-
-    message: `Perfect! Here's a recommended plan for you:\n✨ Fasting Schedule: 16:8 (Fast from 8 PM – 12 PM)\n✨ Meal Timing: Eat at 12 PM, 4 PM, and 7:30 PM\n✨ Suggested Foods: High-protein meals with healthy fats & fiber\n✨ Hydration Goal: 2.5 liters of water per day`,
-  },
-  {
-    id: "8",
-    sender: "user",
-    icon: false,
-    message: "Yes, please!",
-  },
-];
+import Toast from "react-native-toast-message";
+import { fetchData, postData } from "../../APIService/api";
+import ENDPOINTS from "../../APIService/endPoints";
+import { useAppDispatch, useAppSelector } from "../../Redux/store";
+import { ChatResponse } from "../../Typings/apiResponse";
+import { setChatData } from "../../Redux/slices/ChatSlice";
 
 const Chat = () => {
   const [sendMessage, setSendMessage] = useState("");
+  const [isSending, setIsSending] = useState(false); // Track sending state
+  const dispatch = useAppDispatch();
+  const flatListRef = useRef<FlatList>(null); // Reference to FlatList for scrolling
+  const { chatData } = useAppSelector((state) => state.chatData);
 
-  const renderchatData = ({
-    item,
-    index,
-  }: {
-    item: chatDataType;
-    index: number;
-  }) => {
-    const isUser = item.sender === "user";
+  // Send message to API and update chat
+  const sendMessageAPi = async () => {
+    if (!sendMessage.trim()) {
+      Toast.show({
+        type: "error",
+        text1: "Please enter a message",
+      });
+      return;
+    }
+
+    setIsSending(true);
+    const userMessage: ChatResponse = {
+      _id: `temp_${Date.now()}`, // Temporary ID for optimistic update
+      role: "user",
+      content: sendMessage,
+      created_at: new Date().toISOString(),
+    };
+
+    // Optimistically add user message to chat
+    dispatch(setChatData([...chatData, userMessage]));
+    setSendMessage("");
+    Keyboard.dismiss();
+
+    try {
+      const data = { content: sendMessage };
+      const response = await postData<any>(
+        ENDPOINTS.chat,
+        JSON.stringify(data)
+      );
+
+      // Parse streaming response
+      const message = response.data
+        .split("\n")
+        .filter(
+          (line: string) =>
+            line.startsWith("data: ") && !line.includes("[DONE]")
+        )
+        .map((line: string) => {
+          try {
+            return JSON.parse(line.replace("data: ", "")).content;
+          } catch {
+            return "";
+          }
+        })
+        .join("");
+
+      if (response.data.success) {
+        const botMessage: ChatResponse = {
+          _id: `bot_${Date.now()}`,
+          role: "assistant",
+          content: message,
+          created_at: new Date().toISOString(),
+        };
+
+        // Update chat with bot response
+        dispatch(setChatData([userMessage, botMessage, ...chatData]));
+        Toast.show({
+          type: "success",
+          text1: "Message sent successfully",
+        });
+
+        // Scroll to the latest message
+        setTimeout(() => {
+          flatListRef.current?.scrollToIndex({ index: 0, animated: true });
+        }, 100);
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+      // Optionally remove the optimistic user message on error
+      dispatch(
+        setChatData(chatData.filter((msg) => msg._id !== userMessage._id))
+      );
+    } finally {
+      setIsSending(false);
+    }
+  };
+
+  // Fetch initial chat data
+  const fetchChat = async () => {
+    try {
+      const response = await fetchData<ChatResponse>(ENDPOINTS.chatFetch);
+      dispatch(setChatData(response.data.data));
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    }
+  };
+
+  // Render chat message
+  const renderChatData = useCallback(({ item }: { item: ChatResponse }) => {
+    const isUser = item.role === "user";
     return (
       <View
         style={[
@@ -98,7 +133,7 @@ const Chat = () => {
           { justifyContent: isUser ? "flex-end" : "flex-start" },
         ]}
       >
-        {item.icon && (
+        {item.role === "assistant" && (
           <CustomIcon Icon={ICONS.chatBotIcon} height={27} width={27} />
         )}
         <View
@@ -110,42 +145,52 @@ const Chat = () => {
           <CustomText
             fontSize={10}
             fontFamily="regular"
-            color={isUser ? COLORS.white : COLORS.darkBLue}
+            color={isUser ? COLORS.white : COLORS.darkBlue}
             style={{ textAlign: isUser ? "right" : "left" }}
           >
-            {item.message}
+            {item.content}
           </CustomText>
         </View>
       </View>
     );
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchChat();
+  }, []);
 
   return (
     <SafeAreaView style={styles.safeAreaContainer} edges={["top"]}>
       <CustomText
         fontSize={22}
         fontFamily="bold"
-        color={COLORS.darkBLue}
-        style={{
-          marginBottom: verticalScale(10),
-        }}
+        color={COLORS.darkBlue}
+        style={{ marginBottom: verticalScale(10) }}
       >
         AI Life Coach Assistant
       </CustomText>
       <KeyboardAvoidingContainer style={{ flex: 1, gap: verticalScale(10) }}>
         <FlatList
+          ref={flatListRef}
           data={chatData}
-          keyExtractor={(item) => item.id}
-          renderItem={renderchatData}
-          inverted
+          keyExtractor={(item) => item._id}
+          renderItem={renderChatData}
+          inverted // Display latest messages at the bottom
           contentContainerStyle={{
             gap: verticalScale(20),
             flexDirection: "column-reverse",
+            paddingBottom: verticalScale(20),
           }}
-          showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
+          onContentSizeChange={() => {
+            // Auto-scroll to bottom when content changes
+            // flatListRef.current?.scrollToIndex({ index: 0, animated: true });
+          }}
+          onScrollToIndexFailed={() => {
+            // Fallback for scroll failures
+            // flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
+          }}
         />
-
         <View style={styles.inputWrapper}>
           <TextInput
             placeholder="Type your text here"
@@ -153,9 +198,19 @@ const Chat = () => {
             onChangeText={setSendMessage}
             style={styles.inputStyle}
             placeholderTextColor={COLORS.lightGrey}
+            editable={!isSending} // Disable input while sending
           />
-          <TouchableOpacity>
-            <CustomIcon Icon={ICONS.sendIcon} height={16} width={16} />
+          <TouchableOpacity
+            onPress={sendMessageAPi}
+            disabled={isSending}
+            style={styles.sendButton}
+          >
+            <CustomIcon
+              Icon={ICONS.sendIcon}
+              height={16}
+              width={16}
+              style={{ opacity: isSending ? 0.5 : 1 }}
+            />
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingContainer>
@@ -174,11 +229,10 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
   },
   messageContainer: {
-    backgroundColor: COLORS.green,
     paddingVertical: verticalScale(10),
     paddingHorizontal: horizontalScale(10),
-    // borderRadius: 10,
     maxWidth: "75%",
+    borderRadius: 8,
   },
   userContainer: {
     alignSelf: "flex-end",
@@ -202,14 +256,20 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-between",
     paddingHorizontal: horizontalScale(10),
+    backgroundColor: COLORS.white,
   },
   inputStyle: {
     paddingVertical: verticalScale(12),
     paddingHorizontal: horizontalScale(12),
     width: "90%",
+    fontSize: 14,
+  },
+  sendButton: {
+    padding: horizontalScale(10),
   },
   iconMessageContainer: {
     flexDirection: "row",
     gap: horizontalScale(5),
+    alignItems: "flex-end",
   },
 });

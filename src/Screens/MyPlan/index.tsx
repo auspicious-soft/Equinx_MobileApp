@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   ImageBackground,
@@ -8,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { MyPlanScreenProps } from "../../Typings/route";
 import COLORS from "../../Utilities/Colors";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -21,33 +22,81 @@ import {
 import IMAGES from "../../Assets/Images";
 import { CustomText } from "../../Components/CustomText";
 import CircularProgress from "../../Components/CircularProgress";
-import {
-  DateData,
-  DateDataType,
-  foodData,
-  FoodDataType,
-  TipsData,
-  TipsDataType,
-} from "../../Seeds/MyPlanScreenData";
 import MealModal from "../../Components/Modals/MealModal";
 import CustomIcon from "../../Components/CustomIcon";
 import ICONS from "../../Assets/Icons";
+import Toast from "react-native-toast-message";
+import { fetchData } from "../../APIService/api";
+import ENDPOINTS from "../../APIService/endPoints";
+import {
+  EssentialTip,
+  Meal,
+  MyPlanApiResponse,
+  MyPlanData,
+  PlanId,
+} from "../../Typings/apiResponse";
+import { useAppDispatch, useAppSelector } from "../../Redux/store";
+import { setMyPlan } from "../../Redux/slices/MyPlan";
+
+const mealData = [
+  {
+    name: "Breakfast",
+    image: IMAGES.breakFastImg,
+    title: "Breakfast for Intermittent Fasting",
+  },
+  {
+    name: "Lunch",
+    image: IMAGES.snackImg,
+    title: "Lunch for Intermittent Fasting",
+  },
+  {
+    name: "Dinner",
+    image: IMAGES.dinnerImg,
+    title: "Dinner for Intermittent Fasting",
+  },
+];
 
 const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
   const [activeDay, setActiveDay] = useState<string | null>("1");
+  const [activeData, setActiveData] = useState<MyPlanData | null>(null);
   const [isVisibleModal, setIsVisibleModal] = useState(false);
-  const [isPlan, setIsPlan] = useState<"plan" | "notPlan">("plan");
-
+  const dispatch = useAppDispatch();
+  const { myPlan } = useAppSelector((state) => state.myPlan);
+  const [selectedMealData, setSelectedMealData] = useState<Meal | null>(null);
   const closeModal = () => {
     setIsVisibleModal(false);
   };
+  const [isLoading, setIsLoading] = useState(false);
 
-  const renderDates = ({ item }: { item: DateDataType }) => {
-    const isActive = activeDay === item.day;
+  const getMyPlan = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetchData<MyPlanApiResponse>(ENDPOINTS.getMyPlan);
+      console.log(response);
+      if (response.data.success) {
+        dispatch(setMyPlan(response.data.data));
+        setActiveDay(response.data.data.plan[2].planId._id);
+        setActiveData(response.data.data.plan[2]);
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const renderDates = ({ item }: { item: MyPlanData }) => {
+    const isActive = activeDay === item.planId._id;
 
     return (
       <TouchableOpacity
-        onPress={() => setActiveDay(item.day)}
+        onPress={() => {
+          setActiveDay(item.planId._id);
+          setActiveData(item);
+        }}
         style={[
           styles.dayBtn,
           {
@@ -59,18 +108,21 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
           fontSize={14}
           color={isActive ? COLORS.white : COLORS.darkBLue}
         >
-          {` Day ${item.day} `}
+          {` Day ${item.planId.day} `}
         </CustomText>
       </TouchableOpacity>
     );
   };
 
-  const renderFoodData = ({ item }: { item: FoodDataType }) => {
+  const renderFoodData = ({ item, index }: { item: any; index: number }) => {
+    const calorie = activeData?.planId?.meals[index]?.calories;
+
     return (
       <TouchableOpacity
         style={{ gap: verticalScale(5) }}
         activeOpacity={0.8}
         onPress={() => {
+          setSelectedMealData(activeData?.planId?.meals[index]!);
           setIsVisibleModal(true);
         }}
       >
@@ -82,7 +134,7 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
           {item.name}
         </CustomText>
         <View style={styles.foodWrapper}>
-          <Image source={item.IMG} style={styles.foodIMG} />
+          <Image source={item.image} style={styles.foodIMG} />
           <View style={{ gap: verticalScale(10), flex: 1 }}>
             <CustomText fontSize={14} color={COLORS.darkBLue}>
               {item.title}
@@ -95,23 +147,40 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
                 paddingEnd: horizontalScale(10),
               }}
             >
-              <View style={styles.KcalContainer}>
+              {calorie && (
+                <View style={styles.KcalContainer}>
+                  <CustomText
+                    fontSize={12}
+                    color={COLORS.green}
+                    fontFamily="medium"
+                  >
+                    {calorie}
+                  </CustomText>
+                </View>
+              )}
+              {/* {item.firstMealStatus.status === true ? (
                 <CustomText
-                  fontSize={12}
-                  color={COLORS.green}
-                  fontFamily="medium"
-                >{`${item.kcal} Kcal`}</CustomText>
-              </View>
-              <CustomText
-                fontSize={10}
-                color={
-                  item.completed === "completed"
-                    ? COLORS.green
-                    : COLORS.darkBLue
-                }
-              >
-                {item.completed}
-              </CustomText>
+                  fontSize={10}
+                  color={
+                    item.firstMealStatus.status === true
+                      ? COLORS.green
+                      : COLORS.darkBLue
+                  }
+                >
+                  Completed
+                </CustomText>
+              ) : (
+                <CustomText
+                  fontSize={10}
+                  color={
+                    item.firstMealStatus.status === false
+                      ? COLORS.darkBLue
+                      : COLORS.green
+                  }
+                >
+                  pending
+                </CustomText>
+              )} */}
             </View>
           </View>
         </View>
@@ -119,14 +188,21 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
     );
   };
 
-  const renderTipsData = ({ item }: { item: TipsDataType }) => {
+  const renderTipsData = ({
+    item,
+    index,
+  }: {
+    item: EssentialTip;
+    index: any;
+  }) => {
+    const IMG = [IMAGES.benefitImg, IMAGES.fastingImg, IMAGES.exploringImg];
     return (
       <View style={styles.tipsWrapper}>
-        <Image source={item.IMG} style={styles.foodIMG} />
+        <Image source={IMG[index]} style={styles.tipIMG} />
         <View
           style={{
             flex: 1,
-            paddingVertical: verticalScale(3),
+            paddingVertical: verticalScale(5),
           }}
         >
           <CustomText
@@ -134,7 +210,11 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
             color={COLORS.lightGrey}
             style={{ marginBottom: verticalScale(8) }}
           >
-            {item.date}
+            {new Date(item.publishDate).toLocaleDateString("en-GB", {
+              day: "numeric",
+              month: "long",
+              timeZone: "UTC",
+            })}
           </CustomText>
 
           <CustomText
@@ -146,12 +226,24 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
             {item.title}
           </CustomText>
           <CustomText fontSize={12} color={COLORS.lightGrey}>
-            {item.shortDescription}
+            {item.description}
           </CustomText>
         </View>
       </View>
     );
   };
+
+  useEffect(() => {
+    getMyPlan();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator color={COLORS.green} size={30} />
+      </View>
+    );
+  }
 
   return (
     <ScrollView
@@ -172,23 +264,7 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
           source={IMAGES.myPlanImage}
           style={styles.mainImage}
           resizeMode="cover"
-        >
-          {" "}
-          <TouchableOpacity
-            onPress={() => {
-              setIsPlan("plan");
-            }}
-          >
-            <CustomText>pruchased</CustomText>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              setIsPlan("notPlan");
-            }}
-          >
-            <CustomText>Not pruchased</CustomText>
-          </TouchableOpacity>
-        </ImageBackground>
+        ></ImageBackground>
         <View
           style={{
             flex: 1,
@@ -198,7 +274,7 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
             backgroundColor: "fff4e5",
           }}
         >
-          {isPlan === "plan" ? (
+          {myPlan?.hasActivePlan ? (
             <View
               style={{
                 gap: verticalScale(15),
@@ -254,20 +330,19 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
               </View>
               <FlatList
                 renderItem={renderDates}
-                data={DateData}
-                keyExtractor={({ id }) => id.toString()}
+                data={myPlan.plan}
+                keyExtractor={({ _id }) => _id.toString()}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{
                   gap: horizontalScale(5),
                 }}
-                scrollEnabled={false}
               />
               <FlatList
+                data={mealData}
                 renderItem={renderFoodData}
-                data={foodData}
-                keyExtractor={({ id }) => id.toString()}
+                keyExtractor={(item, index) => item.name + index.toString()}
                 showsHorizontalScrollIndicator={false}
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{
@@ -336,8 +411,8 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
             </CustomText>
             <FlatList
               renderItem={renderTipsData}
-              data={TipsData}
-              keyExtractor={({ id }) => id.toString()}
+              data={myPlan?.essentialTips}
+              keyExtractor={({ _id }) => _id.toString()}
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{
@@ -346,18 +421,14 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
             />
           </View>
         </View>
-        <MealModal
-          closeModal={closeModal}
-          isVisible={isVisibleModal}
-          heading="Meal Plan"
-          mealType="Breakfast"
-          timing="12:00"
-          kcal="500-600 kcal"
-          title1="1 cup cooked gluten-free oats (50 g, low-fat milk)"
-          title2="1 tbsp peanut butter"
-          title3="1 small banana"
-          onpress={() => {}}
-        />
+        {selectedMealData && (
+          <MealModal
+            closeModal={closeModal}
+            isVisible={isVisibleModal}
+            onpress={() => {}}
+            data={selectedMealData}
+          />
+        )}
       </SafeAreaView>
     </ScrollView>
   );
@@ -402,7 +473,7 @@ const styles = StyleSheet.create({
   foodIMG: {
     height: verticalScale(80),
     width: verticalScale(80),
-    resizeMode: "cover",
+    resizeMode: "contain",
     borderRadius: 10,
   },
   foodWrapper: {
@@ -430,5 +501,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: COLORS.greyishWhite,
     alignItems: "center",
+  },
+  tipIMG: {
+    height: verticalScale(80),
+    width: verticalScale(80),
+    resizeMode: "cover",
+    borderRadius: 10,
   },
 });

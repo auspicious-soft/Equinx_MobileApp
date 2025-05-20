@@ -11,6 +11,10 @@ const ENDPOINTS = {
   waterTracking: `api/save-water-record`,
   waterIntake: `api/water-tracker`,
   home: `api/user-home`,
+  getMyPlan: `api/get-users-plan`,
+  getPricePlan: `api/get-price-plan`,
+  chat: `api/chat-with-gpt`,
+  chatFetch: `api/chat-with-gpt?page=1&limit=20`,
 };
 
 export default ENDPOINTS;

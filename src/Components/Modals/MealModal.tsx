@@ -4,31 +4,20 @@ import { horizontalScale, verticalScale } from "../../Utilities/Metrics";
 import { CustomText } from "../CustomText";
 import COLORS from "../../Utilities/Colors";
 import PrimaryButton from "../PrimaryButton";
+import { Meal } from "../../Typings/apiResponse";
 
 type MealModalProps = {
   isVisible: boolean;
   closeModal: () => void;
-  heading: string;
+  data: Meal;
   onpress: () => void;
-  mealType: string;
-  timing: string;
-  kcal: string;
-  title1: string;
-  title2: string;
-  title3: string;
 };
 
 const MealModal: FC<MealModalProps> = ({
   isVisible,
   closeModal,
-  heading,
+  data,
   onpress,
-  mealType,
-  timing,
-  kcal,
-  title1,
-  title2,
-  title3,
 }) => {
   return (
     <Modal
@@ -53,70 +42,61 @@ const MealModal: FC<MealModalProps> = ({
               fontSize={14}
               style={{ textAlign: "center" }}
             >
-              {heading}
+              Meal Plan
             </CustomText>
           </View>
           <View style={styles.whiteBox}>
-            <View
-              style={{
-                gap: verticalScale(10),
-              }}
-            >
-              <View style={styles.contentHeader}>
-                <CustomText
-                  fontSize={14}
-                  color={COLORS.lightGrey}
-                  fontFamily="semiBold"
-                >
-                  {mealType}
-                </CustomText>
-                <CustomText
-                  fontSize={14}
-                  color={COLORS.green}
-                  fontFamily="semiBold"
-                >
-                  {timing}
-                </CustomText>
-              </View>
-              <View style={styles.kcalWrapper}>
-                <CustomText
-                  fontSize={12}
-                  fontFamily="medium"
-                  color={COLORS.green}
-                >
-                  {kcal}
-                </CustomText>
-              </View>
+            {data && (
               <View
                 style={{
-                  gap: verticalScale(8),
-
-                  paddingHorizontal: horizontalScale(8),
+                  gap: verticalScale(10),
                 }}
               >
-                <CustomText
-                  fontSize={14}
-                  color={COLORS.darkBLue}
-                  fontFamily="medium"
+                <View style={styles.contentHeader}>
+                  <CustomText
+                    fontSize={14}
+                    color={COLORS.lightGrey}
+                    fontFamily="semiBold"
+                  >
+                    Breakfast
+                  </CustomText>
+                  <CustomText
+                    fontSize={14}
+                    color={COLORS.green}
+                    fontFamily="semiBold"
+                  >
+                    {data.meal_time.match(/\((\d{1,2}:\d{2})/)?.[1]}
+                  </CustomText>
+                </View>
+                <View style={styles.kcalWrapper}>
+                  <CustomText
+                    fontSize={12}
+                    fontFamily="medium"
+                    color={COLORS.green}
+                  >
+                    {data.calories}
+                  </CustomText>
+                </View>
+                <View
+                  style={{
+                    gap: verticalScale(8),
+
+                    paddingHorizontal: horizontalScale(8),
+                  }}
                 >
-                  {` •  ${title1}`}
-                </CustomText>
-                <CustomText
-                  fontSize={14}
-                  color={COLORS.darkBLue}
-                  fontFamily="medium"
-                >
-                  {` •  ${title2}`}
-                </CustomText>
-                <CustomText
-                  fontSize={14}
-                  color={COLORS.darkBLue}
-                  fontFamily="medium"
-                >
-                  {` •  ${title3}`}
-                </CustomText>
+                  {data.items.map((item, index) => (
+                    <CustomText
+                      fontSize={14}
+                      color={COLORS.darkBLue}
+                      fontFamily="medium"
+                      key={index}
+                    >
+                      {`•  ${item}`}
+                    </CustomText>
+                  ))}
+                </View>
               </View>
-            </View>
+            )}
             <PrimaryButton title="Okay" onPress={closeModal} />
           </View>
         </View>

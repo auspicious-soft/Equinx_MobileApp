@@ -4,8 +4,6 @@ import {
   ImageBackground,
   ScrollView,
   StyleSheet,
-  Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -171,6 +169,7 @@ const Home: FC<HomeScreenProps> = () => {
         setSelectedContainer(response.data.data.waterIntake.containerType);
         setSelectedContainerValue(response.data.data.waterIntake.containerSize);
         setSelectedDailyGoal(response.data.data.waterIntake.goal);
+        setIsToggled(response.data.data.waterIntake.waterReminder);
       }
     } catch (error: any) {
       Toast.show({

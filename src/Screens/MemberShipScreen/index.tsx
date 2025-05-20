@@ -1,68 +1,123 @@
+import React, { FC, useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Image,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { FC, useState } from "react";
-import { MemberShipScreenProps } from "../../Typings/route";
 import LinearGradient from "react-native-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
-import CustomIcon from "../../Components/CustomIcon";
+import Toast from "react-native-toast-message";
+import { fetchData } from "../../APIService/api";
+import ENDPOINTS from "../../APIService/endPoints";
 import ICONS from "../../Assets/Icons";
+import IMAGES from "../../Assets/Images";
+import CustomIcon from "../../Components/CustomIcon";
+import { CustomText } from "../../Components/CustomText";
+import PrimaryButton from "../../Components/PrimaryButton";
+import { setPricePlan } from "../../Redux/slices/planPrices";
+import { useAppDispatch, useAppSelector } from "../../Redux/store";
+import { PricePlan } from "../../Typings/apiResponse";
+import { MemberShipScreenProps } from "../../Typings/route";
+import COLORS from "../../Utilities/Colors";
 import {
   horizontalScale,
   hp,
   verticalScale,
   wp,
 } from "../../Utilities/Metrics";
-import IMAGES from "../../Assets/Images";
-import { CustomText } from "../../Components/CustomText";
-import COLORS from "../../Utilities/Colors";
-import PrimaryButton from "../../Components/PrimaryButton";
 
 const planData = [
   {
     id: "basic",
     title: "Basic",
-    durationMonths: 3,
-    monthlyPrice: 11.66,
+    months: 3,
+    price: 11.66,
     annualPriceEquivalent: 34.99,
     isBestPrice: false,
   },
   {
     id: "best",
     title: "Best price",
-    durationMonths: 12,
-    monthlyPrice: 6.66,
+    months: 12,
+    price: 6.66,
     annualPriceEquivalent: 79.99,
     isBestPrice: true,
   },
   {
     id: "popular",
     title: "Popular",
-    durationMonths: 6,
-    monthlyPrice: 6.66,
+    months: 6,
+    price: 6.66,
     annualPriceEquivalent: 49.99,
     isBestPrice: false,
   },
 ];
 
+const basicFeatureList = ["Yes", "Yes", "Yes", "Limited", "Limited", "Limited"];
+
+const cardData = [
+  {
+    id: "1",
+    heading: "Capture Your Meal",
+    title: "Tailor your experience with Equin Global Plus",
+    IMG: IMAGES.captureMealImg,
+    description:
+      "Take a photo of your food to get a detailed analysis of the calories, fat, protein, and carbs on your plate.",
+    name: "",
+    subHeading: "",
+  },
+  {
+    id: "2",
+    heading: "See What People Say",
+    title: "",
+    IMG: IMAGES.peopleSayImg,
+    description:
+      "My customized fasting plan really helped me with my stomach cramps and bloating problems.",
+    name: "Yasmin K.",
+    subHeading: "Improved digestion",
+  },
+];
+
 const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const { plansPrices } = useAppSelector((state) => state.planPrices);
+
+  const getPricePlan = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetchData<PricePlan[]>(ENDPOINTS.getPricePlan);
+      console.log(response);
+
+      if (response.data.success) {
+        dispatch(setPricePlan(response.data.data));
+        setSelectedPlanId(response.data.data[0]._id);
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleSelectPlan = (planId: string) => {
     setSelectedPlanId(planId);
   };
 
-  const PlanCard = ({ plan }: any) => {
-    const isSelected = selectedPlanId === plan.id;
+  const PlanCard = ({ plan }: { plan: PricePlan }) => {
+    const isSelected = selectedPlanId === plan._id;
 
     return (
       <TouchableOpacity
-        onPress={() => handleSelectPlan(plan.id)}
+        onPress={() => handleSelectPlan(plan._id)}
         style={{
           flex: 1,
           paddingHorizontal: verticalScale(10),
@@ -81,7 +136,7 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
           fontSize={18}
           style={{ textAlign: "center" }}
         >
-          {plan.durationMonths}
+          {plan.months}
           {"\n"}Months
         </CustomText>
         <CustomText
@@ -89,20 +144,21 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
           fontSize={14}
           style={{ textAlign: "center" }}
         >
-          {`$${plan.monthlyPrice.toFixed(2)}/month`}
+          {`$${plan.price.toFixed(2)}/month`}
         </CustomText>
         <CustomText
           color={COLORS.lightGrey}
           fontSize={12}
           style={{ textAlign: "center" }}
         >
-          {`only $${plan.annualPriceEquivalent.toFixed(2)}  \n ${
-            plan.durationMonths === 3
+          {/* {`only $${plan.annualPriceEquivalent.toFixed(2)}  \n ${
+            plan.months === 3
               ? "for 3 months"
-              : plan.durationMonths === 6
+              : plan.months === 6
               ? "for 6 months"
               : "annually"
-          }`}
+          }`} */}
+          {plan.description}
         </CustomText>
         <View
           style={{
@@ -112,7 +168,7 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
               ? COLORS.darkGreenGradient.start
               : "#F2F0F5",
             paddingHorizontal:
-              plan.title.length > 6 ? verticalScale(10) : verticalScale(20),
+              plan.type.length > 6 ? verticalScale(10) : verticalScale(20),
             paddingVertical: verticalScale(5),
             borderRadius: 30,
           }}
@@ -123,68 +179,25 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
             color={isSelected ? COLORS.white : COLORS.darkBLue}
             style={{ textAlign: "center" }}
           >
-            {plan.title}
+            {/* {plan.title} */}
+            {plan?.type}
           </CustomText>
         </View>
       </TouchableOpacity>
     );
   };
 
-  const featureList = [
-    {
-      title: "Fasting Timer",
-      basic: true,
-      plus: true,
-    },
-    {
-      title: "Fasting stages",
-      basic: true,
-      plus: true,
-    },
-    {
-      title: "Custom Fasting Goal",
-      basic: true,
-      plus: true,
-    },
-    {
-      title: "Nutrition Scoring",
-      basic: "Limited",
-      plus: true,
-    },
-    {
-      title: "Advanced analysis",
-      basic: "Limited",
-      plus: true,
-    },
-    {
-      title: "Learning center",
-      basic: "Limited",
-      plus: true,
-    },
-  ];
+  useEffect(() => {
+    getPricePlan();
+  }, []);
 
-  const cardData = [
-    {
-      id: "1",
-      heading: "Capture Your Meal",
-      title: "Tailor your experience with Equin Global Plus",
-      IMG: IMAGES.captureMealImg,
-      description:
-        "Take a photo of your food to get a detailed analysis of the calories, fat, protein, and carbs on your plate.",
-      name: "",
-      subHeading: "",
-    },
-    {
-      id: "2",
-      heading: "See What People Say",
-      title: "",
-      IMG: IMAGES.peopleSayImg,
-      description:
-        "My customized fasting plan really helped me with my stomach cramps and bloating problems.",
-      name: "Yasmin K.",
-      subHeading: "Improved digestion",
-    },
-  ];
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator color={COLORS.green} size={30} />
+      </View>
+    );
+  }
 
   return (
     <LinearGradient
@@ -254,8 +267,8 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
                   gap: verticalScale(20),
                 }}
               >
-                {planData.map((plan, index) => (
-                  <PlanCard key={plan.id} plan={plan} />
+                {plansPrices.map((plan, index) => (
+                  <PlanCard key={plan._id} plan={plan} />
                 ))}
               </View>
               <PrimaryButton title="Upgrade now" onPress={() => {}} />
@@ -265,7 +278,7 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
               <View
                 style={{
                   gap: verticalScale(10),
-                  paddingRight: horizontalScale(15),
+                  // paddingRight: horizontalScale(15),
                 }}
               >
                 <CustomText
@@ -294,7 +307,6 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
                       flexDirection: "row",
                       alignSelf: "flex-end",
                       gap: horizontalScale(40),
-                      // backgroundColor: "red",
                     }}
                   >
                     <View
@@ -311,7 +323,7 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
                         fontFamily="medium"
                         color={COLORS.lightGrey}
                       >
-                        Basic
+                        Free
                       </CustomText>
                     </View>
                     <View
@@ -333,61 +345,68 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
                       </CustomText>
                     </View>
                   </View>
-                  {featureList.map((feature, index) => (
-                    <View
-                      key={index}
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        paddingVertical: verticalScale(8),
-                      }}
-                    >
-                      <CustomText
-                        fontSize={14}
-                        color={COLORS.darkBLue}
-                        fontFamily="medium"
-                      >
-                        {feature.title}
-                      </CustomText>
-
-                      <View
-                        style={{
-                          flexDirection: "row",
-                          gap: horizontalScale(75),
-                          paddingEnd: horizontalScale(10),
-                        }}
-                      >
-                        {feature.basic === true ? (
-                          <CustomIcon
-                            Icon={ICONS.greenCheckBox}
-                            height={20}
-                            width={20}
-                          />
-                        ) : (
+                  {selectedPlanId &&
+                    Object.entries(
+                      plansPrices.filter(
+                        (plan) => plan._id === selectedPlanId
+                      )[0]?.perks
+                    ).map(([key, value], index) => {
+                      return (
+                        <View
+                          key={index}
+                          style={{
+                            flexDirection: "row",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            paddingVertical: verticalScale(8),
+                          }}
+                        >
                           <CustomText
-                            fontSize={12}
+                            fontSize={14}
                             color={COLORS.darkBLue}
-                            fontFamily="regular"
+                            fontFamily="medium"
                           >
-                            {feature.basic}
+                            {key}
                           </CustomText>
-                        )}
 
-                        {feature.plus === true ? (
-                          <CustomIcon
-                            Icon={ICONS.greenCheckBox}
-                            height={20}
-                            width={20}
-                          />
-                        ) : (
-                          <CustomText fontSize={12} color={COLORS.darkBLue}>
-                            {feature.plus}
-                          </CustomText>
-                        )}
-                      </View>
-                    </View>
-                  ))}
+                          <View
+                            style={{
+                              flexDirection: "row",
+                              gap: horizontalScale(75),
+                              paddingEnd: horizontalScale(10),
+                            }}
+                          >
+                            {basicFeatureList[index] === "Yes" ? (
+                              <CustomIcon
+                                Icon={ICONS.greenCheckBox}
+                                height={20}
+                                width={20}
+                              />
+                            ) : (
+                              <CustomText
+                                fontSize={12}
+                                color={COLORS.darkBLue}
+                                fontFamily="regular"
+                              >
+                                {basicFeatureList[index]}
+                              </CustomText>
+                            )}
+
+                            {value === "Yes" ? (
+                              <CustomIcon
+                                Icon={ICONS.greenCheckBox}
+                                height={20}
+                                width={20}
+                              />
+                            ) : (
+                              <CustomText fontSize={12} color={COLORS.darkBLue}>
+                                {value}
+                              </CustomText>
+                            )}
+                          </View>
+                        </View>
+                      );
+                    })}
                 </View>
               </View>
             </View>
