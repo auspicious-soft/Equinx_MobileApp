@@ -40,7 +40,7 @@ import {
   launchCamera,
   launchImageLibrary,
 } from "react-native-image-picker";
-
+import { callingCodeToCountryCode } from "../../Utilities/Helpers";
 
 type ProfileForm = {
   gender: string;
@@ -50,13 +50,29 @@ type ProfileForm = {
   weight: string;
 };
 
+// Function to add ordinal suffix
+function getOrdinalSuffix(day: any) {
+  if (day > 3 && day < 21) return "th"; // 4th to 20th
+  switch (day % 10) {
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
+  }
+}
+
 const GENDER_OPTIONS = [
   { label: "Male", value: "Male" },
   { label: "Female", value: "Female" },
   { label: "Other", value: "Other" },
 ];
 
-const EditProfile: FC<EditProfileScreenProps> = ({ navigation }) => {
+const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
+  const { userData } = route.params;
   const dispatch = useAppDispatch();
 
   const [name, setName] = useState("");
@@ -65,9 +81,7 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation }) => {
   const [showCountryPicker, setShowCountryPicker] = useState(false);
   const [isModalVisible, setModalVisible] = React.useState(false);
   const [selectedImage, setSelectedImage] = React.useState<Asset[]>([]);
-
   const { profileForm } = useAppSelector((state) => state.questions);
-
   const [countryCode, setCountryCode] = useState<CountryCode>("US");
   const [country, setCountry] = useState<Country | null>(null);
 
@@ -161,6 +175,31 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation }) => {
       closeModal();
     });
   };
+
+  useEffect(() => {
+    const parsedDate = dayjs(userData?.dob, "MM-DD-YYYY");
+    const day = parsedDate.date();
+    const formattedDate = `${day}${getOrdinalSuffix(day)} ${parsedDate.format(
+      "MMM YYYY"
+    )}`;
+
+    console.log(callingCodeToCountryCode(userData?.countryCode));
+
+    setName(userData?.fullName);
+    setEmail(userData?.email);
+    setPhone(userData?.phoneNumber);
+    setCountryCode(callingCodeToCountryCode(userData?.countryCode));
+    dispatch(
+      setProfileForm({
+        gender: userData?.gender,
+        dob: formattedDate,
+        height: userData?.height.toString(),
+        weight: userData?.weight.toString(),
+      })
+    );
+  }, [userData]);
+
+  console.log("country ---->", countryCode);
 
   return (
     <ScrollView

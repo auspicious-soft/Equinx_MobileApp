@@ -7,6 +7,7 @@ import homeDataReducer from "./slices/homeDataSlice";
 import PlanPricesReducer from "./slices/planPrices";
 import MyPlanReducer from "./slices/MyPlan";
 import chatDataReducer from "./slices/ChatSlice";
+import settingDataReducer from "./slices/settingSlice";
 
 export const store = configureStore({
   reducer: {
@@ -17,6 +18,7 @@ export const store = configureStore({
     planPrices: PlanPricesReducer,
     myPlan: MyPlanReducer,
     chatData: chatDataReducer,
+    settingData: settingDataReducer,
   },
 });
 

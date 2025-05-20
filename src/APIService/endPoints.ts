@@ -15,6 +15,7 @@ const ENDPOINTS = {
   getPricePlan: `api/get-price-plan`,
   chat: `api/chat-with-gpt`,
   chatFetch: `api/chat-with-gpt?page=1&limit=20`,
+  settings: `api/get-settings`,
 };
 
 export default ENDPOINTS;

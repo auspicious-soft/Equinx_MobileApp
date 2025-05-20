@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Alert,
   Animated,
   Easing,
@@ -8,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { FC, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 import COLORS from "../../Utilities/Colors";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
@@ -25,10 +26,20 @@ import ICONS from "../../Assets/Icons";
 import { SettingsScreenProps } from "../../Typings/route";
 import { deleteLocalStorageData } from "../../Utilities/Storage";
 import STORAGE_KEYS from "../../Utilities/Constants";
+import Toast from "react-native-toast-message";
+import { fetchData } from "../../APIService/api";
+import ENDPOINTS from "../../APIService/endPoints";
+import { SettingResponse } from "../../Typings/apiResponse";
+import { useAppDispatch, useAppSelector } from "../../Redux/store";
+import { setSettingData } from "../../Redux/slices/settingSlice";
 
 const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
   const [isToggled, setIsToggled] = useState(false);
   const toggleAnim = useRef(new Animated.Value(0)).current;
+  const [isLoading, setIsLoading] = useState(false);
+  const dispatch = useAppDispatch();
+
+  const { settingData } = useAppSelector((state) => state.settingData);
 
   const toggleSwitch = () => {
     const toValue = isToggled ? 0 : 1;
@@ -48,6 +59,24 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
     outputRange: [2, 22], // This depends on your knob/container width
   });
 
+  const fetchUser = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetchData<SettingResponse>(ENDPOINTS.settings);
+      console.log(response);
+      if (response.data.success) {
+        dispatch(setSettingData(response.data.data));
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleLogOut = () => {
     Alert.alert("Logout", "Are you sure you want to log out?", [
       {
@@ -65,6 +94,26 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
       },
     ]);
   };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: COLORS.white,
+        }}
+      >
+        <ActivityIndicator color={COLORS.green} size={30} />
+      </View>
+    );
+  }
+
   return (
     <ScrollView
       showsHorizontalScrollIndicator={false}
@@ -86,7 +135,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
             }}
           >
             <CustomText fontSize={22} fontFamily="bold" color={COLORS.darkBLue}>
-              Miley Jones
+              {settingData?.editProfile.fullName}
             </CustomText>
             <TouchableOpacity
               style={{
@@ -97,7 +146,9 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
             >
               <TouchableOpacity
                 onPress={() => {
-                  navigation.navigate("EditProfile");
+                  navigation.navigate("EditProfile", {
+                    userData: settingData?.editProfile,
+                  });
                 }}
               >
                 <CustomText

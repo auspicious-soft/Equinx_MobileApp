@@ -1,6 +1,6 @@
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { createSlice } from "@reduxjs/toolkit";
-import { ChatResponse, HomeDataResponse } from "../../Typings/apiResponse";
+import { ChatResponse } from "../../Typings/apiResponse";
 
 // Define a type for the slice state
 interface ChatSliceState {

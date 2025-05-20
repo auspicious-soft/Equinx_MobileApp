@@ -1,6 +1,7 @@
 import { OnBoardingStackParams } from "./route.d";
 import { NavigatorScreenParams } from "@react-navigation/native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { EditProfile } from "./apiResponse";
 
 export type RootStackParams = {
   splash: undefined;
@@ -53,7 +54,9 @@ export type MainStackParams = {
   profile: undefined;
   Fasts: undefined;
   FastDetails: undefined;
-  EditProfile: undefined;
+  EditProfile: {
+    userData?: EditProfile;
+  };
   ChangePassword: undefined;
   UserMemberShip: undefined;
   LanguageScreen: undefined;

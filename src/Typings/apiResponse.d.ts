@@ -201,3 +201,56 @@ export interface Pagination {
   hasNextPage: boolean;
   hasPrevPage: boolean;
 }
+
+export interface SettingResponse {
+  editProfile: EditProfile;
+  notification: boolean;
+  membership: Membership;
+  language: string;
+}
+
+export interface EditProfile {
+  _id: string;
+  fullName: string;
+  email: string;
+  countryCode: string;
+  phoneNumber: string;
+  profilePic: string;
+  gender: string;
+  dob: string;
+  age: number;
+  height: number;
+  weight: number;
+  bmi: number;
+}
+
+export interface Membership {
+  _id: string;
+  planId: PlanId;
+  autoPayment: boolean;
+  startDate: string;
+  endDate: string;
+}
+
+export interface PlanId {
+  _id: string;
+  type: string;
+  months: number;
+  price: number;
+  productId: string;
+  priceText: string;
+  description: string;
+  perks: Perks;
+  __v: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Perks {
+  fastingTimer: string;
+  fastingStages: string;
+  customFastingGoal: string;
+  nutritionScoring: string;
+  advancedAnalysis: string;
+  learningCenter: string;
+}

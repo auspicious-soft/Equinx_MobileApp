@@ -271,17 +271,25 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
     if (questionData.type === "profile") {
       dispatch(
         setProfileForm({
-          gender: JSON.parse(savedAnswers[0])?.gender,
-          dob: JSON.parse(savedAnswers[0])?.dob,
-          age: JSON.parse(savedAnswers[0])?.age,
-          height: JSON.parse(savedAnswers[0])?.height,
-          weight: JSON.parse(savedAnswers[0])?.weight,
+          gender: savedAnswers[0] ? JSON.parse(savedAnswers[0])?.gender : "",
+          dob: savedAnswers[0] ? JSON.parse(savedAnswers[0])?.dob : "",
+          age: savedAnswers[0] ? JSON.parse(savedAnswers[0])?.age : "",
+          height: savedAnswers[0] ? JSON.parse(savedAnswers[0])?.height : "",
+          weight: savedAnswers[0] ? JSON.parse(savedAnswers[0])?.weight : "",
         })
       );
     }
     if (questionData.type === "time") {
-      dispatch(setFirstMealTime(JSON.parse(savedAnswers[0])?.firstMeal));
-      dispatch(setLastMealTime(JSON.parse(savedAnswers[0])?.lastMeal));
+      dispatch(
+        setFirstMealTime(
+          savedAnswers[0] ? JSON.parse(savedAnswers[0])?.firstMeal : ""
+        )
+      );
+      dispatch(
+        setLastMealTime(
+          savedAnswers[0] ? JSON.parse(savedAnswers[0])?.lastMeal : ""
+        )
+      );
     }
 
     // Always reset selectedOptions when changing questions to avoid carrying over selections
