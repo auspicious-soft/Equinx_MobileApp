@@ -15,9 +15,20 @@ import { FlatList } from "react-native-gesture-handler";
 import ICONS from "../../Assets/Icons";
 import CustomIcon from "../../Components/CustomIcon";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { RecentFast } from "../../Typings/apiResponse";
 
-const Fasts: FC<FastsScreenProps> = ({ navigation }) => {
-  const renderFatsData = ({ item }: { item: FastsDataType }) => {
+const Fasts: FC<FastsScreenProps> = ({ navigation, route }) => {
+  const { fastsData } = route.params;
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.toLocaleString("en-US", { month: "long" });
+    const year = date.getFullYear();
+    return `${day} ${month},\n${year}`;
+  };
+
+  const renderFatsData = ({ item }: { item: RecentFast }) => {
     return (
       <TouchableOpacity
         style={styles.fastsContainer}
@@ -32,18 +43,7 @@ const Fasts: FC<FastsScreenProps> = ({ navigation }) => {
             fontFamily="bold"
             style={{ textAlign: "center" }}
           >
-            {item.date}{" "}
-            <CustomText fontSize={14} color={COLORS.green} fontFamily="bold">
-              March,
-            </CustomText>
-          </CustomText>
-          <CustomText
-            fontSize={14}
-            color={COLORS.green}
-            fontFamily="bold"
-            style={{ textAlign: "center" }}
-          >
-            2025
+            {formatDate(item.date)}
           </CustomText>
         </View>
         <View style={{ gap: verticalScale(5) }}>
@@ -110,7 +110,7 @@ const Fasts: FC<FastsScreenProps> = ({ navigation }) => {
           <FlatList
             data={fastsData}
             renderItem={renderFatsData}
-            keyExtractor={({ id }) => id.toString()}
+            keyExtractor={(index) => index + " " + index}
             contentContainerStyle={{
               gap: verticalScale(10),
             }}
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
     gap: verticalScale(20),
   },
   dateContainer: {
-    backgroundColor: COLORS.greenBg,
+    backgroundColor: "#F0F8F0",
     paddingVertical: verticalScale(15),
     paddingHorizontal: horizontalScale(15),
     borderRadius: 10,

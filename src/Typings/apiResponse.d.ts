@@ -254,3 +254,107 @@ export interface Perks {
   advancedAnalysis: string;
   learningCenter: string;
 }
+
+export interface ProfileResponse {
+  totalFasts: number;
+  averageLast7Fasts: number;
+  longestFast: number;
+  longestStreak: number;
+  currentStreak: number;
+  weight: string;
+  bmi: number;
+  recentFasts: RecentFast[];
+}
+
+export interface RecentFast {
+  date: string;
+  completed: boolean;
+  duration: number;
+}
+
+export interface FastsDataResponse {
+  meal: Meal;
+  waterIntake: WaterIntake;
+}
+
+export interface Meal {
+  _id: string;
+  userId: string;
+  planId: PlanId;
+  firstMealStatus: FirstMealStatus;
+  secondMealStatus: SecondMealStatus;
+  thirdMealStatus: ThirdMealStatus;
+  otherMealStatus: OtherMealStatus;
+  planDay: string;
+  __v: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PlanId {
+  _id: string;
+  plan_type: string;
+  day: number;
+  meals: Meal2[];
+  total_calories: string;
+  __v: number;
+}
+
+export interface Meal2 {
+  meal_time: string;
+  items: string[];
+  calories: string;
+  _id: string;
+}
+
+export interface FirstMealStatus {
+  carbs: number;
+  protein: number;
+  fat: number;
+  status: boolean;
+}
+
+export interface SecondMealStatus {
+  carbs: number;
+  protein: number;
+  fat: number;
+  status: boolean;
+}
+
+export interface ThirdMealStatus {
+  carbs: number;
+  protein: number;
+  fat: number;
+  status: boolean;
+}
+
+export interface OtherMealStatus {
+  carbs: number;
+  protein: number;
+  fat: number;
+  status: boolean;
+}
+
+export interface WaterIntake {
+  consumed: number;
+  goal: number;
+  progress: number;
+  unit: string;
+  containerType: string;
+  containerSize: number;
+}
+
+export interface CheckOutResponse {
+  sessionId: string;
+  url: string;
+  productDetails: ProductDetails;
+}
+
+export interface ProductDetails {
+  name: string;
+  description: string;
+  currency: string;
+  unitAmount: number;
+  type: string;
+  interval: string;
+}

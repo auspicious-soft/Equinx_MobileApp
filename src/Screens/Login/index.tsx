@@ -108,7 +108,7 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
 
             <View style={styles.inputContainer}>
               <CustomInput
-                label="Email/Phone"
+                label="Email"
                 value={email}
                 onChangeText={setEmail}
                 leftIcon={ICONS.profileIcon}

@@ -192,8 +192,7 @@ const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
                 color={COLORS.darkBLue}
                 style={{ textAlign: "center" }}
               >
-                Enter the OTP received on your phone or associated email
-                address.
+                Enter the OTP received on your associated email address.
               </CustomText>
             </View>
 
@@ -250,8 +249,8 @@ const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
               isVisible={isModalVisible}
               closeModal={closeModal}
               onpress={() => navigation.navigate("login")}
-              title="Phone Number Verified Successfully!"
-              subTitle="Your Phone Number has been successfully verified. Please login to continue."
+              title="Email Verified Successfully!"
+              subTitle="Your Email has been successfully verified. Please login to continue."
             />
           </View>
         </SafeAreaView>

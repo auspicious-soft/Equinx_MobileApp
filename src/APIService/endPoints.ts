@@ -16,6 +16,13 @@ const ENDPOINTS = {
   chat: `api/chat-with-gpt`,
   chatFetch: `api/chat-with-gpt?page=1&limit=20`,
   settings: `api/get-settings`,
+  updateUserProfile: `api/update-user-profile`,
+  changePassword: `api/change-password`,
+  myProfile: `api/my-profile`,
+  getMealByDate: `'api/get-meal-by-date`,
+  fastingToday: `api/fasting-today`,
+  checkOutSession: `api/create-checkout-session`,
+  updateProfilPic: `api/update-profile-pic`,
 };
 
 export default ENDPOINTS;

@@ -8,6 +8,8 @@ import PlanPricesReducer from "./slices/planPrices";
 import MyPlanReducer from "./slices/MyPlan";
 import chatDataReducer from "./slices/ChatSlice";
 import settingDataReducer from "./slices/settingSlice";
+import profileDataReducer from "./slices/ProfileSlice";
+import FastsDataSliceReducer from "./slices/DateMeal";
 
 export const store = configureStore({
   reducer: {
@@ -19,6 +21,8 @@ export const store = configureStore({
     myPlan: MyPlanReducer,
     chatData: chatDataReducer,
     settingData: settingDataReducer,
+    profileData: profileDataReducer,
+    fastsData: FastsDataSliceReducer,
   },
 });
 

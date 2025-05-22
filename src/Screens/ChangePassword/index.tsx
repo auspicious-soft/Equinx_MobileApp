@@ -10,11 +10,42 @@ import ICONS from "../../Assets/Icons";
 import { CustomText } from "../../Components/CustomText";
 import CustomInput from "../../Components/CustomInput";
 import PrimaryButton from "../../Components/PrimaryButton";
+import Toast from "react-native-toast-message";
+import { putData } from "../../APIService/api";
+import ENDPOINTS from "../../APIService/endPoints";
 
 const ChangePassword: FC<ChangePasswordScreenProps> = ({ navigation }) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+
+  const handlePassword = async () => {
+    const data = {
+      oldPassword: oldPassword,
+      newPassword: newPassword,
+    };
+    try {
+      const response = await putData(ENDPOINTS.changePassword, data);
+      console.log(response.data);
+      if (response.data.success) {
+        Toast.show({
+          type: "success",
+          text1: response.data.message,
+        });
+        setConfirmPassword("");
+        setNewPassword("");
+        setNewPassword("");
+        navigation.replace("tabs", {
+          screen: "settings",
+        });
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    }
+  };
   return (
     <KeyboardAvoidingContainer bounce style={{ flex: 1 }}>
       <SafeAreaView style={styles.safeAreaContainer}>
@@ -52,14 +83,7 @@ const ChangePassword: FC<ChangePasswordScreenProps> = ({ navigation }) => {
               placeholder="*********"
             />
           </View>
-          <PrimaryButton
-            onPress={() => {
-              navigation.replace("tabs", {
-                screen: "settings",
-              });
-            }}
-            title="Save Details"
-          />
+          <PrimaryButton onPress={handlePassword} title="Save Details" />
           <View style={{ gap: verticalScale(8) }}>
             <CustomText
               fontSize={12}
@@ -72,7 +96,9 @@ const ChangePassword: FC<ChangePasswordScreenProps> = ({ navigation }) => {
             <TouchableOpacity
               style={styles.profileContainer}
               onPress={() => {
-                navigation.navigate("ChangePassword");
+                navigation.navigate("authStack", {
+                  screen: "forgotpassword",
+                });
               }}
             >
               <View style={styles.iconBg}>

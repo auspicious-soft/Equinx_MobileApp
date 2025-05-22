@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   StyleSheet,
@@ -6,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { ProfileScreenProps } from "../../Typings/route";
 import { ScrollView } from "react-native-gesture-handler";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -24,14 +25,54 @@ import { CustomText } from "../../Components/CustomText";
 import CircularProgress from "../../Components/CircularProgress";
 import IMAGES from "../../Assets/Images";
 import { fastsData, FastsDataType } from "../../Seeds/ProfileScreenData";
+import { useAppDispatch, useAppSelector } from "../../Redux/store";
+import Toast from "react-native-toast-message";
+import { ProfileResponse, RecentFast } from "../../Typings/apiResponse";
+import ENDPOINTS from "../../APIService/endPoints";
+import { fetchData } from "../../APIService/api";
+import { setProfileData } from "../../Redux/slices/ProfileSlice";
 
 const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
-  const renderFastsData = ({ item }: { item: FastsDataType }) => {
+  const dispatch = useAppDispatch();
+  const { profileData } = useAppSelector((state) => state.profileData);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getProfileData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetchData<ProfileResponse>(ENDPOINTS.myProfile);
+      console.log(response);
+      if (response.data.success) {
+        dispatch(setProfileData(response.data.data));
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.toLocaleString("en-US", { month: "long" });
+    const year = date.getFullYear();
+    return `${day} ${month},\n${year}`;
+  };
+
+  const renderFastsData = ({ item }: { item: RecentFast }) => {
     return (
       <TouchableOpacity
         style={styles.fastsContainer}
         onPress={() => {
-          navigation.navigate("FastDetails");
+          if (item.date) {
+            navigation.navigate("FastDetails", {
+              date: item.date,
+            });
+          }
         }}
       >
         <View style={styles.dateContainer}>
@@ -41,18 +82,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
             fontFamily="bold"
             style={{ textAlign: "center" }}
           >
-            {item.date}{" "}
-            <CustomText fontSize={14} color={COLORS.green} fontFamily="bold">
-              March,
-            </CustomText>
-          </CustomText>
-          <CustomText
-            fontSize={14}
-            color={COLORS.green}
-            fontFamily="bold"
-            style={{ textAlign: "center" }}
-          >
-            2025
+            {formatDate(item.date)}
           </CustomText>
         </View>
         <View style={{ gap: verticalScale(5) }}>
@@ -82,6 +112,18 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
       </TouchableOpacity>
     );
   };
+
+  useEffect(() => {
+    getProfileData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator color={COLORS.green} size={30} />
+      </View>
+    );
+  }
   return (
     <ScrollView
       showsHorizontalScrollIndicator={false}
@@ -151,7 +193,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                   fontFamily="bold"
                   color={COLORS.green}
                 >
-                  12
+                  {profileData?.totalFasts}
                 </CustomText>
               </TouchableOpacity>
               <TouchableOpacity style={styles.detailWrapper}>
@@ -167,7 +209,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                   fontFamily="bold"
                   color={COLORS.green}
                 >
-                  19h
+                  {`${profileData?.averageLast7Fasts}h`}
                 </CustomText>
               </TouchableOpacity>
             </View>
@@ -185,7 +227,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                   fontFamily="bold"
                   color={COLORS.green}
                 >
-                  19h
+                  {`${profileData?.longestFast}h`}
                 </CustomText>
               </TouchableOpacity>
               <TouchableOpacity style={styles.detailWrapper}>
@@ -201,7 +243,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                   fontFamily="bold"
                   color={COLORS.green}
                 >
-                  2
+                  {`${profileData?.longestStreak}`}
                 </CustomText>
               </TouchableOpacity>
             </View>
@@ -219,7 +261,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                   fontFamily="bold"
                   color={COLORS.green}
                 >
-                  1
+                  {`${profileData?.currentStreak}`}
                 </CustomText>
               </TouchableOpacity>
               <TouchableOpacity style={styles.detailWrapper}>
@@ -235,7 +277,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                   fontFamily="bold"
                   color={COLORS.green}
                 >
-                  180 lbs
+                  {`${profileData?.weight} lbs`}
                 </CustomText>
               </TouchableOpacity>
             </View>
@@ -265,7 +307,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                 </View>
               </View>
               <CustomText fontSize={18} fontFamily="bold" color={COLORS.green}>
-                29.8 kg
+                {`${profileData?.bmi} kg`}
               </CustomText>
             </View>
           </View>
@@ -307,9 +349,9 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
             Recent fasts
           </CustomText>
           <FlatList
-            data={fastsData}
+            data={profileData?.recentFasts}
             renderItem={renderFastsData}
-            keyExtractor={({ id }) => id.toString()}
+            keyExtractor={(index) => index + " " + index}
             contentContainerStyle={{
               gap: verticalScale(10),
             }}
@@ -319,7 +361,9 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
         <TouchableOpacity
           style={{ alignSelf: "center" }}
           onPress={() => {
-            navigation.navigate("Fasts");
+            navigation.navigate("Fasts", {
+              fastsData: profileData?.recentFasts,
+            });
           }}
         >
           <CustomText fontSize={14} fontFamily="regular" color={COLORS.green}>
@@ -361,7 +405,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: horizontalScale(20),
     paddingVertical: verticalScale(15),
     gap: verticalScale(15),
-    width: wp(44),
+    width: wp(43.6),
     borderRadius: 10,
   },
   alignContainer: {

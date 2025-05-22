@@ -13,9 +13,9 @@ type ApiResponse<T> = {
 const api = axios.create({
   baseURL: API_URL,
   timeout: 10000,
-  headers: {
-    "Content-Type": "application/json",
-  },
+  // headers: {
+  //   "Content-Type": "application/json",
+  // },
 });
 
 // Request interceptor to add auth token dynamically
@@ -61,6 +61,17 @@ export const fetchData = <T>(endpoint: string, params?: any, headers?: any) =>
 
 export const postData = <T>(endpoint: string, data?: any, headers?: any) =>
   api.post<ApiResponse<T>>(endpoint, data, { headers });
+
+export const postFormData = <T>(
+  endpoint: string,
+  data: FormData,
+  headers?: any
+) =>
+  api.post<ApiResponse<T>>(endpoint, data, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
 
 export const patchData = <T>(endpoint: string, data: any, headers?: any) =>
   api.patch<ApiResponse<T>>(endpoint, data, { headers });

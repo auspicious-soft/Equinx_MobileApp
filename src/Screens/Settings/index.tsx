@@ -32,6 +32,7 @@ import ENDPOINTS from "../../APIService/endPoints";
 import { SettingResponse } from "../../Typings/apiResponse";
 import { useAppDispatch, useAppSelector } from "../../Redux/store";
 import { setSettingData } from "../../Redux/slices/settingSlice";
+import { IMAGE_BASE_URL } from "@env";
 
 const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
   const [isToggled, setIsToggled] = useState(false);
@@ -63,7 +64,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
     setIsLoading(true);
     try {
       const response = await fetchData<SettingResponse>(ENDPOINTS.settings);
-      console.log(response);
+      console.log("userData response", response);
       if (response.data.success) {
         dispatch(setSettingData(response.data.data));
       }
@@ -94,6 +95,8 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
       },
     ]);
   };
+
+  console.log("profilepicdata ---->", settingData?.editProfile.profilePic);
 
   useEffect(() => {
     fetchUser();
@@ -127,7 +130,12 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
       <SafeAreaView style={styles.safeAreaContainer}>
         <View style={styles.headerView}>
           <View style={styles.circleView}>
-            <Image source={IMAGES.userImg} style={styles.userImg} />
+            <Image
+              source={{
+                uri: IMAGE_BASE_URL + settingData?.editProfile.profilePic,
+              }}
+              style={styles.userImg}
+            />
           </View>
           <View
             style={{

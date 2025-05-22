@@ -1,5 +1,12 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import React, { FC, useState } from "react";
+import {
+  ActivityIndicator,
+  Alert,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import React, { FC, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import COLORS from "../../Utilities/Colors";
 import { horizontalScale, verticalScale } from "../../Utilities/Metrics";
@@ -8,6 +15,13 @@ import CustomIcon from "../../Components/CustomIcon";
 import { CustomText } from "../../Components/CustomText";
 import ICONS from "../../Assets/Icons";
 import PrimaryButton from "../../Components/PrimaryButton";
+import Toast from "react-native-toast-message";
+import { PricePlan } from "../../Typings/apiResponse";
+import { fetchData, postData } from "../../APIService/api";
+import ENDPOINTS from "../../APIService/endPoints";
+import { useAppDispatch, useAppSelector } from "../../Redux/store";
+import { setPricePlan } from "../../Redux/slices/planPrices";
+import { useStripe } from "@stripe/stripe-react-native";
 
 const planData = [
   {
@@ -37,18 +51,73 @@ const planData = [
 ];
 
 const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
-  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(
+    null
+  );
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSelectPlan = (planId: string) => {
-    setSelectedPlanId(planId);
+  const dispatch = useAppDispatch();
+
+  const { plansPrices } = useAppSelector((state) => state.planPrices);
+
+  const handlePricePlan = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetchData<PricePlan[]>(ENDPOINTS.getPricePlan);
+      console.log(response);
+      if (response.data.success) {
+        dispatch(setPricePlan(response.data.data));
+        setSelectedProductId(response.data.data[0].productId);
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const PlanCard = ({ plan }: any) => {
-    const isSelected = selectedPlanId === plan.id;
+  const handleCheckOut = async () => {
+    const data = {
+      productId: selectedProductId,
+    };
+
+    try {
+      const response = await postData(ENDPOINTS.checkOutSession, data);
+      console.log(response);
+
+      if (response.data.success) {
+        Toast.show({
+          type: "success",
+          text1: response.data.message,
+        });
+        // navigation.navigate("tabs", {
+        //   screen: "settings",
+        // });
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    }
+  };
+
+  const handleSelectPlan = (planId: string) => {
+    setSelectedProductId(planId);
+  };
+
+  const PlanCard = ({ plan }: { plan: PricePlan }) => {
+    const isSelected = selectedProductId === plan.productId;
 
     return (
       <TouchableOpacity
-        onPress={() => handleSelectPlan(plan.id)}
+        onPress={() => {
+          console.log("productId  ----->", plan.productId);
+          handleSelectPlan(plan.productId);
+        }}
         style={{
           flex: 1,
           paddingHorizontal: verticalScale(10),
@@ -67,7 +136,7 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
           fontSize={18}
           style={{ textAlign: "center" }}
         >
-          {plan.durationMonths}
+          {plan.months}
           {"\n"}Months
         </CustomText>
         <CustomText
@@ -75,20 +144,21 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
           fontSize={14}
           style={{ textAlign: "center" }}
         >
-          {`$${plan.monthlyPrice.toFixed(2)}/month`}
+          {`$${plan.price.toFixed(2)}/month`}
         </CustomText>
         <CustomText
           color={COLORS.lightGrey}
           fontSize={12}
           style={{ textAlign: "center" }}
         >
-          {`only $${plan.annualPriceEquivalent.toFixed(2)}  \n ${
+          {/* {`only $${plan..toFixed(2)}  \n ${
             plan.durationMonths === 3
               ? "for 3 months"
               : plan.durationMonths === 6
               ? "for 6 months"
               : "annually"
-          }`}
+          }`} */}
+          {plan.description}
         </CustomText>
         <View
           style={{
@@ -98,7 +168,7 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
               ? COLORS.darkGreenGradient.start
               : "#F2F0F5",
             paddingHorizontal:
-              plan.title.length > 6 ? verticalScale(10) : verticalScale(20),
+              plan.type.length > 6 ? verticalScale(10) : verticalScale(20),
             paddingVertical: verticalScale(5),
             borderRadius: 30,
           }}
@@ -109,12 +179,25 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
             color={isSelected ? COLORS.white : COLORS.darkBLue}
             style={{ textAlign: "center" }}
           >
-            {plan.title}
+            {plan.type}
           </CustomText>
         </View>
       </TouchableOpacity>
     );
   };
+
+  useEffect(() => {
+    handlePricePlan();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator color={COLORS.green} size={30} />
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
       <View style={styles.arrowContainer}>
@@ -177,18 +260,11 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
               gap: verticalScale(20),
             }}
           >
-            {planData.map((plan, index) => (
-              <PlanCard key={plan.id} plan={plan} />
+            {plansPrices.map((plan, index) => (
+              <PlanCard key={plan.productId} plan={plan} />
             ))}
           </View>
-          <PrimaryButton
-            title="Upgrade Plan"
-            onPress={() => {
-              navigation.navigate("tabs", {
-                screen: "settings",
-              });
-            }}
-          />
+          <PrimaryButton title="Upgrade Plan" onPress={handleCheckOut} />
         </View>
       </View>
     </SafeAreaView>

@@ -26,7 +26,7 @@ import IMAGES from "../../Assets/Images";
 import WaterTrackModal from "../../Components/Modals/WaterTrackModal";
 import RecordIntakeModal from "../../Components/Modals/RecordIntakeModal";
 import moment from "moment-timezone";
-import { fetchData } from "../../APIService/api";
+import { fetchData, postData } from "../../APIService/api";
 import ENDPOINTS from "../../APIService/endPoints";
 import { HomeDataResponse } from "../../Typings/apiResponse";
 import { useAppDispatch, useAppSelector } from "../../Redux/store";
@@ -181,6 +181,25 @@ const Home: FC<HomeScreenProps> = () => {
     }
   };
 
+  const handleFastingToday = async () => {
+    try {
+      const response = await postData(ENDPOINTS.fastingToday);
+      console.log(response);
+      if (response.data.success) {
+        Toast.show({
+          type: "success",
+          text1: response.data.message,
+        });
+        getHomeData();
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "success",
+        text1: "Fasting record already exists for today",
+      });
+    }
+  };
+
   useEffect(() => {
     getHomeData();
   }, []);
@@ -283,7 +302,7 @@ const Home: FC<HomeScreenProps> = () => {
               title={`Start Your ${fastingMethod.type} ${
                 isFasting ? "Fasting" : "Eating"
               }`}
-              onPress={() => {}}
+              onPress={handleFastingToday}
               style={{
                 width: wp(80),
               }}

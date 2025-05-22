@@ -1,4 +1,5 @@
 import {
+  ActivityIndicator,
   Image,
   ScrollView,
   StyleSheet,
@@ -6,7 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { FastDetailsScreenProps } from "../../Typings/route";
 import COLORS from "../../Utilities/Colors";
@@ -20,34 +21,89 @@ import {
   wp,
 } from "../../Utilities/Metrics";
 import IMAGES from "../../Assets/Images";
+import Toast from "react-native-toast-message";
+import { fetchData } from "../../APIService/api";
+import ENDPOINTS from "../../APIService/endPoints";
+import { FastsDataResponse } from "../../Typings/apiResponse";
+import { useAppDispatch, useAppSelector } from "../../Redux/store";
+import { setFastsData } from "../../Redux/slices/DateMeal";
 
-const FastDetail: FC<FastDetailsScreenProps> = ({ navigation }) => {
-  const mealData = [
-    {
-      title: "Breakfast",
-      kcal: "311",
-      inProgress: "Completed",
-      mealImg: IMAGES.breakFastImg,
-    },
-    {
-      title: "Lunch",
-      kcal: "Required 311",
-      inProgress: "Not Recorded",
-      mealImg: IMAGES.snackImg,
-    },
-    {
-      title: "Dinner",
-      kcal: "311",
-      inProgress: "pending",
-      mealImg: IMAGES.captureMealImg,
-    },
-    {
-      title: "Snack",
-      kcal: "311",
-      inProgress: "",
-      mealImg: IMAGES.fastMealImg,
-    },
-  ];
+const mealData = [
+  {
+    title: "Breakfast",
+    kcal: "311",
+    inProgress: "Completed",
+    mealImg: IMAGES.breakFastImg,
+  },
+  {
+    title: "Lunch",
+    kcal: "Required 311",
+    inProgress: "Not Recorded",
+    mealImg: IMAGES.snackImg,
+  },
+  {
+    title: "Dinner",
+    kcal: "311",
+    inProgress: "pending",
+    mealImg: IMAGES.captureMealImg,
+  },
+  {
+    title: "Snack",
+    kcal: "311",
+    inProgress: "",
+    mealImg: IMAGES.fastMealImg,
+  },
+];
+
+const FastDetail: FC<FastDetailsScreenProps> = ({ navigation, route }) => {
+  const dispatch = useAppDispatch();
+  const { fastsData } = useAppSelector((state) => state.fastsData);
+  const { date } = route.params;
+  const [isLoading, setIsLoading] = useState(false);
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = date.getDate();
+    const month = date.toLocaleString("en-US", { month: "long" });
+    const year = date.getFullYear();
+    return `${day} ${month} ${year}`;
+  };
+
+  const getFastsData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetchData<FastsDataResponse>(
+        ENDPOINTS.getMealByDate
+      );
+      console.log("date response -->", response);
+
+      if (response.data.success) {
+        dispatch(setFastsData(response.data.data));
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (date) {
+      getFastsData();
+    }
+  }, [date]);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator color={COLORS.green} size={30} />
+      </View>
+    );
+  }
+
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: COLORS.white }}
@@ -65,7 +121,7 @@ const FastDetail: FC<FastDetailsScreenProps> = ({ navigation }) => {
             <CustomIcon Icon={ICONS.BackArrow} />
           </TouchableOpacity>
           <CustomText fontSize={22} fontFamily="bold" color={COLORS.darkBLue}>
-            23 March 2025
+            {formatDate(date)}
           </CustomText>
         </View>
 

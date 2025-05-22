@@ -8,6 +8,9 @@ import { setCurrentRoute } from "./src/Redux/slices/initialSlice";
 import { useAppDispatch, useAppSelector } from "./src/Redux/store";
 import Routing from "./src/Routes";
 import COLORS from "./src/Utilities/Colors";
+import { StripeProvider } from "@stripe/stripe-react-native";
+import STORAGE_KEYS from "./src/Utilities/Constants";
+import { STRIPE_PUBLISHABLE_KEY } from "@env";
 
 const App = () => {
   const dispatch = useAppDispatch();
@@ -75,18 +78,22 @@ const App = () => {
   return (
     <>
       <SafeAreaProvider>
-        <StatusBar
-          animated={true}
-          backgroundColor={statusBarConfig.backgroundColor}
-          barStyle={statusBarConfig.barStyle}
-          translucent={
-            Platform.OS === "android" ? statusBarConfig.translucent : undefined
-          }
-        />
-        <NavigationContainer onStateChange={handleNavigationStateChange}>
-          <Routing />
-          {__DEV__ && <NetworkLogger />}
-        </NavigationContainer>
+        <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
+          <StatusBar
+            animated={true}
+            backgroundColor={statusBarConfig.backgroundColor}
+            barStyle={statusBarConfig.barStyle}
+            translucent={
+              Platform.OS === "android"
+                ? statusBarConfig.translucent
+                : undefined
+            }
+          />
+          <NavigationContainer onStateChange={handleNavigationStateChange}>
+            <Routing />
+            {__DEV__ && <NetworkLogger />}
+          </NavigationContainer>
+        </StripeProvider>
       </SafeAreaProvider>
       <Toast />
     </>

@@ -52,8 +52,12 @@ export type MainStackParams = {
   Welcome: undefined;
   Recalculate: undefined;
   profile: undefined;
-  Fasts: undefined;
-  FastDetails: undefined;
+  Fasts: {
+    fastsData?: RecentFast[];
+  };
+  FastDetails: {
+    date: string;
+  };
   EditProfile: {
     userData?: EditProfile;
   };
@@ -176,7 +180,7 @@ export type EditProfileScreenProps = NativeStackScreenProps<
   "EditProfile"
 >;
 export type ChangePasswordScreenProps = NativeStackScreenProps<
-  BottomTabParams & MainStackParams,
+  BottomTabParams & MainStackParams & AuthStackParams,
   "ChangePassword"
 >;
 export type UserMemberShipScreenProps = NativeStackScreenProps<

@@ -41,6 +41,10 @@ import {
   launchImageLibrary,
 } from "react-native-image-picker";
 import { callingCodeToCountryCode } from "../../Utilities/Helpers";
+import Toast from "react-native-toast-message";
+import { postData, postFormData, putData } from "../../APIService/api";
+import ENDPOINTS from "../../APIService/endPoints";
+import { IMAGE_BASE_URL } from "@env";
 
 type ProfileForm = {
   gender: string;
@@ -80,7 +84,8 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
   const [phone, setPhone] = useState("");
   const [showCountryPicker, setShowCountryPicker] = useState(false);
   const [isModalVisible, setModalVisible] = React.useState(false);
-  const [selectedImage, setSelectedImage] = React.useState<Asset[]>([]);
+
+  const [selectedImage, setSelectedImage] = React.useState<string | null>(null);
   const { profileForm } = useAppSelector((state) => state.questions);
   const [countryCode, setCountryCode] = useState<CountryCode>("US");
   const [country, setCountry] = useState<Country | null>(null);
@@ -111,6 +116,101 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
     return "";
   }, [profileForm.height, profileForm.weight]);
 
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
+  const openCamera = () => {
+    const options: CameraOptions = {
+      mediaType: "photo",
+      saveToPhotos: true,
+    };
+    launchCamera(options, async (response) => {
+      if (response.didCancel) {
+        console.log("User cancelled camera picker");
+      } else if (response.errorCode) {
+        console.log("camera open error");
+      } else if (response.assets && response.assets.length > 0) {
+        const formData = new FormData();
+        formData.append("image", response.assets[0]);
+        try {
+          await postData(ENDPOINTS.updateProfilPic, formData, {
+            "Content-Type": "multipart/form-data",
+          });
+        } catch (error: any) {
+          Toast.show({
+            type: "error",
+            text1: error.message || "Something went wrong",
+          });
+        }
+        setSelectedImage(response.assets[0].uri!);
+      }
+      closeModal();
+    });
+  };
+
+  const openGallery = () => {
+    const options: ImageLibraryOptions = {
+      mediaType: "photo",
+      quality: 0.1,
+    };
+    launchImageLibrary(options, async (response) => {
+      if (response.didCancel) {
+        console.log("User cancelled image picker");
+      } else if (response.errorCode) {
+        console.log("image picker error");
+      } else if (response.assets && response.assets.length > 0) {
+        const formData = new FormData();
+        formData.append("image", response.assets[0]);
+        try {
+          const response = await postFormData(
+            ENDPOINTS.updateProfilPic,
+            formData
+          );
+
+          console.log(response.data, "SSSS");
+        } catch (error: any) {
+          Toast.show({
+            type: "error",
+            text1: error.message || "Something went wrong",
+          });
+        }
+        setSelectedImage(response.assets[0]?.uri!);
+      }
+      closeModal();
+    });
+  };
+
+  const userUpdateData = async () => {
+    const data = {
+      gender: profileForm.gender,
+      dob: profileForm.dob,
+      age: Number(profileForm.age),
+      height: Number(profileForm.height),
+      weight: Number(profileForm.weight),
+      bmi: Number(bmi),
+    };
+
+    try {
+      const response = await putData(ENDPOINTS.updateUserProfile, data);
+      console.log("update data ----->", response);
+      if (response.data.success) {
+        Toast.show({
+          type: "success",
+          text1: response.data.message,
+        });
+        navigation.replace("tabs", {
+          screen: "settings",
+        });
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    }
+  };
+
   useEffect(() => {
     if (profileForm.dob) {
       // Remove ordinal suffixes (st, nd, rd, th)
@@ -129,52 +229,6 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
       }
     }
   }, [profileForm.dob, dispatch]);
-
-  const closeModal = () => {
-    setModalVisible(false);
-  };
-
-  const openCamera = () => {
-    const options: CameraOptions = {
-      mediaType: "photo",
-      saveToPhotos: true,
-    };
-    launchCamera(options, (response) => {
-      if (response.didCancel) {
-        console.log("User cancelled camera picker");
-      } else if (response.errorCode) {
-        console.log("camera open error");
-      } else {
-        if (response.assets && response.assets.length > 0) {
-          const image = response.assets[0];
-          setSelectedImage([...selectedImage, response.assets[0]]);
-        }
-      }
-      closeModal();
-    });
-  };
-
-  const openGallery = () => {
-    const options: ImageLibraryOptions = {
-      mediaType: "photo",
-    };
-    launchImageLibrary(options, (response) => {
-      if (response.didCancel) {
-        console.log("User cancelled image picker");
-      } else if (response.errorCode) {
-        console.log("image picker error");
-      } else {
-        console.log("Image picker response: ", response.assets);
-        const imageUri = response.assets?.[0]?.uri;
-        console.log("Selected Image uri: ", imageUri);
-        if (response.assets && response.assets.length > 0) {
-          const image = response.assets[0];
-          setSelectedImage([...selectedImage, response.assets[0]]);
-        }
-      }
-      closeModal();
-    });
-  };
 
   useEffect(() => {
     const parsedDate = dayjs(userData?.dob, "MM-DD-YYYY");
@@ -199,7 +253,7 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
     );
   }, [userData]);
 
-  console.log("country ---->", countryCode);
+  console.log(selectedImage);
 
   return (
     <ScrollView
@@ -224,14 +278,15 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
 
         <View style={{ gap: verticalScale(20) }}>
           <TouchableOpacity style={styles.circleView}>
-            {selectedImage.length > 0 ? (
+            {selectedImage ? (
+              <Image source={{ uri: selectedImage }} style={styles.userImg} />
+            ) : (
               <Image
-                source={{ uri: selectedImage[0].uri }}
+                source={{ uri: IMAGE_BASE_URL + userData?.profilePic }}
                 style={styles.userImg}
               />
-            ) : (
-              <Image source={IMAGES.userImg} style={styles.userImg} />
             )}
+
             <View style={styles.penContainer}>
               <TouchableOpacity
                 style={styles.penBtn}
@@ -383,14 +438,7 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
                 />
               )}
             </View>
-            <PrimaryButton
-              title="Save Details"
-              onPress={() => {
-                navigation.replace("tabs", {
-                  screen: "settings",
-                });
-              }}
-            />
+            <PrimaryButton title="Save Details" onPress={userUpdateData} />
           </KeyboardAvoidingContainer>
         </View>
 
