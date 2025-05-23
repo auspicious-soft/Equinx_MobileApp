@@ -28,6 +28,7 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
   const [activeCheckBox, setActiveCheckBox] = useState<
     "ActiveBox" | "nonActive"
   >("nonActive");
+  const [fcmToken, setFcmToken] = useState(null);
 
   const toggleCheckBox = () => {
     setActiveCheckBox((prev) =>
@@ -35,11 +36,24 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
     );
   };
 
+  const getFcmToken = async () => {
+    const getToken = await getLocalStorageData(STORAGE_KEYS.fcmToken);
+    console.log(getToken);
+    if (getToken) {
+      setFcmToken(getToken);
+    }
+  };
+
+  useEffect(() => {
+    getFcmToken();
+  }, [fcmToken]);
+
   const handleNavigation = async () => {
     const data = {
       email: email,
       password: password,
       authType: "Email",
+      fcmToken: fcmToken,
     };
 
     try {

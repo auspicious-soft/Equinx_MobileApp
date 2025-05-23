@@ -4,15 +4,15 @@ import notifee, {
   EventType,
   TimestampTrigger,
   TriggerType,
-} from '@notifee/react-native';
+} from "@notifee/react-native";
 
 class NotificationService {
   // Initialize notification channels (required for Android)
   async initializeNotifications() {
     // Create a channel for fasting notifications (Android only)
     await notifee.createChannel({
-      id: 'fasting',
-      name: 'Fasting Notifications',
+      id: "fasting",
+      name: "Fasting Notifications",
       lights: false,
       vibration: true,
       importance: AndroidImportance.HIGH,
@@ -20,8 +20,8 @@ class NotificationService {
 
     // Create a channel for reminders
     await notifee.createChannel({
-      id: 'reminders',
-      name: 'Reminders',
+      id: "reminders",
+      name: "Reminders",
       lights: false,
       vibration: true,
       importance: AndroidImportance.DEFAULT,
@@ -45,19 +45,23 @@ class NotificationService {
   }
 
   // Display a basic notification
-  async displayNotification(title: string, body: string, channelId = 'fasting') {
+  async displayNotification(
+    title: string,
+    body: string,
+    channelId = "fasting"
+  ) {
     return await notifee.displayNotification({
       title,
       body,
       android: {
         channelId,
-        smallIcon: 'ic_notification', // Make sure this icon exists in android/app/src/main/res/drawable
+        smallIcon: "ic_notification", // Make sure this icon exists in android/app/src/main/res/drawable
         pressAction: {
-          id: 'default',
+          id: "default",
         },
       },
       ios: {
-        sound: 'default',
+        sound: "default",
       },
     });
   }
@@ -67,7 +71,7 @@ class NotificationService {
     title: string,
     body: string,
     timestamp: number,
-    channelId = 'fasting',
+    channelId = "fasting"
   ) {
     // Create a time-based trigger
     const trigger: TimestampTrigger = {
@@ -82,16 +86,16 @@ class NotificationService {
         body,
         android: {
           channelId,
-          smallIcon: 'ic_notification',
+          smallIcon: "ic_notification",
           pressAction: {
-            id: 'default',
+            id: "default",
           },
         },
         ios: {
-          sound: 'default',
+          sound: "default",
         },
       },
-      trigger,
+      trigger
     );
   }
 
@@ -110,12 +114,12 @@ class NotificationService {
     return notifee.onForegroundEvent(({ type, detail }) => {
       switch (type) {
         case EventType.DISMISSED:
-          console.log('User dismissed notification', detail.notification);
+          console.log("User dismissed notification", detail.notification);
           break;
         case EventType.PRESS:
-          console.log('User pressed notification', detail.notification);
+          console.log("User pressed notification", detail.notification);
           if (detail.notification && detail.notification.data) {
-            onNotificationPress('press', detail.notification.data);
+            onNotificationPress("press", detail.notification.data);
           }
           break;
       }

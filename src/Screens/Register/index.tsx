@@ -11,7 +11,7 @@ import CountryPicker, {
   Country,
   CountryCode,
 } from "react-native-country-picker-modal";
-import DeviceInfo from "react-native-device-info";
+import DeviceInfo, { getDeviceId } from "react-native-device-info";
 import LinearGradient from "react-native-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
@@ -48,12 +48,13 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
     const data = {
       fullName: name,
       email: email,
-      countryCode: countryCode,
+      countryCode: country?.callingCode.toString(),
       phoneNumber: phone,
-      deviceId: DeviceInfo.getUniqueId(),
+      deviceId: await DeviceInfo.getUniqueId(),
       password: password,
       authType: "Email",
     };
+    console.log(data);
     try {
       const response = await postData(ENDPOINTS.signUp, data);
       if (response.data.success) {
@@ -74,6 +75,8 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
       });
     }
   };
+
+  console.log(getDeviceId());
 
   return (
     <KeyboardAvoidingContainer>

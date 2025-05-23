@@ -9,6 +9,7 @@ const STORAGE_KEYS = {
   homeDataTimestamp: "home_data_timestamp",
   cachedDiscoverData: "cached_discover_data",
   discoverDataTimestamp: "discover_data_timestamp",
+  fcmToken: "fcm_token",
 };
 
 export default STORAGE_KEYS;

@@ -145,7 +145,7 @@ const Chat = () => {
           <CustomText
             fontSize={10}
             fontFamily="regular"
-            color={isUser ? COLORS.white : COLORS.darkBlue}
+            color={isUser ? COLORS.white : COLORS.darkBLue}
             style={{ textAlign: isUser ? "right" : "left" }}
           >
             {item.content}

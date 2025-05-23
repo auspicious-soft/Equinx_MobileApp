@@ -20,6 +20,8 @@ import { KeyboardAvoidingContainer } from "../../Components/KeyboardAvoidingComp
 import Toast from "react-native-toast-message";
 import { postData } from "../../APIService/api";
 import ENDPOINTS from "../../APIService/endPoints";
+import { getLocalStorageData } from "../../Utilities/Storage";
+import STORAGE_KEYS from "../../Utilities/Constants";
 
 const initialSeconds = 5;
 
@@ -29,6 +31,19 @@ const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
   const [timeInSeconds, setTimeInSeconds] = useState<number>(initialSeconds);
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputs = useRef<(TextInput | null)[]>([]);
+  const [fcmToken, setFcmToken] = useState(null);
+
+  const getFcmToken = async () => {
+    const getToken = await getLocalStorageData(STORAGE_KEYS.fcmToken);
+    console.log(getToken);
+    if (getToken) {
+      setFcmToken(getToken);
+    }
+  };
+
+  useEffect(() => {
+    getFcmToken();
+  }, [fcmToken]);
 
   const handleNavigation = async () => {
     const data =
@@ -36,6 +51,7 @@ const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
         ? {
             otp: otp.map((otp) => otp).join(""),
             email: email,
+            fcmToken: fcmToken,
           }
         : {
             token: otp.map((otp) => otp).join(""),

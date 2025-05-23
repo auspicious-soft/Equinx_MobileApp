@@ -285,6 +285,19 @@ const InfoScreen: FC<InfoScreenProps> = ({ navigation, route }) => {
               }}
             >
               <PrimaryButton title={"Continue"} onPress={handleNext} />
+
+              {currentIndex === 0 && (
+                <PrimaryButton
+                  title="Skip to Login"
+                  onPress={() =>
+                    navigation.replace("authStack", {
+                      screen: "login",
+                    })
+                  }
+                  bgColor={["transparent", "transparent"]}
+                  textColor={COLORS.darkGreenGradient.end}
+                />
+              )}
             </Animated.View>
           )}
         </View>

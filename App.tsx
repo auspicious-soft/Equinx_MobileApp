@@ -9,8 +9,11 @@ import { useAppDispatch, useAppSelector } from "./src/Redux/store";
 import Routing from "./src/Routes";
 import COLORS from "./src/Utilities/Colors";
 import { StripeProvider } from "@stripe/stripe-react-native";
-import STORAGE_KEYS from "./src/Utilities/Constants";
 import { STRIPE_PUBLISHABLE_KEY } from "@env";
+import { storeLocalStorageData } from "./src/Utilities/Storage";
+import STORAGE_KEYS from "./src/Utilities/Constants";
+import messaging from "@react-native-firebase/messaging";
+import NotificationService from "./src/Services/NotificationService";
 
 const App = () => {
   const dispatch = useAppDispatch();
@@ -73,6 +76,53 @@ const App = () => {
 
   useEffect(() => {
     Appearance.setColorScheme("light");
+  }, []);
+
+  const getFcmToken = async () => {
+    try {
+      const fcmToken = await messaging().getToken();
+      if (fcmToken) {
+        console.log("FCM Token:", fcmToken);
+        await storeLocalStorageData(STORAGE_KEYS.fcmToken, fcmToken);
+      }
+    } catch (error) {
+      console.log("Error getting FCM token:", error);
+    }
+  };
+
+  useEffect(() => {
+    const initNotifications = async () => {
+      await NotificationService.initializeNotifications();
+    };
+    initNotifications();
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      console.log("FCM Foreground Message:", remoteMessage);
+
+      const title = remoteMessage.notification?.title || "Notification";
+      const body = remoteMessage.notification?.body || "";
+
+      await NotificationService.displayNotification(title, body);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    const unsubscribe = NotificationService.setupListeners((type, data) => {
+      console.log("Notification interaction:", type, data);
+      // Handle navigation or other logic based on notification data
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
+  useEffect(() => {
+    getFcmToken();
   }, []);
 
   return (
