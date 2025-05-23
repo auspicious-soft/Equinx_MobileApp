@@ -81,6 +81,8 @@ const Splash: FC<SplashProps> = ({ navigation }) => {
     }
   }, [token]);
 
+  console.log(isOnBoarded);
+
   useEffect(() => {
     // Fade in animation
     Animated.timing(fadeAnim, {
