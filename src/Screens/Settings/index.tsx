@@ -268,7 +268,10 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
             App
           </CustomText>
           <View style={{ gap: verticalScale(4) }}>
-            <TouchableOpacity style={styles.profileContainer}>
+            <TouchableOpacity
+              style={styles.profileContainer}
+              onPress={toggleSwitch}
+            >
               <View
                 style={{
                   flexDirection: "row",
@@ -284,28 +287,27 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                   Notifications
                 </CustomText>
               </View>
-              <TouchableOpacity onPress={toggleSwitch} activeOpacity={0.8}>
+
+              <Animated.View
+                style={{
+                  width: 40,
+                  height: 20,
+                  borderRadius: 10,
+                  backgroundColor: COLORS.greyishWhite,
+                  padding: 2,
+                  justifyContent: "center",
+                }}
+              >
                 <Animated.View
                   style={{
-                    width: 40,
-                    height: 20,
-                    borderRadius: 10,
-                    backgroundColor: COLORS.greyishWhite,
-                    padding: 2,
-                    justifyContent: "center",
+                    width: 16,
+                    height: 16,
+                    borderRadius: 8,
+                    backgroundColor: COLORS.green,
+                    transform: [{ translateX }],
                   }}
-                >
-                  <Animated.View
-                    style={{
-                      width: 16,
-                      height: 16,
-                      borderRadius: 8,
-                      backgroundColor: COLORS.green,
-                      transform: [{ translateX }],
-                    }}
-                  />
-                </Animated.View>
-              </TouchableOpacity>
+                />
+              </Animated.View>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.profileContainer}

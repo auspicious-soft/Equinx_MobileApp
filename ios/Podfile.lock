@@ -1748,6 +1748,27 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - RNLocalize (3.4.1):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.11.18.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNNotifee (9.1.8):
     - React-Core
     - RNNotifee/NotifeeCore (= 9.1.8)
@@ -2123,6 +2144,7 @@ DEPENDENCIES:
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNLocalize (from `../node_modules/react-native-localize`)
   - "RNNotifee (from `../node_modules/@notifee/react-native`)"
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -2302,6 +2324,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/messaging"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNLocalize:
+    :path: "../node_modules/react-native-localize"
   RNNotifee:
     :path: "../node_modules/@notifee/react-native"
   RNReanimated:
@@ -2400,6 +2424,7 @@ SPEC CHECKSUMS:
   RNFBApp: 6e738f1d86520e65e7dc4d5a6e7422ff0c908e6a
   RNFBMessaging: 0033d4bd56649e3bbf7553d3eb1cd7f2cdcd070d
   RNGestureHandler: 96fc2de36a25cf6bece93e030c2ed9a5e95d33dd
+  RNLocalize: 759649ec888d632e6d3ac50fb7756c2af777e1ae
   RNNotifee: 5e3b271e8ea7456a36eec994085543c9adca9168
   RNReanimated: bb8cae23e5b3d6bb253fad0fb91f29dd8a32c82c
   RNScreens: 04304337930029a5d0db297b22eb0f07adc31a2c

@@ -1,9 +1,8 @@
 import {
+  ActivityIndicator,
   FlatList,
   Keyboard,
-  Platform,
   StyleSheet,
-  Text,
   TextInput,
   TouchableOpacity,
   View,
@@ -22,6 +21,7 @@ import ENDPOINTS from "../../APIService/endPoints";
 import { useAppDispatch, useAppSelector } from "../../Redux/store";
 import { ChatResponse } from "../../Typings/apiResponse";
 import { setChatData } from "../../Redux/slices/ChatSlice";
+import TypingLoader from "../../Components/TypingLoader";
 
 const Chat = () => {
   const [sendMessage, setSendMessage] = useState("");
@@ -29,84 +29,35 @@ const Chat = () => {
   const dispatch = useAppDispatch();
   const flatListRef = useRef<FlatList>(null); // Reference to FlatList for scrolling
   const { chatData } = useAppSelector((state) => state.chatData);
+  const [loadingAssistant, setLoadingAssistant] = useState(false);
 
   // Send message to API and update chat
-  const sendMessageAPi = async () => {
-    if (!sendMessage.trim()) {
-      Toast.show({
-        type: "error",
-        text1: "Please enter a message",
-      });
-      return;
-    }
-
-    setIsSending(true);
-    const userMessage: ChatResponse = {
-      _id: `temp_${Date.now()}`, // Temporary ID for optimistic update
-      role: "user",
+  const handleSendMessage = async () => {
+    const data = {
       content: sendMessage,
-      created_at: new Date().toISOString(),
     };
 
-    // Optimistically add user message to chat
-    dispatch(setChatData([...chatData, userMessage]));
-    setSendMessage("");
     Keyboard.dismiss();
-
+    setSendMessage("");
     try {
-      const data = { content: sendMessage };
-      const response = await postData<any>(
-        ENDPOINTS.chat,
-        JSON.stringify(data)
-      );
-
-      // Parse streaming response
-      const message = response.data
-        .split("\n")
-        .filter(
-          (line: string) =>
-            line.startsWith("data: ") && !line.includes("[DONE]")
-        )
-        .map((line: string) => {
-          try {
-            return JSON.parse(line.replace("data: ", "")).content;
-          } catch {
-            return "";
-          }
-        })
-        .join("");
-
+      setTimeout(() => {
+        setLoadingAssistant(true);
+      }, 2000);
+      const response = await postData(ENDPOINTS.chat, data);
+      console.log(response.data);
       if (response.data.success) {
-        const botMessage: ChatResponse = {
-          _id: `bot_${Date.now()}`,
-          role: "assistant",
-          content: message,
-          created_at: new Date().toISOString(),
-        };
-
-        // Update chat with bot response
-        dispatch(setChatData([userMessage, botMessage, ...chatData]));
         Toast.show({
           type: "success",
           text1: "Message sent successfully",
         });
-
-        // Scroll to the latest message
-        setTimeout(() => {
-          flatListRef.current?.scrollToIndex({ index: 0, animated: true });
-        }, 100);
       }
     } catch (error: any) {
       Toast.show({
         type: "error",
         text1: error.message || "Something went wrong",
       });
-      // Optionally remove the optimistic user message on error
-      dispatch(
-        setChatData(chatData.filter((msg) => msg._id !== userMessage._id))
-      );
     } finally {
-      setIsSending(false);
+      setLoadingAssistant(false);
     }
   };
 
@@ -136,6 +87,7 @@ const Chat = () => {
         {item.role === "assistant" && (
           <CustomIcon Icon={ICONS.chatBotIcon} height={27} width={27} />
         )}
+
         <View
           style={[
             styles.messageContainer,
@@ -157,14 +109,14 @@ const Chat = () => {
 
   useEffect(() => {
     fetchChat();
-  }, []);
+  }, [chatData, loadingAssistant]);
 
   return (
     <SafeAreaView style={styles.safeAreaContainer} edges={["top"]}>
       <CustomText
         fontSize={22}
         fontFamily="bold"
-        color={COLORS.darkBlue}
+        color={COLORS.darkBLue}
         style={{ marginBottom: verticalScale(10) }}
       >
         AI Life Coach Assistant
@@ -178,19 +130,31 @@ const Chat = () => {
           inverted // Display latest messages at the bottom
           contentContainerStyle={{
             gap: verticalScale(20),
-            flexDirection: "column-reverse",
             paddingBottom: verticalScale(20),
           }}
           showsVerticalScrollIndicator={false}
-          onContentSizeChange={() => {
-            // Auto-scroll to bottom when content changes
-            // flatListRef.current?.scrollToIndex({ index: 0, animated: true });
-          }}
-          onScrollToIndexFailed={() => {
-            // Fallback for scroll failures
-            // flatListRef.current?.scrollToOffset({ offset: 0, animated: true });
-          }}
+          onContentSizeChange={() => {}}
         />
+        {loadingAssistant && (
+          <View
+            style={[
+              styles.iconMessageContainer,
+              { justifyContent: "flex-start" },
+            ]}
+          >
+            <CustomIcon Icon={ICONS.chatBotIcon} height={27} width={27} />
+            <View style={[styles.messageContainer, styles.botContainer]}>
+              <TypingLoader
+                text="Assistant is typing"
+                dotCount={3}
+                size={10}
+                color={COLORS.darkBLue}
+                speed={500}
+                dotSpacing={2}
+              />
+            </View>
+          </View>
+        )}
         <View style={styles.inputWrapper}>
           <TextInput
             placeholder="Type your text here"
@@ -201,7 +165,7 @@ const Chat = () => {
             editable={!isSending} // Disable input while sending
           />
           <TouchableOpacity
-            onPress={sendMessageAPi}
+            onPress={handleSendMessage}
             disabled={isSending}
             style={styles.sendButton}
           >

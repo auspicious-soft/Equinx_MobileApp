@@ -4,12 +4,12 @@ import { ChatResponse } from "../../Typings/apiResponse";
 
 // Define a type for the slice state
 interface ChatSliceState {
-  chatData: ChatResponse | null;
+  chatData: ChatResponse | [];
 }
 
 // Define the initial state using that type
 const initialState: ChatSliceState = {
-  chatData: null,
+  chatData: [],
 };
 
 export const ChatDataSlice = createSlice({

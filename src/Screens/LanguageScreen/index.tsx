@@ -46,7 +46,9 @@ const language = [
 ];
 
 const LanguageScreen: FC<LanguageScreenProps> = ({ navigation }) => {
-  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(null);
+  const [selectedLanguage, setSelectedLanguage] = useState<string | null>(
+    "English"
+  );
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: COLORS.white }}
