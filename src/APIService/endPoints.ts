@@ -23,6 +23,7 @@ const ENDPOINTS = {
   fastingToday: `api/fasting-today`,
   checkOutSession: `api/create-checkout-session`,
   updateProfilPic: `api/update-profile-pic`,
+  logOut: `api/logout-user`,
 };
 
 export default ENDPOINTS;

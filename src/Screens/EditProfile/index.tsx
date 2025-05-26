@@ -21,7 +21,6 @@ import {
   verticalScale,
   wp,
 } from "../../Utilities/Metrics";
-import IMAGES from "../../Assets/Images";
 import CustomInput from "../../Components/CustomInput";
 import CountryPicker, {
   Country,
@@ -34,7 +33,6 @@ import PrimaryButton from "../../Components/PrimaryButton";
 import dayjs from "dayjs";
 import UploadImageOptions from "../../Components/Modals/UploadImageOption";
 import {
-  Asset,
   CameraOptions,
   ImageLibraryOptions,
   launchCamera,
@@ -131,8 +129,14 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
       } else if (response.errorCode) {
         console.log("camera open error");
       } else if (response.assets && response.assets.length > 0) {
+        setSelectedImage(response.assets[0].uri!);
         const formData = new FormData();
-        formData.append("image", response.assets[0]);
+        const asset = response.assets[0];
+        formData.append("image", {
+          uri: asset.uri,
+          type: asset.type,
+          name: asset.fileName,
+        });
         try {
           await postData(ENDPOINTS.updateProfilPic, formData, {
             "Content-Type": "multipart/form-data",
@@ -143,7 +147,6 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
             text1: error.message || "Something went wrong",
           });
         }
-        setSelectedImage(response.assets[0].uri!);
       }
       closeModal();
     });
@@ -160,8 +163,14 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
       } else if (response.errorCode) {
         console.log("image picker error");
       } else if (response.assets && response.assets.length > 0) {
+        setSelectedImage(response.assets[0]?.uri!);
         const formData = new FormData();
-        formData.append("image", response.assets[0]);
+        const asset = response.assets[0];
+        formData.append("image", {
+          uri: asset.uri,
+          type: asset.type,
+          name: asset.fileName,
+        });
         try {
           const response = await postFormData(
             ENDPOINTS.updateProfilPic,
@@ -175,7 +184,6 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
             text1: error.message || "Something went wrong",
           });
         }
-        setSelectedImage(response.assets[0]?.uri!);
       }
       closeModal();
     });
@@ -191,9 +199,11 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
       bmi: Number(bmi),
     };
 
+    // console.log("update data", data);
+
     try {
       const response = await putData(ENDPOINTS.updateUserProfile, data);
-      console.log("update data ----->", response);
+      // console.log("update data ----->", response);
       if (response.data.success) {
         Toast.show({
           type: "success",
@@ -246,14 +256,14 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
     dispatch(
       setProfileForm({
         gender: userData?.gender,
-        dob: formattedDate,
+        dob: userData?.dob,
         height: userData?.height.toString(),
         weight: userData?.weight.toString(),
       })
     );
   }, [userData]);
 
-  console.log(selectedImage);
+  console.log("selected image ", selectedImage);
 
   return (
     <ScrollView

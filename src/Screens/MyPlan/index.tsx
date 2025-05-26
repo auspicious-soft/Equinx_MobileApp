@@ -75,7 +75,9 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
       console.log(response);
       if (response.data.success) {
         dispatch(setMyPlan(response.data.data));
-        setActiveDay(response.data.data.plan[2].planId._id);
+        if (response.data.data.hasActivePlan) {
+          setActiveDay(response.data.data.plan[2].planId._id);
+        }
         setActiveData(response.data.data.plan[2]);
       }
     } catch (error: any) {

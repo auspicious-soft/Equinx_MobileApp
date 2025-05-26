@@ -270,6 +270,7 @@ export interface RecentFast {
   date: string;
   completed: boolean;
   duration: number;
+  calories: number;
 }
 
 export interface FastsDataResponse {
@@ -305,6 +306,14 @@ export interface Meal2 {
   items: string[];
   calories: string;
   _id: string;
+  mealStatus: MealStatus;
+}
+
+export interface MealStatus {
+  carbs: number;
+  protein: number;
+  fat: number;
+  status: boolean;
 }
 
 export interface FirstMealStatus {
@@ -345,9 +354,16 @@ export interface WaterIntake {
 }
 
 export interface CheckOutResponse {
-  sessionId: string;
-  url: string;
+  clientSecret: string;
   productDetails: ProductDetails;
+}
+
+export interface ProductDetails {
+  name: string;
+  description: string;
+  currency: string;
+  unitAmount: number;
+  type: string;
 }
 
 export interface ProductDetails {

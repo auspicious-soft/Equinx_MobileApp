@@ -81,15 +81,6 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
     }
   };
 
-  // const getToken = async () => {
-  //   const token = await getLocalStorageData(STORAGE_KEYS.token);
-  //   console.log(token);
-  // };
-
-  // useEffect(() => {
-  //   getToken();
-  // }, []);
-
   return (
     <KeyboardAvoidingContainer>
       <LinearGradient

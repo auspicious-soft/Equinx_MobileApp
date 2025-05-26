@@ -48,7 +48,7 @@ const Fasts: FC<FastsScreenProps> = ({ navigation, route }) => {
         </View>
         <View style={{ gap: verticalScale(5) }}>
           <CustomText fontFamily="medium" color={COLORS.darkBLue} fontSize={14}>
-            {`${item.kcal} Kcal consumed`}
+            {`${item.calories} Kcal consumed`}
           </CustomText>
           <View
             style={{

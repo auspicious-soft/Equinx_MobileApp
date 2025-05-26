@@ -24,10 +24,13 @@ import { CustomText } from "../../Components/CustomText";
 import CustomIcon from "../../Components/CustomIcon";
 import ICONS from "../../Assets/Icons";
 import { SettingsScreenProps } from "../../Typings/route";
-import { deleteLocalStorageData } from "../../Utilities/Storage";
+import {
+  deleteLocalStorageData,
+  getLocalStorageData,
+} from "../../Utilities/Storage";
 import STORAGE_KEYS from "../../Utilities/Constants";
 import Toast from "react-native-toast-message";
-import { fetchData } from "../../APIService/api";
+import { fetchData, postData } from "../../APIService/api";
 import ENDPOINTS from "../../APIService/endPoints";
 import { SettingResponse } from "../../Typings/apiResponse";
 import { useAppDispatch, useAppSelector } from "../../Redux/store";
@@ -39,6 +42,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
   const toggleAnim = useRef(new Animated.Value(0)).current;
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
+  const [fcmToken, setFcmToken] = useState(null);
 
   const { settingData } = useAppSelector((state) => state.settingData);
 
@@ -64,7 +68,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
     setIsLoading(true);
     try {
       const response = await fetchData<SettingResponse>(ENDPOINTS.settings);
-      console.log("userData response", response);
+      // console.log("userData response", response);
       if (response.data.success) {
         dispatch(setSettingData(response.data.data));
       }
@@ -86,21 +90,51 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
       },
       {
         text: "Confirm",
-        onPress: () => {
-          deleteLocalStorageData(STORAGE_KEYS.token);
-          navigation.replace("authStack", {
-            screen: "login",
-          });
+        onPress: async () => {
+          const data = {
+            fcmToken: fcmToken,
+          };
+
+          try {
+            const response = await postData(ENDPOINTS.logOut, data);
+            console.log(response.data);
+            if (response.data.success) {
+              Toast.show({
+                type: "success",
+                text1: response.data.message,
+              });
+              deleteLocalStorageData(STORAGE_KEYS.token);
+              navigation.replace("authStack", {
+                screen: "login",
+              });
+            }
+          } catch (error: any) {
+            Toast.show({
+              type: "error",
+              text1: error.message || "Something went wrong",
+            });
+          }
         },
       },
     ]);
   };
 
-  console.log("profilepicdata ---->", settingData?.editProfile.profilePic);
+  // console.log("profilepicdata ---->", settingData?.editProfile.profilePic);
 
   useEffect(() => {
     fetchUser();
   }, []);
+
+  const getFcmToken = async () => {
+    const token = await getLocalStorageData(STORAGE_KEYS.fcmToken);
+    if (token) {
+      setFcmToken(token);
+    }
+  };
+
+  useEffect(() => {
+    getFcmToken();
+  }, [fcmToken]);
 
   if (isLoading) {
     return (

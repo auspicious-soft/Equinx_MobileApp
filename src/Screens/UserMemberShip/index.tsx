@@ -1,6 +1,7 @@
 import {
   ActivityIndicator,
   Alert,
+  Linking,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -16,12 +17,15 @@ import { CustomText } from "../../Components/CustomText";
 import ICONS from "../../Assets/Icons";
 import PrimaryButton from "../../Components/PrimaryButton";
 import Toast from "react-native-toast-message";
-import { PricePlan } from "../../Typings/apiResponse";
+import { CheckOutResponse, PricePlan } from "../../Typings/apiResponse";
 import { fetchData, postData } from "../../APIService/api";
 import ENDPOINTS from "../../APIService/endPoints";
 import { useAppDispatch, useAppSelector } from "../../Redux/store";
 import { setPricePlan } from "../../Redux/slices/planPrices";
-import { useStripe } from "@stripe/stripe-react-native";
+import {
+  initPaymentSheet,
+  presentPaymentSheet,
+} from "@stripe/stripe-react-native";
 
 const planData = [
   {
@@ -85,23 +89,39 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
     };
 
     try {
-      const response = await postData(ENDPOINTS.checkOutSession, data);
-      console.log(response);
+      const response = await postData<CheckOutResponse>(
+        ENDPOINTS.checkOutSession,
+        data
+      );
+      console.log(response.data.data.clientSecret);
 
       if (response.data.success) {
-        Toast.show({
-          type: "success",
-          text1: response.data.message,
+        await initPaymentSheet({
+          paymentIntentClientSecret: response.data.data.clientSecret,
+          merchantDisplayName: "Equin Global",
         });
-        // navigation.navigate("tabs", {
-        //   screen: "settings",
-        // });
+        openPaymentSheet();
+        // Linking.openURL(response.data.data.url);
       }
     } catch (error: any) {
+      console.log(error);
+
       Toast.show({
         type: "error",
         text1: error.message || "Something went wrong",
       });
+    }
+  };
+
+  const openPaymentSheet = async () => {
+    const { error } = await presentPaymentSheet();
+
+    if (error) {
+      console.log(error);
+
+      Alert.alert(`Error: ${error.message}`);
+    } else {
+      Alert.alert("Success", "Payment confirmed!");
     }
   };
 

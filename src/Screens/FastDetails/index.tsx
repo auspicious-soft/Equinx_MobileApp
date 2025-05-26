@@ -61,6 +61,8 @@ const FastDetail: FC<FastDetailsScreenProps> = ({ navigation, route }) => {
   const { date } = route.params;
   const [isLoading, setIsLoading] = useState(false);
 
+  console.log("date ", date);
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     const day = date.getDate();
@@ -91,10 +93,8 @@ const FastDetail: FC<FastDetailsScreenProps> = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    if (date) {
-      getFastsData();
-    }
-  }, [date]);
+    getFastsData();
+  }, []);
 
   if (isLoading) {
     return (
