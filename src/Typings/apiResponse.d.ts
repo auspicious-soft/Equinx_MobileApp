@@ -374,3 +374,98 @@ export interface ProductDetails {
   type: string;
   interval: string;
 }
+
+export interface NutritionResponse {
+  todayMeal: TodayMeal;
+}
+
+export interface TodayMeal {
+  _id: string;
+  userId: string;
+  planId: PlanId;
+  firstMealStatus: FirstMealStatus;
+  secondMealStatus: SecondMealStatus;
+  thirdMealStatus: ThirdMealStatus;
+  otherMealStatus: OtherMealStatus;
+  planDay: string;
+  __v: number;
+  createdAt: string;
+  updatedAt: string;
+  stats: Stats;
+}
+
+export interface PlanId {
+  _id: string;
+  plan_type: string;
+  day: number;
+  meals: Meal[];
+  total_calories: string;
+  __v: number;
+}
+
+export interface Meal {
+  meal_time: string;
+  items: string[];
+  calories: string;
+  _id: string;
+}
+
+export interface FirstMealStatus {
+  carbs: number;
+  protein: number;
+  fat: number;
+  status: boolean;
+  calories: number;
+}
+
+export interface SecondMealStatus {
+  carbs: number;
+  protein: number;
+  fat: number;
+  status: boolean;
+  calories: number;
+}
+
+export interface ThirdMealStatus {
+  carbs: number;
+  protein: number;
+  fat: number;
+  status: boolean;
+  calories: number;
+}
+
+export interface OtherMealStatus {
+  carbs: number;
+  protein: number;
+  fat: number;
+  status: boolean;
+}
+
+export interface Stats {
+  carbs: Carbs;
+  protein: Protein;
+  fat: Fat;
+  overall: Overall;
+}
+
+export interface Carbs {
+  target: number;
+  consumed: number;
+  percentage: number;
+}
+
+export interface Protein {
+  target: number;
+  consumed: number;
+  percentage: number;
+}
+
+export interface Fat {
+  target: number;
+  consumed: number;
+  percentage: number;
+}
+
+export interface Overall {
+  percentage: number;
+}

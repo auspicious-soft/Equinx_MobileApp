@@ -8,6 +8,7 @@ const COLORS = {
   orange: "#FF9500",
   lightGrey: "#777689",
   skyBlue: "#4D81E7",
+  golden: "#E3E089",
   greenBg: "#D4EACF",
   lightGreenGradient: {
     start: "#CCFFD5",

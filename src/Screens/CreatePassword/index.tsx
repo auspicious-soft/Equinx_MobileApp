@@ -30,8 +30,43 @@ const CreatePassword: FC<CreatePasswordScreenProps> = ({
 
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState({
+    newPassword: "",
+    confirmPassword: "",
+  });
 
-  const handleNavigation = async () => {
+  const validInputs = () => {
+    let valid = true;
+    let newErrors = {
+      newPassword: "",
+      confirmPassword: "",
+    };
+    if (!newPassword) {
+      valid = false;
+      newErrors.newPassword = "New Password is required.";
+      Toast.show({
+        type: "error",
+        text1: "New Password is required.",
+      });
+    } else if (newPassword.length < 6) {
+      valid = false;
+    } else if (newPassword !== confirmPassword) {
+      valid = false;
+      newErrors.confirmPassword = "Passwords do not match.";
+      Toast.show({
+        type: "error",
+        text1: "Passwords do not match.",
+      });
+    }
+
+    setError(newErrors);
+    return valid;
+  };
+
+  const handleCreatePassword = async () => {
+    if (!validInputs()) {
+      return; // Stop execution if validation fails
+    }
     const data = {
       password: newPassword,
       otp: otp,
@@ -112,7 +147,7 @@ const CreatePassword: FC<CreatePasswordScreenProps> = ({
 
               <PrimaryButton
                 title="Create New Password"
-                onPress={handleNavigation}
+                onPress={handleCreatePassword}
               />
               <View style={styles.footerContainer}>
                 <CustomText fontSize={12} color={COLORS.oldGrey}>

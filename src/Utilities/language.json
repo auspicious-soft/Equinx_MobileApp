@@ -1,0 +1,23 @@
+{
+  "en": {
+    "language": "English",
+    "good_morning": "Good Morning",
+    "ready_to_crush": "Ready to crush your fast today?",
+    "water_tracker": "Water Tracker",
+    "Liters": "Liters",
+    "today": "today",
+    "daily_goal": "Daily Goal",
+    "liters": "liters",
+    "record_intake": "Record intake",
+    "quick_stats": "Quick Stats",
+    "you_have_fasted": "You've fasted",
+    "in_a_row": "in a row",
+    "total_hours_fasted": "Total Hours Fasted",
+    "days": "days",
+    "hours": "hours",
+    "this_week": "This Week",
+    "need_guidance": "Need Guidance? Ask Your Fasting Coach",
+    "get_personlized_tips": "Get personalized tips, motivation, and fasting insights from our AI coach.",
+    "start_chat": "Start Chat"
+  }
+}

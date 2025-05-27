@@ -8,34 +8,91 @@ import ICONS from "../../Assets/Icons";
 import CustomInput from "../CustomInput";
 import PrimaryButton from "../PrimaryButton";
 import { KeyboardAvoidingContainer } from "../KeyboardAvoidingComponent";
+import { postData } from "../../APIService/api";
+import ENDPOINTS from "../../APIService/endPoints";
+import Toast from "react-native-toast-message";
 
 type RecordMealModalProps = {
   isVisible: boolean;
   closeModal: () => void;
-  mealType: string | null;
+  mealType: string;
+  mealId: string;
+  getNutrition: () => void;
+  Mealcarbs?: string;
+  Mealfat?: string;
+  Mealprotine?: string;
+  status?: boolean;
 };
 
 const RecordMealModal: FC<RecordMealModalProps> = ({
   isVisible,
   closeModal,
   mealType,
+  mealId,
+  getNutrition,
+  Mealcarbs,
+  Mealfat,
+  Mealprotine,
+  status,
 }) => {
   const [activeTab, setActiveTab] = useState<"recordMeal" | "catpureMeal">(
     "recordMeal"
   );
+  const [carbs, setCarbs] = useState(Mealcarbs || "");
+  const [protine, setProtine] = useState(Mealprotine || "");
+  const [fat, setFat] = useState(Mealfat || "");
 
-  const [isType, setIsType] = useState(false);
-  const [selectedType, setSelectedType] = useState<
-    "Breakfast" | "Dinner" | "Lunch" | "Other" | string
-  >(mealType!);
+  const handleMealType = () => {
+    if (mealType === "Breakfast") {
+      return "first";
+    } else if (mealType === "Lunch") {
+      return "second";
+    } else if (mealType === "Dinner") {
+      return "third";
+    } else {
+      return "other";
+    }
+  };
+
+  const handleRecordMeal = async () => {
+    const data = {
+      mealId: mealId,
+      finishedMeal: handleMealType(),
+      data: {
+        carbs: Number(carbs),
+        protein: Number(protine),
+        fat: Number(fat),
+        status: true,
+      },
+    };
+
+    try {
+      const response = await postData(ENDPOINTS.recordMeal, data);
+      // console.log(response);
+      if (response.data.success) {
+        Toast.show({
+          type: "success",
+          text1: response.data.message,
+        });
+        closeModal();
+        getNutrition();
+        // handleEmptyInput();
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    }
+  };
 
   useEffect(() => {
-    setSelectedType(mealType!);
-  }, [mealType]);
-
-  const [carbs, setCarbs] = useState("");
-  const [protine, setProtine] = useState("");
-  const [fat, setFat] = useState("");
+    if (Mealcarbs && Mealfat && Mealprotine) {
+      setCarbs(Mealcarbs);
+      setProtine(Mealprotine);
+      setFat(Mealfat);
+    }
+  }, [Mealcarbs, Mealprotine, Mealfat]);
 
   return (
     <Modal
@@ -43,7 +100,6 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
       transparent
       onRequestClose={() => {
         closeModal();
-        setIsType(false);
       }}
       animationType="fade"
     >
@@ -51,7 +107,6 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
         <TouchableOpacity
           onPress={() => {
             closeModal();
-            setIsType(false);
           }}
           activeOpacity={1}
           style={styles.container}
@@ -151,18 +206,13 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                 >
                   Meal Type
                 </CustomText>
-                <TouchableOpacity
-                  style={styles.typeContainer}
-                  onPress={() => {
-                    setIsType(!isType);
-                  }}
-                >
+                <TouchableOpacity style={styles.typeContainer}>
                   <CustomText
                     fontSize={16}
                     fontFamily="regular"
                     color={COLORS.darkBLue}
                   >
-                    {selectedType}
+                    {mealType}
                   </CustomText>
 
                   <CustomIcon
@@ -172,111 +222,6 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                   />
                 </TouchableOpacity>
               </View>
-
-              {isType && (
-                <View
-                  style={{
-                    borderWidth: 1,
-                    borderColor: COLORS.greyishWhite,
-                    paddingVertical: verticalScale(5),
-                    paddingHorizontal: horizontalScale(15),
-                    gap: verticalScale(10),
-                    borderRadius: 12,
-                  }}
-                >
-                  <TouchableOpacity
-                    style={styles.selectedTypeContainer}
-                    onPress={() => {
-                      setSelectedType("Breakfast");
-                      setIsType(!isType);
-                    }}
-                  >
-                    <CustomText
-                      fontSize={12}
-                      fontFamily="medium"
-                      color={COLORS.oldGrey}
-                    >
-                      Breakfast
-                    </CustomText>
-                    {selectedType === "Breakfast" && (
-                      <CustomIcon
-                        Icon={ICONS.WhiteTickwithBlueBg}
-                        height={15}
-                        width={15}
-                      />
-                    )}
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={styles.selectedTypeContainer}
-                    onPress={() => {
-                      setSelectedType("lunch");
-                      setIsType(!isType);
-                    }}
-                  >
-                    <CustomText
-                      fontSize={12}
-                      fontFamily="medium"
-                      color={COLORS.oldGrey}
-                    >
-                      Lunch
-                    </CustomText>
-                    {selectedType === "lunch" && (
-                      <CustomIcon
-                        Icon={ICONS.WhiteTickwithBlueBg}
-                        height={15}
-                        width={15}
-                      />
-                    )}
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={styles.selectedTypeContainer}
-                    onPress={() => {
-                      setSelectedType("dinner");
-                      setIsType(!isType);
-                    }}
-                  >
-                    <CustomText
-                      fontSize={12}
-                      fontFamily="medium"
-                      color={COLORS.oldGrey}
-                    >
-                      Dinner
-                    </CustomText>
-                    {selectedType === "dinner" && (
-                      <CustomIcon
-                        Icon={ICONS.WhiteTickwithBlueBg}
-                        height={15}
-                        width={15}
-                      />
-                    )}
-                  </TouchableOpacity>
-
-                  <TouchableOpacity
-                    style={styles.selectedTypeContainer}
-                    onPress={() => {
-                      setSelectedType("other");
-                      setIsType(!isType);
-                    }}
-                  >
-                    <CustomText
-                      fontSize={12}
-                      fontFamily="medium"
-                      color={COLORS.oldGrey}
-                    >
-                      Other
-                    </CustomText>
-                    {selectedType === "other" && (
-                      <CustomIcon
-                        Icon={ICONS.WhiteTickwithBlueBg}
-                        height={15}
-                        width={15}
-                      />
-                    )}
-                  </TouchableOpacity>
-                </View>
-              )}
 
               <View
                 style={{
@@ -340,11 +285,9 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
               </View>
 
               <PrimaryButton
-                onPress={() => {
-                  closeModal();
-                  setIsType(false);
-                }}
+                onPress={handleRecordMeal}
                 title="Record"
+                disabled={status}
               />
             </View>
           </View>

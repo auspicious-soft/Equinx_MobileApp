@@ -379,7 +379,7 @@ const Home: FC<HomeScreenProps> = () => {
                   You've fasted
                 </CustomText>
                 <CustomText fontSize={18} color={COLORS.green}>
-                  {homeData?.thisWeekFastingDays}
+                  {`${homeData?.thisWeekFastingDays} day!`}
                 </CustomText>
                 <CustomText fontSize={12} color={COLORS.darkBLue}>
                   in a row
@@ -408,7 +408,7 @@ const Home: FC<HomeScreenProps> = () => {
                   Total Hours Fasted
                 </CustomText>
                 <CustomText fontSize={18} color={COLORS.green}>
-                  {homeData?.thisWeekFastingHours}
+                  {`${homeData?.thisWeekFastingHours} hours`}
                 </CustomText>
                 <CustomText fontSize={12} color={COLORS.darkBLue}>
                   This Week

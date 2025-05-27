@@ -29,6 +29,38 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
     "ActiveBox" | "nonActive"
   >("nonActive");
   const [fcmToken, setFcmToken] = useState(null);
+  const [isError, setIsError] = useState({
+    email: "",
+    password: "",
+  });
+
+  const validInputs = () => {
+    let valid = true;
+    let newErrors = {
+      email: "",
+      password: "",
+    };
+    if (!email) {
+      valid = false;
+      newErrors.email = "Email is required.";
+      Toast.show({
+        type: "error",
+        text1: "Email is required.",
+      });
+    }
+
+    if (!password) {
+      valid = false;
+      newErrors.password = "Password is required.";
+      Toast.show({
+        type: "error",
+        text1: "Password is required.",
+      });
+    }
+
+    setIsError(newErrors);
+    return valid;
+  };
 
   const toggleCheckBox = () => {
     setActiveCheckBox((prev) =>
@@ -48,7 +80,10 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
     getFcmToken();
   }, [fcmToken]);
 
-  const handleNavigation = async () => {
+  const handleLogin = async () => {
+    if (!validInputs()) {
+      return; // Stop execution if validation fails
+    }
     const data = {
       email: email,
       password: password,
@@ -164,11 +199,7 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
               </TouchableOpacity>
             </View>
 
-            <PrimaryButton
-              title="Log in"
-              onPress={handleNavigation}
-              textSize={20}
-            />
+            <PrimaryButton title="Log in" onPress={handleLogin} textSize={20} />
 
             <View style={styles.footerTextContainer}>
               <View style={styles.dontAccountContainer}>

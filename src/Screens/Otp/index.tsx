@@ -32,6 +32,23 @@ const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
   const inputs = useRef<(TextInput | null)[]>([]);
   const [fcmToken, setFcmToken] = useState(null);
+  const [error, setError] = useState("");
+
+  const validInputs = () => {
+    let valid = true;
+    let newErrors = "";
+    if (!otp.some((item) => item.trim() === "")) {
+      valid = false;
+      newErrors = "Please enter a valid OTP.";
+      Toast.show({
+        type: "error",
+        text1: "Please enter a valid OTP.",
+      });
+    }
+
+    setError(newErrors);
+    return valid;
+  };
 
   const getFcmToken = async () => {
     const getToken = await getLocalStorageData(STORAGE_KEYS.fcmToken);
@@ -46,6 +63,9 @@ const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
   }, [fcmToken]);
 
   const handleNavigation = async () => {
+    if (!validInputs()) {
+      return; // Stop execution if validation fails
+    }
     const data =
       isFrom === "register"
         ? {

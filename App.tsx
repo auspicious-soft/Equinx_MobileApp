@@ -1,6 +1,12 @@
 import { NavigationContainer, NavigationState } from "@react-navigation/native";
 import React, { useEffect, useMemo } from "react";
-import { Appearance, Platform, StatusBar, StatusBarStyle } from "react-native";
+import {
+  Appearance,
+  LogBox,
+  Platform,
+  StatusBar,
+  StatusBarStyle,
+} from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
 import NetworkLogger from "./src/Components/NetworkLogger";
@@ -14,6 +20,8 @@ import { storeLocalStorageData } from "./src/Utilities/Storage";
 import STORAGE_KEYS from "./src/Utilities/Constants";
 import messaging from "@react-native-firebase/messaging";
 import NotificationService from "./src/Services/NotificationService";
+
+LogBox.ignoreAllLogs(true);
 
 const App = () => {
   const dispatch = useAppDispatch();

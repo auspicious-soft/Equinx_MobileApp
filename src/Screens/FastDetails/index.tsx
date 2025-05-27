@@ -24,42 +24,40 @@ import IMAGES from "../../Assets/Images";
 import Toast from "react-native-toast-message";
 import { fetchData } from "../../APIService/api";
 import ENDPOINTS from "../../APIService/endPoints";
-import { FastsDataResponse } from "../../Typings/apiResponse";
+import { FastsDataResponse, Meal } from "../../Typings/apiResponse";
 import { useAppDispatch, useAppSelector } from "../../Redux/store";
 import { setFastsData } from "../../Redux/slices/DateMeal";
+import FastsMealModal from "../../Components/Modals/FastsMealModal";
 
-const mealData = [
-  {
-    title: "Breakfast",
-    kcal: "311",
-    inProgress: "Completed",
-    mealImg: IMAGES.breakFastImg,
-  },
-  {
-    title: "Lunch",
-    kcal: "Required 311",
-    inProgress: "Not Recorded",
-    mealImg: IMAGES.snackImg,
-  },
-  {
-    title: "Dinner",
-    kcal: "311",
-    inProgress: "pending",
-    mealImg: IMAGES.captureMealImg,
-  },
-  {
-    title: "Snack",
-    kcal: "311",
-    inProgress: "",
-    mealImg: IMAGES.fastMealImg,
-  },
-];
+// const mealData = [
+//   {
+//     title: "Breakfast",
+//     kcal: "311",
+//     inProgress: "Completed",
+//     mealImg: IMAGES.breakFastImg,
+//   },
+//   {
+//     title: "Lunch",
+//     kcal: "Required 311",
+//     inProgress: "Not Recorded",
+//     mealImg: IMAGES.snackImg,
+//   },
+//   {
+//     title: "Dinner",
+//     kcal: "311",
+//     inProgress: "pending",
+//     mealImg: IMAGES.captureMealImg,
+//   },
+
+// ];
 
 const FastDetail: FC<FastDetailsScreenProps> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
   const { fastsData } = useAppSelector((state) => state.fastsData);
   const { date } = route.params;
   const [isLoading, setIsLoading] = useState(false);
+  const [isModal, setIsModal] = useState(false);
+  const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
 
   console.log("date ", date);
 
@@ -75,20 +73,48 @@ const FastDetail: FC<FastDetailsScreenProps> = ({ navigation, route }) => {
     setIsLoading(true);
     try {
       const response = await fetchData<FastsDataResponse>(
-        ENDPOINTS.getMealByDate
+        `${ENDPOINTS.getMealByDate}?date=${date}`
       );
-      console.log("date response -->", response);
+      console.log("getFastsData response -->", response);
 
       if (response.data.success) {
         dispatch(setFastsData(response.data.data));
       }
     } catch (error: any) {
+      console.log("fast detail error", error);
       Toast.show({
         type: "error",
         text1: error.message || "Something went wrong",
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const getWaterStatus = (consumed: number, goal: number) => {
+    const ratio = consumed / goal;
+
+    if (ratio < 0.5) {
+      return {
+        message: "You need to drink more water!",
+        textColor: COLORS.golden,
+        bgColor: "#EFFFF3",
+        Color: COLORS.golden,
+      };
+    } else if (ratio >= 0.5 && ratio < 1) {
+      return {
+        message: "Keep up the good work! You are almost there.",
+        textColor: "#78C1E5",
+        bgColor: "#78C1E5",
+        Color: "#78C1E5",
+      };
+    } else {
+      return {
+        message: "Perfect! You consumed a lot of water.",
+        textColor: COLORS.green,
+        bgColor: "#F0F8F0",
+        Color: COLORS.green,
+      };
     }
   };
 
@@ -130,91 +156,143 @@ const FastDetail: FC<FastDetailsScreenProps> = ({ navigation, route }) => {
             Your Meals
           </CustomText>
 
-          {mealData.map((item, index) => (
-            <View key={index} style={styles.mealCard}>
-              <Image source={item.mealImg} style={styles.mealImgStyle} />
-              <View style={{ flex: 1, gap: verticalScale(10) }}>
-                <CustomText
-                  fontSize={14}
-                  fontFamily="medium"
-                  color={COLORS.darkBLue}
-                >
-                  {item.title}
-                </CustomText>
-
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "flex-end",
-                    justifyContent: "space-between",
-                  }}
-                >
-                  {item.kcal && (
-                    <View style={styles.kcalContainer}>
-                      <CustomText
-                        fontSize={12}
-                        color={COLORS.green}
-                        fontFamily="medium"
-                      >{`${item.kcal} Kcal`}</CustomText>
-                    </View>
-                  )}
+          {fastsData?.meal.planId.meals.map((item: any, index: number) => {
+            const IMG = [
+              IMAGES.breakFastImg,
+              IMAGES.snackImg,
+              IMAGES.dinnerImg,
+            ];
+            const title = ["Breakfast", "Lunch", "Dinner"];
+            return (
+              <TouchableOpacity
+                key={index}
+                style={styles.mealCard}
+                onPress={() => {
+                  const mealWithType = { ...item, meal_type: title[index] };
+                  setSelectedMeal(mealWithType);
+                  setIsModal(true);
+                }}
+              >
+                <Image source={IMG[index]} style={styles.mealImgStyle} />
+                <View style={{ flex: 1, gap: verticalScale(10) }}>
                   <CustomText
+                    fontSize={14}
                     fontFamily="medium"
-                    fontSize={10}
-                    color={
-                      item.inProgress === "Completed"
-                        ? COLORS.green
-                        : COLORS.darkBLue
-                    }
+                    color={COLORS.darkBLue}
                   >
-                    {item.inProgress}
+                    {title[index]}
                   </CustomText>
+
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      alignItems: "flex-end",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    {item.calories && (
+                      <View style={styles.kcalContainer}>
+                        <CustomText
+                          fontSize={12}
+                          color={COLORS.green}
+                          fontFamily="medium"
+                        >{`${item.calories} Kcal`}</CustomText>
+                      </View>
+                    )}
+
+                    {item.mealStatus.status == true ? (
+                      <CustomText
+                        fontFamily="medium"
+                        fontSize={10}
+                        color={COLORS.green}
+                      >
+                        Complete
+                      </CustomText>
+                    ) : (
+                      <CustomText
+                        fontFamily="medium"
+                        fontSize={10}
+                        color={COLORS.darkBLue}
+                      >
+                        Pending
+                      </CustomText>
+                    )}
+                  </View>
                 </View>
-              </View>
-            </View>
-          ))}
+              </TouchableOpacity>
+            );
+          })}
         </View>
 
         <View style={{ gap: verticalScale(10) }}>
           <CustomText fontSize={18} fontFamily="bold" color={COLORS.darkBLue}>
             Water Intake
           </CustomText>
-          <View style={styles.footerContainer}>
-            <View
-              style={{
-                gap: verticalScale(5),
-                paddingVertical: verticalScale(5),
-              }}
-            >
-              <CustomText fontSize={18} fontFamily="bold" color={COLORS.green}>
-                5.6 Liters
-              </CustomText>
-              <CustomText
-                fontSize={12}
-                fontFamily="regular"
-                color={COLORS.darkBLue}
-              >
-                Perfect! You consumed a lot of water.
-              </CustomText>
-            </View>
-            <View style={styles.goalContainer}>
-              <CustomText
-                fontSize={12}
-                fontFamily="regular"
-                color={COLORS.darkBLue}
-              >
-                Goal
-              </CustomText>
-              <CustomText
-                fontSize={12}
-                fontFamily="regular"
-                color={COLORS.green}
-              >
-                3.6 Liters
-              </CustomText>
-            </View>
-          </View>
+          {fastsData?.waterIntake &&
+            (() => {
+              const { consumed, goal } = fastsData.waterIntake;
+              const consumedLitres = (consumed / 1000).toFixed(1); // convert ml to litres
+              const goalLitres = (goal / 1000).toFixed(1);
+              const { message, textColor, bgColor, Color } = getWaterStatus(
+                consumed,
+                goal
+              );
+
+              return (
+                <View
+                  style={[
+                    styles.footerContainer,
+                    { backgroundColor: bgColor, borderColor: Color },
+                  ]}
+                >
+                  <View
+                    style={{
+                      gap: verticalScale(5),
+                      paddingVertical: verticalScale(5),
+                    }}
+                  >
+                    <CustomText
+                      fontSize={18}
+                      fontFamily="bold"
+                      color={textColor}
+                    >
+                      {consumedLitres} Litres
+                    </CustomText>
+                    <CustomText
+                      fontSize={12}
+                      fontFamily="regular"
+                      color={COLORS.darkBLue}
+                    >
+                      {message}
+                    </CustomText>
+                  </View>
+                  <View style={styles.goalContainer}>
+                    <CustomText
+                      fontSize={12}
+                      fontFamily="regular"
+                      color={COLORS.darkBLue}
+                    >
+                      Goal
+                    </CustomText>
+                    <CustomText
+                      fontSize={12}
+                      fontFamily="regular"
+                      color={COLORS.green}
+                    >
+                      {goalLitres} Litres
+                    </CustomText>
+                  </View>
+                </View>
+              );
+            })()}
         </View>
+
+        <FastsMealModal
+          isVisible={isModal}
+          closeModal={() => setIsModal(false)}
+          onpress={() => {}}
+          data={selectedMeal}
+        />
       </SafeAreaView>
     </ScrollView>
   );

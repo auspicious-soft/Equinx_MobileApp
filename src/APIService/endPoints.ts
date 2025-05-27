@@ -19,11 +19,13 @@ const ENDPOINTS = {
   updateUserProfile: `api/update-user-profile`,
   changePassword: `api/change-password`,
   myProfile: `api/my-profile`,
-  getMealByDate: `'api/get-meal-by-date`,
+  getMealByDate: `api/get-meal-by-date`,
   fastingToday: `api/fasting-today`,
   checkOutSession: `api/create-checkout-session`,
   updateProfilPic: `api/update-profile-pic`,
   logOut: `api/logout-user`,
+  recordMeal: `api/record-meal`,
+  nutrition: `api/get-nutrition`,
 };
 
 export default ENDPOINTS;

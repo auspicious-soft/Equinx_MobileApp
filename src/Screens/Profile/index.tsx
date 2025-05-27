@@ -24,7 +24,6 @@ import ICONS from "../../Assets/Icons";
 import { CustomText } from "../../Components/CustomText";
 import CircularProgress from "../../Components/CircularProgress";
 import IMAGES from "../../Assets/Images";
-import { fastsData, FastsDataType } from "../../Seeds/ProfileScreenData";
 import { useAppDispatch, useAppSelector } from "../../Redux/store";
 import Toast from "react-native-toast-message";
 import { ProfileResponse, RecentFast } from "../../Typings/apiResponse";
@@ -37,11 +36,23 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
   const { profileData } = useAppSelector((state) => state.profileData);
   const [isLoading, setIsLoading] = useState(false);
 
+  const getBmiCatgeory = () => {
+    if (profileData?.bmi < 18.5) {
+      return "Underweight";
+    } else if (profileData?.bmi >= 18.5 && profileData?.bmi < 25) {
+      return "Normal Weight";
+    } else if (profileData?.bmi >= 25 && profileData?.bmi < 30) {
+      return "Overweight";
+    } else {
+      return "Obese";
+    }
+  };
+
   const getProfileData = async () => {
     setIsLoading(true);
     try {
       const response = await fetchData<ProfileResponse>(ENDPOINTS.myProfile);
-      console.log(response);
+      console.log("get profile data ", response);
       if (response.data.success) {
         dispatch(setProfileData(response.data.data));
       }
@@ -296,13 +307,27 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                 >
                   Body Mass Index (BMI)
                 </CustomText>
-                <View style={styles.textContainer}>
+                <View
+                  style={[
+                    styles.textContainer,
+                    {
+                      backgroundColor:
+                        getBmiCatgeory() === "Underweight"
+                          ? "#78C1E5"
+                          : getBmiCatgeory() === "Normal Weight"
+                          ? COLORS.green
+                          : getBmiCatgeory() === "Overweight"
+                          ? COLORS.greenBg
+                          : "#E57373", // for Obese
+                    },
+                  ]}
+                >
                   <CustomText
                     fontSize={12}
                     fontFamily="medium"
-                    color={COLORS.green}
+                    color={COLORS.darkBLue}
                   >
-                    Overweight
+                    {getBmiCatgeory()}
                   </CustomText>
                 </View>
               </View>
@@ -344,33 +369,48 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
           </View>
         )}
 
-        <View style={{ gap: verticalScale(5) }}>
-          <CustomText fontSize={18} color={COLORS.darkBLue} fontFamily="bold">
-            Recent fasts
-          </CustomText>
-          <FlatList
-            data={profileData?.recentFasts}
-            renderItem={renderFastsData}
-            keyExtractor={(index) => index + " " + index}
-            contentContainerStyle={{
-              gap: verticalScale(10),
-            }}
-          />
-        </View>
+        {profileData?.recentFasts && (
+          <View style={{ gap: verticalScale(5) }}>
+            <View style={styles.recentFastContainer}>
+              <CustomText
+                fontSize={18}
+                color={COLORS.darkBLue}
+                fontFamily="bold"
+              >
+                Recent fasts
+              </CustomText>
+              {profileData.recentFasts.length > 5 && (
+                <TouchableOpacity style={styles.filterContainer}>
+                  <CustomIcon Icon={ICONS.filterIcon} height={12} width={12} />
+                  <CustomText
+                    fontSize={12}
+                    color={COLORS.slateGrey}
+                    fontFamily="regular"
+                  >
+                    Filter Data
+                  </CustomText>
+                </TouchableOpacity>
+              )}
+            </View>
+            <FlatList
+              data={profileData?.recentFasts}
+              renderItem={renderFastsData}
+              keyExtractor={(index) => index + " " + index}
+              contentContainerStyle={{
+                gap: verticalScale(10),
+              }}
+            />
+          </View>
+        )}
 
-        <TouchableOpacity
-          style={{ alignSelf: "center" }}
-          onPress={() => {
-            navigation.navigate("Fasts", {
-              fastsData: profileData?.recentFasts,
-            });
-          }}
-        >
-          <CustomText fontSize={14} fontFamily="regular" color={COLORS.green}>
-            View More
-          </CustomText>
-          <View style={{ height: 1, backgroundColor: COLORS.green }} />
-        </TouchableOpacity>
+        {profileData?.recentFasts.length > 5 && (
+          <TouchableOpacity style={{ alignSelf: "center" }} onPress={() => {}}>
+            <CustomText fontSize={14} fontFamily="regular" color={COLORS.green}>
+              View More
+            </CustomText>
+            <View style={{ height: 1, backgroundColor: COLORS.green }} />
+          </TouchableOpacity>
+        )}
       </SafeAreaView>
     </ScrollView>
   );
@@ -423,7 +463,7 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     backgroundColor: COLORS.greenBg,
-    paddingVertical: verticalScale(8),
+    paddingVertical: verticalScale(5),
     paddingHorizontal: horizontalScale(8),
     borderRadius: 6,
   },
@@ -461,5 +501,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: horizontalScale(8),
     borderRadius: 10,
     gap: horizontalScale(10),
+  },
+  filterContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-end",
+    gap: horizontalScale(5),
+  },
+  recentFastContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
 });

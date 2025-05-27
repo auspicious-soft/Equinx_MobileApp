@@ -38,13 +38,77 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
 
   const [countryCode, setCountryCode] = useState<CountryCode>("US");
   const [country, setCountry] = useState<Country | null>(null);
+  const [isError, setIsError] = useState({
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
+  const validInputs = () => {
+    let valid = true;
+    let newErrors = {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    };
+    if (!name) {
+      valid = false;
+      newErrors.name = "Name is required.";
+      Toast.show({
+        type: "error",
+        text1: "Name is required.",
+      });
+    }
+
+    if (!email) {
+      valid = false;
+      newErrors.email = "Email is required.";
+      Toast.show({
+        type: "error",
+        text1: "Email is required.",
+      });
+    }
+
+    if (!password) {
+      valid = false;
+      newErrors.password = "Password is required.";
+      Toast.show({
+        type: "error",
+        text1: "Password is required.",
+      });
+    }
+
+    if (!confirmPassword) {
+      valid = false;
+      newErrors.confirmPassword = "Confirm Password is required.";
+      Toast.show({
+        type: "error",
+        text1: "Confirm Password is required.",
+      });
+    } else if (password !== confirmPassword) {
+      valid = false;
+      newErrors.confirmPassword = "Passwords do not match.";
+      Toast.show({
+        type: "error",
+        text1: "Passwords do not match.",
+      });
+    }
+
+    setIsError(newErrors);
+    return valid;
+  };
 
   const onSelect = (country: Country) => {
     setCountryCode(country.cca2);
     setCountry(country);
   };
 
-  const handleNavigation = async () => {
+  const handleSignUp = async () => {
+    if (!validInputs()) {
+      return; // Stop execution if validation fails
+    }
     const data = {
       fullName: name,
       email: email,
@@ -200,7 +264,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                 </View>
               </View>
 
-              <PrimaryButton title="Register" onPress={handleNavigation} />
+              <PrimaryButton title="Register" onPress={handleSignUp} />
               <View style={styles.footerContainer}>
                 <CustomText fontSize={12} color={COLORS.oldGrey}>
                   Already have an account?

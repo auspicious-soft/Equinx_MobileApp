@@ -10,6 +10,7 @@ import chatDataReducer from "./slices/ChatSlice";
 import settingDataReducer from "./slices/settingSlice";
 import profileDataReducer from "./slices/ProfileSlice";
 import FastsDataSliceReducer from "./slices/DateMeal";
+import NutritionReducer from "./slices/NutritionSlice";
 
 export const store = configureStore({
   reducer: {
@@ -23,6 +24,7 @@ export const store = configureStore({
     settingData: settingDataReducer,
     profileData: profileDataReducer,
     fastsData: FastsDataSliceReducer,
+    nutrition: NutritionReducer,
   },
 });
 

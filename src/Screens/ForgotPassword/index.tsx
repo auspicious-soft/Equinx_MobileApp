@@ -17,8 +17,28 @@ import Toast from "react-native-toast-message";
 
 const ForgotPassword: FC<ForgotPasswordScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
 
-  const handleNavigaion = async () => {
+  const validInputs = () => {
+    let valid = true;
+    let newErrors = "";
+    if (!email) {
+      valid = false;
+      newErrors = "Email is required.";
+      Toast.show({
+        type: "error",
+        text1: "Email is required.",
+      });
+    }
+
+    setError(newErrors);
+    return valid;
+  };
+
+  const handleForgotPassword = async () => {
+    if (!validInputs()) {
+      return; // Stop execution if validation fails
+    }
     const data = {
       email: email,
     };
@@ -91,7 +111,7 @@ const ForgotPassword: FC<ForgotPasswordScreenProps> = ({ navigation }) => {
                   paddingVertical: verticalScale(15),
                 }}
               />
-              <PrimaryButton onPress={handleNavigaion} title="Confirm" />
+              <PrimaryButton onPress={handleForgotPassword} title="Confirm" />
               <View style={styles.rememberPasswordContainer}>
                 <CustomText fontSize={12} color={COLORS.oldGrey}>
                   Remember Password?
