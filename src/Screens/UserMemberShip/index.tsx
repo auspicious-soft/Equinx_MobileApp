@@ -1,7 +1,6 @@
 import {
   ActivityIndicator,
   Alert,
-  Linking,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -24,104 +23,133 @@ import { useAppDispatch, useAppSelector } from "../../Redux/store";
 import { setPricePlan } from "../../Redux/slices/planPrices";
 import {
   initPaymentSheet,
+  initStripe,
   presentPaymentSheet,
 } from "@stripe/stripe-react-native";
-
-const planData = [
-  {
-    id: "basic",
-    title: "Basic",
-    durationMonths: 3,
-    monthlyPrice: 11.66,
-    annualPriceEquivalent: 34.99,
-    isBestPrice: false,
-  },
-  {
-    id: "best",
-    title: "Best price",
-    durationMonths: 12,
-    monthlyPrice: 6.66,
-    annualPriceEquivalent: 79.99,
-    isBestPrice: true,
-  },
-  {
-    id: "popular",
-    title: "Popular",
-    durationMonths: 6,
-    monthlyPrice: 6.66,
-    annualPriceEquivalent: 49.99,
-    isBestPrice: false,
-  },
-];
+import { PUBLISHABLE_KEY } from "@env";
 
 const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
   const [selectedProductId, setSelectedProductId] = useState<string | null>(
     null
   );
   const [isLoading, setIsLoading] = useState(false);
+  const [isStripeInitialized, setIsStripeInitialized] = useState(false);
 
+  const [isCheckOutLoading, setIsCheckOutLoading] = useState(false);
   const dispatch = useAppDispatch();
-
   const { plansPrices } = useAppSelector((state) => state.planPrices);
 
-  const handlePricePlan = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetchData<PricePlan[]>(ENDPOINTS.getPricePlan);
-      console.log(response);
-      if (response.data.success) {
-        dispatch(setPricePlan(response.data.data));
-        setSelectedProductId(response.data.data[0].productId);
+  // Initialize Stripe SDK
+  useEffect(() => {
+    const initializeStripe = async () => {
+      try {
+        if (!PUBLISHABLE_KEY) {
+          throw new Error("Stripe publishable key is not set");
+        }
+        await initStripe({
+          publishableKey: PUBLISHABLE_KEY,
+        });
+        console.log("Stripe initialized successfully");
+        setIsStripeInitialized(true);
+      } catch (error: any) {
+        console.error("Failed to initialize Stripe:", error);
+        Toast.show({
+          type: "error",
+          text1: error.message || "Failed to initialize payment system",
+        });
       }
-    } catch (error: any) {
+    };
+    initializeStripe();
+  }, []);
+
+  // Fetch price plans
+  useEffect(() => {
+    const fetchPlans = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetchData<PricePlan[]>(ENDPOINTS.getPricePlan);
+        if (response.data.success) {
+          dispatch(setPricePlan(response.data.data));
+          setSelectedProductId(response.data.data[0]?.productId || null);
+        } else {
+          throw new Error("Failed to fetch price plans");
+        }
+      } catch (error: any) {
+        Toast.show({
+          type: "error",
+          text1: error.message || "Something went wrong",
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchPlans();
+  }, []);
+
+  // Handle checkout
+  const handleCheckOut = async () => {
+    if (!isStripeInitialized) {
       Toast.show({
         type: "error",
-        text1: error.message || "Something went wrong",
+        text1: "Payment system is not ready. Please try again.",
       });
-    } finally {
-      setIsLoading(false);
+      return;
     }
-  };
 
-  const handleCheckOut = async () => {
-    const data = {
-      productId: selectedProductId,
-    };
+    if (!selectedProductId) {
+      Toast.show({
+        type: "error",
+        text1: "Please select a plan",
+      });
+      return;
+    }
 
+    setIsCheckOutLoading(true);
     try {
+      const data = { productId: selectedProductId };
       const response = await postData<CheckOutResponse>(
         ENDPOINTS.checkOutSession,
         data
       );
-      console.log(response.data.data.clientSecret);
 
-      if (response.data.success) {
-        await initPaymentSheet({
+      if (response.data.success && response.data.data.clientSecret) {
+        const { error: initError } = await initPaymentSheet({
           paymentIntentClientSecret: response.data.data.clientSecret,
           merchantDisplayName: "Equin Global",
         });
-        openPaymentSheet();
-        // Linking.openURL(response.data.data.url);
+
+        if (initError) {
+          throw new Error(
+            `Payment initialization failed: ${initError.message}`
+          );
+        }
+
+        await openPaymentSheet();
+      } else {
+        throw new Error("Invalid checkout response");
       }
     } catch (error: any) {
-      console.log(error);
-
+      console.error("Checkout error:", error);
       Toast.show({
         type: "error",
-        text1: error.message || "Something went wrong",
+        text1: error.message || "Something went wrong during checkout",
       });
+    } finally {
+      setIsCheckOutLoading(false);
     }
   };
 
+  // Open PaymentSheet
   const openPaymentSheet = async () => {
-    const { error } = await presentPaymentSheet();
-
+    const { error,paymentOption } = await presentPaymentSheet();
     if (error) {
-      console.log(error);
-
+      console.error("Payment sheet error:", error);
       Alert.alert(`Error: ${error.message}`);
     } else {
-      Alert.alert("Success", "Payment confirmed!");
+     Toast.show({
+      type:'success',
+      text1:'Payment successful',
+     })
     }
   };
 
@@ -134,10 +162,7 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
 
     return (
       <TouchableOpacity
-        onPress={() => {
-          console.log("productId  ----->", plan.productId);
-          handleSelectPlan(plan.productId);
-        }}
+        onPress={() => handleSelectPlan(plan.productId)}
         style={{
           flex: 1,
           paddingHorizontal: verticalScale(10),
@@ -171,19 +196,12 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
           fontSize={12}
           style={{ textAlign: "center" }}
         >
-          {/* {`only $${plan..toFixed(2)}  \n ${
-            plan.durationMonths === 3
-              ? "for 3 months"
-              : plan.durationMonths === 6
-              ? "for 6 months"
-              : "annually"
-          }`} */}
           {plan.description}
         </CustomText>
         <View
           style={{
             position: "absolute",
-            top: "-10%", // Align the top of the badge with the top of the card
+            top: "-10%",
             backgroundColor: isSelected
               ? COLORS.darkGreenGradient.start
               : "#F2F0F5",
@@ -206,10 +224,6 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
     );
   };
 
-  useEffect(() => {
-    handlePricePlan();
-  }, []);
-
   if (isLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -221,11 +235,7 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
   return (
     <SafeAreaView style={styles.safeAreaContainer}>
       <View style={styles.arrowContainer}>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.goBack();
-          }}
-        >
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <CustomIcon Icon={ICONS.BackArrow} />
         </TouchableOpacity>
         <CustomText fontSize={22} fontFamily="bold" color={COLORS.darkBLue}>
@@ -263,29 +273,27 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
           </CustomText>
         </View>
       </View>
-
       <View style={{ gap: verticalScale(30) }}>
         <CustomText fontSize={12} fontFamily="bold" color={COLORS.darkBLue}>
           Upgrade your plan
         </CustomText>
         <View
           style={{
-            gap: verticalScale(15),
+            flexDirection: "row",
+            alignItems: "center",
+            gap: verticalScale(20),
           }}
         >
-          <View
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: verticalScale(20),
-            }}
-          >
-            {plansPrices.map((plan, index) => (
-              <PlanCard key={plan.productId} plan={plan} />
-            ))}
-          </View>
-          <PrimaryButton title="Upgrade Plan" onPress={handleCheckOut} />
+          {plansPrices.map((plan) => (
+            <PlanCard key={plan.productId} plan={plan} />
+          ))}
         </View>
+        <PrimaryButton
+          title="Upgrade Plan"
+          onPress={handleCheckOut}
+          disabled={isCheckOutLoading || !isStripeInitialized}
+          isLoading={isCheckOutLoading}
+        />
       </View>
     </SafeAreaView>
   );

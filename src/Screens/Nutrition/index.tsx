@@ -1,16 +1,29 @@
+import React, { useEffect, useState } from "react";
 import {
   Image,
   ImageBackground,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { useEffect, useState, version } from "react";
-import COLORS from "../../Utilities/Colors";
 import { SafeAreaView } from "react-native-safe-area-context";
+import Toast from "react-native-toast-message";
+import { fetchData } from "../../APIService/api";
+import ENDPOINTS from "../../APIService/endPoints";
+import ICONS from "../../Assets/Icons";
+import IMAGES from "../../Assets/Images";
+import CustomIcon from "../../Components/CustomIcon";
 import { CustomText } from "../../Components/CustomText";
+import LinearProgressBar from "../../Components/LinearProgressBar";
+import AchivementModal from "../../Components/Modals/AchivementModal";
+import MacroBalanceModal from "../../Components/Modals/MacroBalanceModal";
+import RecordMealModal from "../../Components/Modals/RecordMealModal";
+import PrimaryButton from "../../Components/PrimaryButton";
+import { setNutrition } from "../../Redux/slices/NutritionSlice";
+import { useAppDispatch, useAppSelector } from "../../Redux/store";
+import { NutritionResponse } from "../../Typings/apiResponse";
+import COLORS from "../../Utilities/Colors";
 import {
   horizontalScale,
   hp,
@@ -18,61 +31,22 @@ import {
   wp,
 } from "../../Utilities/Metrics";
 import CircularProgress from "../../Components/CircularProgress";
-import LinearProgressBar from "../../Components/LinearProgressBar";
-import IMAGES from "../../Assets/Images";
-import CustomIcon from "../../Components/CustomIcon";
-import ICONS from "../../Assets/Icons";
-import PrimaryButton from "../../Components/PrimaryButton";
-import MacroBalanceModal from "../../Components/Modals/MacroBalanceModal";
-import RecordMealModal from "../../Components/Modals/RecordMealModal";
-import AchivementModal from "../../Components/Modals/AchivementModal";
-import { useAppDispatch, useAppSelector } from "../../Redux/store";
-import Toast from "react-native-toast-message";
-import { fetchData } from "../../APIService/api";
-import { NutritionResponse } from "../../Typings/apiResponse";
-import ENDPOINTS from "../../APIService/endPoints";
-import { setNutrition } from "../../Redux/slices/NutritionSlice";
-
-// const mealData = [
-//   {
-//     title: "Breakfast",
-//     kcal: "311",
-//     inProgress: "Completed",
-//     mealImg: IMAGES.breakFastImg,
-//   },
-//   {
-//     title: "Lunch",
-//     kcal: "311",
-//     inProgress: "pending",
-//     mealImg: IMAGES.snackImg,
-//   },
-//   {
-//     title: "Dinner",
-//     kcal: "Recommended 311",
-//     inProgress: "pending",
-//     mealImg: IMAGES.captureMealImg,
-//   },
-//   {
-//     title: "Other",
-//     kcal: "",
-//     inProgress: "",
-//     mealImg: IMAGES.dinnerImg,
-//   },
-// ];
 
 const Nutrition = () => {
+  const dispatch = useAppDispatch();
+
+  const { nutrition } = useAppSelector((state) => state.nutrition);
+
   const [isMacroModal, setIsMacroModal] = useState(false);
   const [recordMealModal, setRecordMealModal] = useState(false);
-  const [achievementModal, setAchievementModal] = useState(false);
-  const dispatch = useAppDispatch();
+  const [captureMealModal, setCaptureMealModal] = useState(false);
   const [mealType, setMealType] = useState<string | null>(null);
+  const [achievementModal, setAchievementModal] = useState(false);
   const [mealId, setMealId] = useState<string | null>(null);
   const [carbs, setCarbs] = useState("");
   const [protine, setProtine] = useState("");
   const [fat, setFat] = useState("");
   const [status, setStatus] = useState(false);
-
-  const { nutrition } = useAppSelector((state) => state.nutrition);
 
   const closeAchivementModal = () => {
     setAchievementModal(false);
@@ -80,6 +54,10 @@ const Nutrition = () => {
 
   const closeRecordMealModal = () => {
     setRecordMealModal(false);
+  };
+
+  const closeCaptureMealModal = () => {
+    setCaptureMealModal(false);
   };
 
   const closeMacroModal = () => {
@@ -138,7 +116,7 @@ const Nutrition = () => {
                 backgroundColor={COLORS.greyishWhite}
                 progress={
                   Math.min(
-                    nutrition?.todayMeal.stats.overall.percentage! / 100,
+                    nutrition?.todayMeal?.stats?.overall?.percentage! / 100,
                     1
                   ) || 0
                 }
@@ -153,7 +131,7 @@ const Nutrition = () => {
                   fontFamily="medium"
                 >
                   {`${Math.min(
-                    nutrition?.todayMeal.stats.overall.percentage || 0,
+                    nutrition?.todayMeal?.stats?.overall?.percentage || 0,
                     100
                   )}%`}
                 </CustomText>
@@ -181,14 +159,14 @@ const Nutrition = () => {
                     fontSize={10}
                     color={COLORS.darkBLue}
                   >
-                    {nutrition?.todayMeal.stats.fat.consumed} {"/"}
-                    {nutrition?.todayMeal.stats.fat.target}g
+                    {nutrition?.todayMeal?.stats?.fat.consumed} {"/"}
+                    {nutrition?.todayMeal?.stats?.fat.target}g
                   </CustomText>
                 </View>
                 <LinearProgressBar
                   progress={
-                    nutrition?.todayMeal.stats.fat.consumed! /
-                      nutrition?.todayMeal.stats.fat.target! || 0
+                    nutrition?.todayMeal?.stats?.fat.consumed! /
+                      nutrition?.todayMeal?.stats?.fat.target! || 0
                   }
                   height={14}
                   borderRadius={6}
@@ -210,14 +188,14 @@ const Nutrition = () => {
                     fontSize={10}
                     color={COLORS.darkBLue}
                   >
-                    {nutrition?.todayMeal.stats.carbs.consumed} {"/"}
-                    {nutrition?.todayMeal.stats.carbs.target}g
+                    {nutrition?.todayMeal?.stats?.carbs.consumed} {"/"}
+                    {nutrition?.todayMeal?.stats?.carbs.target}g
                   </CustomText>
                 </View>
                 <LinearProgressBar
                   progress={
-                    nutrition?.todayMeal.stats.carbs.consumed! /
-                      nutrition?.todayMeal.stats.carbs.target! || 0
+                    nutrition?.todayMeal?.stats?.carbs.consumed! /
+                      nutrition?.todayMeal?.stats?.carbs.target! || 0
                   }
                   height={14}
                   borderRadius={6}
@@ -239,14 +217,14 @@ const Nutrition = () => {
                     fontSize={10}
                     color={COLORS.darkBLue}
                   >
-                    {nutrition?.todayMeal.stats.protein.consumed} {"/"}
-                    {nutrition?.todayMeal.stats.protein.target}g
+                    {nutrition?.todayMeal?.stats?.protein.consumed} {"/"}
+                    {nutrition?.todayMeal?.stats?.protein.target}g
                   </CustomText>
                 </View>
                 <LinearProgressBar
                   progress={
-                    nutrition?.todayMeal.stats.protein.consumed! /
-                      nutrition?.todayMeal.stats.protein.target! || 0
+                    nutrition?.todayMeal?.stats?.protein.consumed! /
+                      nutrition?.todayMeal?.stats?.protein.target! || 0
                   }
                   height={14}
                   borderRadius={6}
@@ -311,15 +289,17 @@ const Nutrition = () => {
                   style={styles.penContainer}
                   onPress={() => {
                     setMealType("Breakfast");
-                    setMealId(nutrition?.todayMeal._id);
+                    setMealId(nutrition?.todayMeal?._id!);
                     setCarbs(
-                      nutrition?.todayMeal.firstMealStatus.carbs.toString()
+                      nutrition?.todayMeal?.firstMealStatus.carbs.toString()!
                     );
-                    setFat(nutrition?.todayMeal.firstMealStatus.fat.toString());
+                    setFat(
+                      nutrition?.todayMeal?.firstMealStatus.fat.toString()!
+                    );
                     setProtine(
-                      nutrition?.todayMeal.firstMealStatus.protein.toString()
+                      nutrition?.todayMeal?.firstMealStatus.protein.toString()!
                     );
-                    setStatus(nutrition?.todayMeal.firstMealStatus.status);
+                    setStatus(nutrition?.todayMeal?.firstMealStatus.status!);
                     setRecordMealModal(true);
                   }}
                 >
@@ -337,25 +317,25 @@ const Nutrition = () => {
                   justifyContent: "space-between",
                 }}
               >
-                {nutrition?.todayMeal.firstMealStatus.calories && (
+                {nutrition?.todayMeal?.firstMealStatus.calories && (
                   <View style={styles.kcalContainer}>
                     <CustomText
                       fontSize={12}
                       color={COLORS.green}
                       fontFamily="medium"
-                    >{`${nutrition.todayMeal.firstMealStatus.calories} Kcal`}</CustomText>
+                    >{`${nutrition.todayMeal?.firstMealStatus.calories} Kcal`}</CustomText>
                   </View>
                 )}
                 <CustomText
                   fontFamily="medium"
                   fontSize={10}
                   color={
-                    nutrition?.todayMeal.firstMealStatus.status === true
+                    nutrition?.todayMeal?.firstMealStatus.status === true
                       ? COLORS.green
                       : COLORS.darkBLue
                   }
                 >
-                  {nutrition?.todayMeal.firstMealStatus.status === true
+                  {nutrition?.todayMeal?.firstMealStatus.status === true
                     ? "Completed"
                     : "Pending"}
                 </CustomText>
@@ -383,17 +363,17 @@ const Nutrition = () => {
                   style={styles.penContainer}
                   onPress={() => {
                     setMealType("Lunch");
-                    setMealId(nutrition?.todayMeal._id);
+                    setMealId(nutrition?.todayMeal?._id!);
                     setCarbs(
-                      nutrition?.todayMeal.secondMealStatus.carbs.toString()
+                      nutrition?.todayMeal?.secondMealStatus.carbs.toString()!
                     );
                     setFat(
-                      nutrition?.todayMeal.secondMealStatus.fat.toString()
+                      nutrition?.todayMeal?.secondMealStatus.fat.toString()!
                     );
                     setProtine(
-                      nutrition?.todayMeal.secondMealStatus.protein.toString()
+                      nutrition?.todayMeal?.secondMealStatus.protein.toString()!
                     );
-                    setStatus(nutrition?.todayMeal.secondMealStatus.status);
+                    setStatus(nutrition?.todayMeal?.secondMealStatus.status!);
 
                     setRecordMealModal(true);
                   }}
@@ -412,25 +392,25 @@ const Nutrition = () => {
                   justifyContent: "space-between",
                 }}
               >
-                {nutrition?.todayMeal.secondMealStatus.calories && (
+                {nutrition?.todayMeal?.secondMealStatus.calories && (
                   <View style={styles.kcalContainer}>
                     <CustomText
                       fontSize={12}
                       color={COLORS.green}
                       fontFamily="medium"
-                    >{`${nutrition.todayMeal.secondMealStatus.calories} Kcal`}</CustomText>
+                    >{`${nutrition.todayMeal?.secondMealStatus.calories} Kcal`}</CustomText>
                   </View>
                 )}
                 <CustomText
                   fontFamily="medium"
                   fontSize={10}
                   color={
-                    nutrition?.todayMeal.secondMealStatus.status === true
+                    nutrition?.todayMeal?.secondMealStatus.status === true
                       ? COLORS.green
                       : COLORS.darkBLue
                   }
                 >
-                  {nutrition?.todayMeal.secondMealStatus.status === true
+                  {nutrition?.todayMeal?.secondMealStatus.status === true
                     ? "Completed"
                     : "Pending"}
                 </CustomText>
@@ -458,15 +438,17 @@ const Nutrition = () => {
                   style={styles.penContainer}
                   onPress={() => {
                     setMealType("Dinner");
-                    setMealId(nutrition?.todayMeal._id);
+                    setMealId(nutrition?.todayMeal?._id!);
                     setCarbs(
-                      nutrition?.todayMeal.thirdMealStatus.carbs.toString()
+                      nutrition?.todayMeal?.thirdMealStatus.carbs.toString()!
                     );
-                    setFat(nutrition?.todayMeal.thirdMealStatus.fat.toString());
+                    setFat(
+                      nutrition?.todayMeal?.thirdMealStatus.fat.toString()!
+                    );
                     setProtine(
-                      nutrition?.todayMeal.thirdMealStatus.protein.toString()
+                      nutrition?.todayMeal?.thirdMealStatus.protein.toString()!
                     );
-                    setStatus(nutrition?.todayMeal.thirdMealStatus.status);
+                    setStatus(nutrition?.todayMeal?.thirdMealStatus.status!);
 
                     setRecordMealModal(true);
                   }}
@@ -485,25 +467,25 @@ const Nutrition = () => {
                   justifyContent: "space-between",
                 }}
               >
-                {nutrition?.todayMeal.thirdMealStatus.calories && (
+                {nutrition?.todayMeal?.thirdMealStatus.calories && (
                   <View style={styles.kcalContainer}>
                     <CustomText
                       fontSize={12}
                       color={COLORS.green}
                       fontFamily="medium"
-                    >{`${nutrition.todayMeal.thirdMealStatus.calories} Kcal`}</CustomText>
+                    >{`${nutrition.todayMeal?.thirdMealStatus.calories} Kcal`}</CustomText>
                   </View>
                 )}
                 <CustomText
                   fontFamily="medium"
                   fontSize={10}
                   color={
-                    nutrition?.todayMeal.thirdMealStatus.status === true
+                    nutrition?.todayMeal?.thirdMealStatus.status === true
                       ? COLORS.green
                       : COLORS.darkBLue
                   }
                 >
-                  {nutrition?.todayMeal.thirdMealStatus.status === true
+                  {nutrition?.todayMeal?.thirdMealStatus.status === true
                     ? "Completed"
                     : "Pending"}
                 </CustomText>
@@ -531,15 +513,17 @@ const Nutrition = () => {
                   style={styles.penContainer}
                   onPress={() => {
                     setMealType("Other");
-                    setMealId(nutrition?.todayMeal._id);
+                    setMealId(nutrition?.todayMeal?._id!);
                     setCarbs(
-                      nutrition?.todayMeal.otherMealStatus.carbs.toString()
+                      nutrition?.todayMeal?.otherMealStatus.carbs.toString()!
                     );
-                    setFat(nutrition?.todayMeal.otherMealStatus.fat.toString());
+                    setFat(
+                      nutrition?.todayMeal?.otherMealStatus.fat.toString()!
+                    );
                     setProtine(
-                      nutrition?.todayMeal.otherMealStatus.protein.toString()
+                      nutrition?.todayMeal?.otherMealStatus.protein.toString()!
                     );
-                    setStatus(nutrition?.todayMeal.otherMealStatus.status);
+                    setStatus(nutrition?.todayMeal?.otherMealStatus.status!);
 
                     setRecordMealModal(true);
                   }}
@@ -558,26 +542,26 @@ const Nutrition = () => {
                   justifyContent: "space-between",
                 }}
               >
-                {nutrition?.todayMeal.thirdMealStatus.calories && (
+                {nutrition?.todayMeal?.thirdMealStatus.calories && (
                   <View style={styles.kcalContainer}>
                     <CustomText
                       fontSize={12}
                       color={COLORS.green}
                       fontFamily="medium"
-                    >{`${nutrition.todayMeal.thirdMealStatus.calories} Kcal`}</CustomText>
+                    >{`${nutrition.todayMeal?.thirdMealStatus.calories} Kcal`}</CustomText>
                   </View>
                 )}
-                {nutrition?.todayMeal.otherMealStatus && (
+                {nutrition?.todayMeal?.otherMealStatus && (
                   <CustomText
                     fontFamily="medium"
                     fontSize={10}
                     color={
-                      nutrition?.todayMeal.otherMealStatus.status === true
+                      nutrition?.todayMeal?.otherMealStatus.status === true
                         ? COLORS.green
                         : COLORS.darkBLue
                     }
                   >
-                    {nutrition?.todayMeal.otherMealStatus.status === true
+                    {nutrition?.todayMeal?.otherMealStatus.status === true
                       ? "Completed"
                       : "Pending"}
                   </CustomText>
@@ -719,7 +703,13 @@ const Nutrition = () => {
             resizeMode="cover"
             borderRadius={12}
           ></ImageBackground>
-          <PrimaryButton title="Capture Meal" onPress={() => {}} />
+          <PrimaryButton
+            title="Capture Meal"
+            onPress={() => {
+              setMealType("breakfast");
+              setCaptureMealModal(true);
+            }}
+          />
         </View>
         <MacroBalanceModal
           closeModal={closeMacroModal}
@@ -735,6 +725,12 @@ const Nutrition = () => {
           Mealfat={fat}
           Mealprotine={protine}
           status={status}
+        />
+        <RecordMealModal
+          isVisible={captureMealModal}
+          closeModal={closeCaptureMealModal}
+          mealType={mealType}
+          initialTab="catpureMeal"
         />
 
         <AchivementModal

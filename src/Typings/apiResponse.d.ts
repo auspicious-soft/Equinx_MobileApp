@@ -1,4 +1,3 @@
-import { MyPlan } from "./apiResponse.d";
 export interface GetQuestionDataResponse {
   questions: Question[];
   questionResponse: QuestionResponse[];
@@ -468,4 +467,11 @@ export interface Fat {
 
 export interface Overall {
   percentage: number;
+}
+
+export interface GetMacroFromimageApiResponse {
+  carbs: number;
+  protein: number;
+  fat: number;
+  status: boolean;
 }

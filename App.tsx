@@ -1,4 +1,7 @@
+import { PUBLISHABLE_KEY } from "@env";
+import messaging from "@react-native-firebase/messaging";
 import { NavigationContainer, NavigationState } from "@react-navigation/native";
+import { StripeProvider } from "@stripe/stripe-react-native";
 import React, { useEffect, useMemo } from "react";
 import {
   Appearance,
@@ -13,13 +16,10 @@ import NetworkLogger from "./src/Components/NetworkLogger";
 import { setCurrentRoute } from "./src/Redux/slices/initialSlice";
 import { useAppDispatch, useAppSelector } from "./src/Redux/store";
 import Routing from "./src/Routes";
-import COLORS from "./src/Utilities/Colors";
-import { StripeProvider } from "@stripe/stripe-react-native";
-import { STRIPE_PUBLISHABLE_KEY } from "@env";
-import { storeLocalStorageData } from "./src/Utilities/Storage";
-import STORAGE_KEYS from "./src/Utilities/Constants";
-import messaging from "@react-native-firebase/messaging";
 import NotificationService from "./src/Services/NotificationService";
+import COLORS from "./src/Utilities/Colors";
+import STORAGE_KEYS from "./src/Utilities/Constants";
+import { storeLocalStorageData } from "./src/Utilities/Storage";
 
 LogBox.ignoreAllLogs(true);
 
@@ -136,7 +136,7 @@ const App = () => {
   return (
     <>
       <SafeAreaProvider>
-        <StripeProvider publishableKey={STRIPE_PUBLISHABLE_KEY}>
+        <StripeProvider publishableKey={PUBLISHABLE_KEY}>
           <StatusBar
             animated={true}
             backgroundColor={statusBarConfig.backgroundColor}

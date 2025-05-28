@@ -72,6 +72,7 @@ import FastingIcon from "./fastingIcon.svg";
 import sendIcon from "./sendIcon.svg";
 import chatBotIcon from "./chatBotIcon.svg";
 import shareIcon from "./shareIcon.svg";
+import DeleteIcon from "./deleteIcon.svg";
 
 const ICONS = {
   AppLogo,
@@ -148,6 +149,7 @@ const ICONS = {
   sendIcon,
   chatBotIcon,
   shareIcon,
+  DeleteIcon,
 };
 
 export default ICONS;
