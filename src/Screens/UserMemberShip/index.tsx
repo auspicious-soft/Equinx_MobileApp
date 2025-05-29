@@ -32,6 +32,7 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
   const [selectedProductId, setSelectedProductId] = useState<string | null>(
     null
   );
+  const [selectedPlan, setSelectedPlan] = useState<PricePlan | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isStripeInitialized, setIsStripeInitialized] = useState(false);
 
@@ -71,6 +72,7 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
         if (response.data.success) {
           dispatch(setPricePlan(response.data.data));
           setSelectedProductId(response.data.data[0]?.productId || null);
+          setSelectedPlan(response.data.data[0] || null);
         } else {
           throw new Error("Failed to fetch price plans");
         }
@@ -141,20 +143,35 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
 
   // Open PaymentSheet
   const openPaymentSheet = async () => {
-    const { error,paymentOption } = await presentPaymentSheet();
+    const { error, paymentOption } = await presentPaymentSheet();
     if (error) {
       console.error("Payment sheet error:", error);
       Alert.alert(`Error: ${error.message}`);
     } else {
-     Toast.show({
-      type:'success',
-      text1:'Payment successful',
-     })
+      Toast.show({
+        type: "success",
+        text1: "Payment successful",
+      });
     }
+  };
+
+  // Add this helper function to calculate expiry date
+  const calculateExpiryDate = (months: number) => {
+    const date = new Date();
+    date.setMonth(date.getMonth() + months);
+    return date.toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
   };
 
   const handleSelectPlan = (planId: string) => {
     setSelectedProductId(planId);
+    const plan = plansPrices.find((p) => p.productId === planId);
+    if (plan) {
+      setSelectedPlan(plan);
+    }
   };
 
   const PlanCard = ({ plan }: { plan: PricePlan }) => {
@@ -162,7 +179,10 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
 
     return (
       <TouchableOpacity
-        onPress={() => handleSelectPlan(plan.productId)}
+        onPress={() => {
+          handleSelectPlan(plan.productId);
+          console.log(plan.productId);
+        }}
         style={{
           flex: 1,
           paddingHorizontal: verticalScale(10),
@@ -249,10 +269,10 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
             fontFamily="regular"
             color={COLORS.slateGrey}
           >
-            Basic Plan
+            {selectedPlan?.type} Plan
           </CustomText>
           <CustomText fontSize={20} fontFamily="semiBold" color={COLORS.green}>
-            3 Months
+            {selectedPlan?.months} Months
           </CustomText>
         </View>
         <View style={{ gap: verticalScale(10) }}>
@@ -269,7 +289,7 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
             fontFamily="regular"
             color={COLORS.slateGrey}
           >
-            3 Jun 2025
+            {calculateExpiryDate(selectedPlan?.months || 0)}
           </CustomText>
         </View>
       </View>

@@ -8,12 +8,13 @@ import {
   View,
 } from "react-native";
 import {
+  Asset,
   CameraOptions,
   ImageLibraryOptions,
   launchCamera,
   launchImageLibrary,
 } from "react-native-image-picker";
-import { postData } from "../../APIService/api";
+import { postData, postFormData } from "../../APIService/api";
 import ICONS from "../../Assets/Icons";
 import COLORS from "../../Utilities/Colors";
 import { horizontalScale, hp, verticalScale } from "../../Utilities/Metrics";
@@ -38,6 +39,9 @@ type RecordMealModalProps = {
   Mealprotine?: string;
   status?: boolean;
   initialTab?: "recordMeal" | "catpureMeal";
+  isPlan?: string;
+  refreshData: () => void;
+  isPlanActive?: boolean; // Add this prop
 };
 
 const RecordMealModal: FC<RecordMealModalProps> = ({
@@ -51,6 +55,9 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
   Mealprotine,
   status,
   initialTab = "catpureMeal",
+  isPlan,
+  refreshData,
+  isPlanActive = false, // Default to false
 }) => {
   const [activeTab, setActiveTab] = useState<"recordMeal" | "catpureMeal">(
     initialTab
@@ -58,18 +65,27 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
   const [carbs, setCarbs] = useState(Mealcarbs || "");
   const [protine, setProtine] = useState(Mealprotine || "");
   const [fat, setFat] = useState(Mealfat || "");
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
 
   const [isType, setIsType] = useState(false);
 
   // Capture meal states
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<Asset | null>(null);
   const [isUploading, setIsUploading] = useState(false);
   const [apiMacros, setApiMacros] = useState<{
     carbs: number;
     protein: number;
     fat: number;
+    microNutrients: any;
   } | null>(null);
   const [showMacroResults, setShowMacroResults] = useState(false);
+
+  // Add this state for dropdown visibility
+  const [showMealTypeDropdown, setShowMealTypeDropdown] = useState(false);
+  const [captureTabMealType, setCaptureTabMealType] = useState(
+    mealType || "Breakfast"
+  );
+  const [mealTypeSelected, setMealTypeSelected] = useState(false);
 
   const handleMealType = () => {
     if (mealType === "Breakfast") {
@@ -94,6 +110,7 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
         status: true,
       },
     };
+    setIsButtonLoading(true);
 
     try {
       const response = await postData(ENDPOINTS.recordMeal, data);
@@ -112,6 +129,8 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
         type: "error",
         text1: error.message || "Something went wrong",
       });
+    } finally {
+      setIsButtonLoading(false);
     }
   };
 
@@ -129,7 +148,7 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
       } else if (response.errorCode) {
         Alert.alert("Error", "Failed to open camera");
       } else if (response.assets && response.assets.length > 0) {
-        setSelectedImage(response.assets[0].uri!);
+        setSelectedImage(response.assets[0]!);
       }
     });
   };
@@ -147,7 +166,7 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
       } else if (response.errorCode) {
         Alert.alert("Error", "Failed to open gallery");
       } else if (response.assets && response.assets.length > 0) {
-        setSelectedImage(response.assets[0].uri!);
+        setSelectedImage(response.assets[0]!);
       }
     });
   };
@@ -159,33 +178,32 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
     }
 
     setIsUploading(true);
+    const formData = new FormData();
+    formData.append("image", {
+      uri: selectedImage.uri,
+      type: selectedImage.type,
+      name: selectedImage.fileName,
+    });
     try {
-      const response = await postData<GetMacroFromimageApiResponse>(
+      const response = await postFormData<GetMacroFromimageApiResponse>(
         ENDPOINTS.getImageData,
-        {
-          imageUrl: "https://takethemameal.com/files_images_v2/stam.jpg",
-        }
+        formData
       );
-
-      console.log(response.data.data);
-
       // Store the API macro data
       if (response.data.data) {
         setApiMacros({
           carbs: response.data.data.carbs,
           protein: response.data.data.protein,
           fat: response.data.data.fat,
+          microNutrients: response.data.data.microNutrients,
         });
         setShowMacroResults(true);
-
         Toast.show({
           type: "success",
           text1: "Meal analyzed successfully!",
         });
       }
     } catch (error: any) {
-      console.log(error, "Error while Uploading Image");
-
       Toast.show({
         type: "error",
         text1: error.message || "Failed to upload meal image",
@@ -198,9 +216,14 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
   const handleAcceptApiMacros = async () => {
     if (!apiMacros) return;
 
+    const mealTypeValue =
+      activeTab === "catpureMeal"
+        ? handleMealTypeValue(captureTabMealType)
+        : handleMealType();
+
     const data = {
       mealId: mealId,
-      finishedMeal: handleMealType(),
+      finishedMeal: mealTypeValue,
       data: {
         carbs: apiMacros.carbs,
         protein: apiMacros.protein,
@@ -208,6 +231,10 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
         status: true,
       },
     };
+
+    if (apiMacros.microNutrients) {
+      data.data = { ...data.data, microNutrients: apiMacros.microNutrients };
+    }
 
     try {
       const response = await postData(ENDPOINTS.recordMeal, data);
@@ -217,8 +244,9 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
           text1: response.data.message,
         });
         closeModal();
-        getNutrition();
+        getNutrition && getNutrition();
         resetCaptureState();
+        refreshData();
       }
     } catch (error: any) {
       Toast.show({
@@ -228,26 +256,46 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
     }
   };
 
-  const handleEditMacros = () => {
-    if (apiMacros) {
-      setCarbs(apiMacros.carbs.toString());
-      setProtine(apiMacros.protein.toString());
-      setFat(apiMacros.fat.toString());
-    }
-    setShowMacroResults(false);
-    setActiveTab("recordMeal");
-  };
+  // const handleEditMacros = () => {
+  //   if (apiMacros) {
+  //     setCarbs(apiMacros.carbs.toString());
+  //     setProtine(apiMacros.protein.toString());
+  //     setFat(apiMacros.fat.toString());
+  //   }
+  //   setShowMacroResults(false);
+  //   setActiveTab("recordMeal");
+  // };
 
   const resetCaptureState = () => {
     setSelectedImage(null);
     setApiMacros(null);
     setShowMacroResults(false);
+    setMealTypeSelected(false);
+    setCaptureTabMealType(mealType || "Breakfast");
   };
 
   const handleRetakePhoto = () => {
     setShowMacroResults(false);
     setApiMacros(null);
     setSelectedImage(null);
+  };
+
+  const handleCaptureTabMealTypeSelect = (type: string) => {
+    setCaptureTabMealType(type);
+    setShowMealTypeDropdown(false);
+    setMealTypeSelected(true);
+  };
+
+  const handleMealTypeValue = (type: string) => {
+    if (type === "Breakfast") {
+      return "first";
+    } else if (type === "Lunch") {
+      return "second";
+    } else if (type === "Dinner") {
+      return "third";
+    } else {
+      return "other";
+    }
   };
 
   useEffect(() => {
@@ -260,12 +308,13 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
 
   useEffect(() => {
     if (isVisible) {
-      setActiveTab(initialTab);
+      // If user doesn't have an active plan, force "recordMeal" tab
+      setActiveTab(isPlanActive ? initialTab : "recordMeal");
     } else {
       // Reset capture state when modal closes
       resetCaptureState();
     }
-  }, [isVisible, initialTab]);
+  }, [isVisible, initialTab, isPlanActive]);
 
   return (
     <Modal
@@ -341,32 +390,34 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                     Record a Meal
                   </CustomText>
                 </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    setActiveTab("catpureMeal");
-                  }}
-                  style={[
-                    styles.captureBtn,
-                    {
-                      backgroundColor:
-                        activeTab === "catpureMeal"
-                          ? COLORS.darkBLue
-                          : COLORS.white,
-                    },
-                  ]}
-                >
-                  <CustomText
-                    fontSize={14}
-                    fontFamily="regular"
-                    color={
-                      activeTab === "catpureMeal"
-                        ? COLORS.white
-                        : COLORS.darkBLue
-                    }
+                {isPlanActive && ( // Only show Capture Meal tab if user has active plan
+                  <TouchableOpacity
+                    onPress={() => {
+                      setActiveTab("catpureMeal");
+                    }}
+                    style={[
+                      styles.captureBtn,
+                      {
+                        backgroundColor:
+                          activeTab === "catpureMeal"
+                            ? COLORS.darkBLue
+                            : COLORS.white,
+                      },
+                    ]}
                   >
-                    Capture Meal
-                  </CustomText>
-                </TouchableOpacity>
+                    <CustomText
+                      fontSize={14}
+                      fontFamily="regular"
+                      color={
+                        activeTab === "catpureMeal"
+                          ? COLORS.white
+                          : COLORS.darkBLue
+                      }
+                    >
+                      Capture Meal
+                    </CustomText>
+                  </TouchableOpacity>
+                )}
               </View>
 
               {/* Record Meal Tab Content */}
@@ -467,21 +518,22 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                     />
                   </View>
 
-                  <PrimaryButton onPress={handleRecordMeal} title="Record" />
+                  <PrimaryButton
+                    onPress={handleRecordMeal}
+                    title="Record"
+                    isLoading={isButtonLoading}
+                  />
                 </>
               )}
 
               {/* Capture Meal Tab Content */}
+
               {activeTab === "catpureMeal" && (
                 <>
                   {showMacroResults && apiMacros ? (
                     /* Macro Results Display */
                     <>
-                      <View
-                        style={{
-                          gap: verticalScale(6),
-                        }}
-                      >
+                      <View style={{ gap: verticalScale(6) }}>
                         <CustomText
                           fontSize={12}
                           fontFamily="regular"
@@ -492,57 +544,14 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                         <CustomInput
                           onChangeText={setCarbs}
                           value={apiMacros.carbs.toString()}
-                          inputStyle={{
-                            paddingVertical: verticalScale(10),
-                          }}
+                          inputStyle={{ paddingVertical: verticalScale(10) }}
                         />
                       </View>
-                      <View
-                        style={{
-                          gap: verticalScale(6),
-                        }}
-                      >
-                        <CustomText
-                          fontSize={12}
-                          fontFamily="regular"
-                          color={COLORS.darkBLue}
-                        >
-                          gms of proteins
-                        </CustomText>
-                        <CustomInput
-                          onChangeText={setProtine}
-                          value={apiMacros.protein.toString()}
-                          inputStyle={{
-                            paddingVertical: verticalScale(10),
-                          }}
-                        />
-                      </View>
-                      <View
-                        style={{
-                          gap: verticalScale(6),
-                        }}
-                      >
-                        <CustomText
-                          fontSize={12}
-                          fontFamily="regular"
-                          color={COLORS.darkBLue}
-                        >
-                          gms of fat
-                        </CustomText>
-                        <CustomInput
-                          onChangeText={setFat}
-                          value={apiMacros.fat.toString()}
-                          inputStyle={{
-                            paddingVertical: verticalScale(10),
-                          }}
-                        />
-                      </View>
-
+                      {/* Other macro input fields... */}
                       <PrimaryButton
                         onPress={handleAcceptApiMacros}
                         title="Accept & Record"
                       />
-
                       <TouchableOpacity
                         style={styles.retakeButton}
                         onPress={handleRetakePhoto}
@@ -557,18 +566,70 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                       </TouchableOpacity>
                     </>
                   ) : (
-                    /* Image Selection Area */
+                    /* Image Selection Area with Meal Type Dropdown */
                     <>
+                      <View style={{ gap: verticalScale(15) }}>
+                        <View style={{ gap: verticalScale(6) }}>
+                          <CustomText
+                            fontSize={12}
+                            fontFamily="regular"
+                            color={COLORS.darkBLue}
+                          >
+                            Meal Type
+                          </CustomText>
+                          <TouchableOpacity
+                            style={styles.typeContainer}
+                            onPress={() =>
+                              setShowMealTypeDropdown(!showMealTypeDropdown)
+                            }
+                          >
+                            <CustomText
+                              fontSize={16}
+                              fontFamily="regular"
+                              color={COLORS.darkBLue}
+                            >
+                              {captureTabMealType}
+                            </CustomText>
+                            <CustomIcon
+                              Icon={ICONS.DropdownIcon}
+                              height={10}
+                              width={10}
+                            />
+                          </TouchableOpacity>
+                        </View>
+
+                        {showMealTypeDropdown && (
+                          <View style={styles.dropdownContainer}>
+                            {["Breakfast", "Lunch", "Dinner", "Other"].map(
+                              (type) => (
+                                <TouchableOpacity
+                                  key={type}
+                                  style={styles.dropdownItem}
+                                  onPress={() =>
+                                    handleCaptureTabMealTypeSelect(type)
+                                  }
+                                >
+                                  <CustomText
+                                    fontSize={16}
+                                    fontFamily="regular"
+                                    color={COLORS.darkBLue}
+                                  >
+                                    {type}
+                                  </CustomText>
+                                </TouchableOpacity>
+                              )
+                            )}
+                          </View>
+                        )}
+                      </View>
+
                       <View
-                        style={{
-                          gap: verticalScale(15),
-                          alignItems: "center",
-                        }}
+                        style={{ gap: verticalScale(15), alignItems: "center" }}
                       >
                         {selectedImage ? (
                           <View style={styles.imagePreviewContainer}>
                             <Image
-                              source={{ uri: selectedImage }}
+                              source={{ uri: selectedImage.uri }}
                               style={styles.imagePreview}
                               resizeMode="cover"
                             />
@@ -618,7 +679,6 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                           </View>
                         )}
                       </View>
-
                       <PrimaryButton
                         onPress={handleCaptureMeal}
                         title={"Analyze Meal"}
@@ -767,5 +827,26 @@ const styles = StyleSheet.create({
   retakeButton: {
     alignItems: "center",
     paddingVertical: verticalScale(10),
+  },
+  dropdownContainer: {
+    backgroundColor: COLORS.white,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: COLORS.greyishWhite,
+    marginTop: -10,
+    zIndex: 10,
+  },
+  dropdownItem: {
+    paddingVertical: verticalScale(12),
+    paddingHorizontal: horizontalScale(15),
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.greyishWhite,
+  },
+  backButton: {
+    paddingVertical: verticalScale(12),
+    // paddingHorizontal: horizontalScale(10),
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "red",
   },
 });

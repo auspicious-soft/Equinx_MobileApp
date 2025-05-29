@@ -31,6 +31,7 @@ const IMAGES = {
   fastMealImg: require("./fastMealImg.png"),
   taskCompleteImg: require("./taskCompleteImg.png"),
   achievementImg: require("./achiementImg.png"),
+  blurImg: require("./blurImg.png"),
 };
 
 export default IMAGES;

@@ -82,6 +82,7 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
   const [phone, setPhone] = useState("");
   const [showCountryPicker, setShowCountryPicker] = useState(false);
   const [isModalVisible, setModalVisible] = React.useState(false);
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
 
   const [selectedImage, setSelectedImage] = React.useState<string | null>(null);
   const { profileForm } = useAppSelector((state) => state.questions);
@@ -198,7 +199,7 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
       weight: Number(profileForm.weight),
       bmi: Number(bmi),
     };
-
+    setIsButtonLoading(true);
     // console.log("update data", data);
 
     try {
@@ -218,6 +219,8 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
         type: "error",
         text1: error.message || "Something went wrong",
       });
+    } finally {
+      setIsButtonLoading(false);
     }
   };
 
@@ -318,12 +321,14 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
                 value={name}
                 onChangeText={setName}
                 placeholder="Enter your name"
+                disabled={true}
               />
               <CustomInput
                 label="Email Address"
                 value={email}
                 onChangeText={setEmail}
                 placeholder="Enter your email"
+                disabled={true}
               />
 
               <View style={{ gap: verticalScale(5) }}>
@@ -351,11 +356,11 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
                         flagSizeButton: 20,
                       }}
                     />
-                    <CustomIcon
+                    {/* <CustomIcon
                       Icon={ICONS.ArrowDownIcon}
                       height={10}
                       width={10}
-                    />
+                    /> */}
                   </TouchableOpacity>
                   <View style={styles.numberWithCallingContainer}>
                     <CustomText fontSize={14} color={COLORS.oldGrey}>
@@ -368,6 +373,7 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
                       style={styles.inputStyle}
                       keyboardType="number-pad"
                       value={phone}
+                      editable={false}
                     />
                   </View>
                 </View>
@@ -448,7 +454,11 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
                 />
               )}
             </View>
-            <PrimaryButton title="Save Details" onPress={userUpdateData} />
+            <PrimaryButton
+              title="Save Details"
+              onPress={userUpdateData}
+              isLoading={isButtonLoading}
+            />
           </KeyboardAvoidingContainer>
         </View>
 
@@ -511,13 +521,13 @@ const styles = StyleSheet.create({
     borderRadius: 30,
   },
   phoneInputContainer: {
-    // backgroundColor:'red',
     borderWidth: 1.5,
     borderColor: COLORS.greyishWhite,
     borderRadius: 8,
     flexDirection: "row",
     gap: horizontalScale(5),
-    // alignItems:'center'
+
+    backgroundColor: COLORS.greyishWhite,
   },
   countryPickerContainer: {
     borderEndWidth: 1.5,
@@ -532,12 +542,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: horizontalScale(5),
     flex: 1,
+    backgroundColor: COLORS.greyishWhite,
   },
   inputStyle: {
     flex: 1,
     paddingVertical: verticalScale(15),
-    // backgroundColor:'red',
     marginRight: horizontalScale(5),
+    color: COLORS.slateGrey,
   },
   optionsContainer: {
     width: "100%",

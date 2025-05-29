@@ -156,72 +156,84 @@ const FastDetail: FC<FastDetailsScreenProps> = ({ navigation, route }) => {
             Your Meals
           </CustomText>
 
-          {fastsData?.meal.planId.meals.map((item: any, index: number) => {
-            const IMG = [
-              IMAGES.breakFastImg,
-              IMAGES.snackImg,
-              IMAGES.dinnerImg,
-            ];
-            const title = ["Breakfast", "Lunch", "Dinner"];
-            return (
-              <TouchableOpacity
-                key={index}
-                style={styles.mealCard}
-                onPress={() => {
-                  const mealWithType = { ...item, meal_type: title[index] };
-                  setSelectedMeal(mealWithType);
-                  setIsModal(true);
-                }}
-              >
-                <Image source={IMG[index]} style={styles.mealImgStyle} />
-                <View style={{ flex: 1, gap: verticalScale(10) }}>
-                  <CustomText
-                    fontSize={14}
-                    fontFamily="medium"
-                    color={COLORS.darkBLue}
-                  >
-                    {title[index]}
-                  </CustomText>
+          {fastsData?.meal?.planId?.meals ? (
+            fastsData.meal.planId.meals.map((item: any, index: number) => {
+              const IMG = [
+                IMAGES.breakFastImg,
+                IMAGES.snackImg,
+                IMAGES.dinnerImg,
+              ];
+              const title = ["Breakfast", "Lunch", "Dinner"];
+              return (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.mealCard}
+                  onPress={() => {
+                    const mealWithType = { ...item, meal_type: title[index] };
+                    setSelectedMeal(mealWithType);
+                    setIsModal(true);
+                  }}
+                >
+                  <Image source={IMG[index]} style={styles.mealImgStyle} />
+                  <View style={{ flex: 1, gap: verticalScale(10) }}>
+                    <CustomText
+                      fontSize={14}
+                      fontFamily="medium"
+                      color={COLORS.darkBLue}
+                    >
+                      {title[index]}
+                    </CustomText>
 
-                  <View
-                    style={{
-                      flexDirection: "row",
-                      alignItems: "flex-end",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    {item.calories && (
-                      <View style={styles.kcalContainer}>
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        alignItems: "flex-end",
+                        justifyContent: "space-between",
+                      }}
+                    >
+                      {item.calories && (
+                        <View style={styles.kcalContainer}>
+                          <CustomText
+                            fontSize={12}
+                            color={COLORS.green}
+                            fontFamily="medium"
+                          >{`${item.calories} Kcal`}</CustomText>
+                        </View>
+                      )}
+
+                      {item.mealStatus.status == true ? (
                         <CustomText
-                          fontSize={12}
-                          color={COLORS.green}
                           fontFamily="medium"
-                        >{`${item.calories} Kcal`}</CustomText>
-                      </View>
-                    )}
-
-                    {item.mealStatus.status == true ? (
-                      <CustomText
-                        fontFamily="medium"
-                        fontSize={10}
-                        color={COLORS.green}
-                      >
-                        Complete
-                      </CustomText>
-                    ) : (
-                      <CustomText
-                        fontFamily="medium"
-                        fontSize={10}
-                        color={COLORS.darkBLue}
-                      >
-                        Pending
-                      </CustomText>
-                    )}
+                          fontSize={10}
+                          color={COLORS.green}
+                        >
+                          Complete
+                        </CustomText>
+                      ) : (
+                        <CustomText
+                          fontFamily="medium"
+                          fontSize={10}
+                          color={COLORS.darkBLue}
+                        >
+                          Pending
+                        </CustomText>
+                      )}
+                    </View>
                   </View>
-                </View>
-              </TouchableOpacity>
-            );
-          })}
+                </TouchableOpacity>
+              );
+            })
+          ) : (
+            <View style={styles.noMealsContainer}>
+              <CustomText
+                fontSize={14}
+                fontFamily="medium"
+                color={COLORS.darkBLue}
+              >
+                No meals available for this day
+              </CustomText>
+            </View>
+          )}
         </View>
 
         <View style={{ gap: verticalScale(10) }}>
@@ -353,5 +365,11 @@ const styles = StyleSheet.create({
     paddingVertical: verticalScale(10),
     justifyContent: "space-between",
     borderRadius: 20,
+  },
+  noMealsContainer: {
+    padding: verticalScale(15),
+    backgroundColor: COLORS.greyishWhite,
+    borderRadius: 10,
+    alignItems: "center",
   },
 });

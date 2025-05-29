@@ -38,7 +38,7 @@ interface FastingMethod {
   fastingDays?: number[]; // For 5:2, e.g., [1, 4] for Monday and Thursday (0 = Sunday)
 }
 
-const Home: FC<HomeScreenProps> = () => {
+const Home: FC<HomeScreenProps> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const { homeData } = useAppSelector((state) => state.homeData);
   const [isModal, setIsModal] = useState(false);
@@ -51,6 +51,7 @@ const Home: FC<HomeScreenProps> = () => {
   >("Eating");
   const [isLoading, setIsLoading] = useState(false);
   const [isToggled, setIsToggled] = useState(false);
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
 
   // Record Intake Modal
   const [selectedRecord, setSelectedRecord] = useState<string | number>(250);
@@ -182,6 +183,7 @@ const Home: FC<HomeScreenProps> = () => {
   };
 
   const handleFastingToday = async () => {
+    setIsButtonLoading(true);
     try {
       const response = await postData(ENDPOINTS.fastingToday);
       console.log(response);
@@ -197,6 +199,8 @@ const Home: FC<HomeScreenProps> = () => {
         type: "success",
         text1: "Fasting record already exists for today",
       });
+    } finally {
+      setIsButtonLoading(false);
     }
   };
 
@@ -303,6 +307,7 @@ const Home: FC<HomeScreenProps> = () => {
                 isFasting ? "Fasting" : "Eating"
               }`}
               onPress={handleFastingToday}
+              isLoading={isButtonLoading}
               style={{
                 width: wp(80),
               }}
@@ -450,7 +455,12 @@ const Home: FC<HomeScreenProps> = () => {
               AI coach.
             </CustomText>
           </ImageBackground>
-          <PrimaryButton title="Start Chat" onPress={() => {}} />
+          <PrimaryButton
+            title="Start Chat"
+            onPress={() => {
+              navigation.navigate("chats");
+            }}
+          />
         </View>
         <WaterTrackModal
           closeModal={closeModal}

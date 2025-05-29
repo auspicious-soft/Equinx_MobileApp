@@ -1,11 +1,12 @@
 import {
+  ActivityIndicator,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { SupportScreenProps } from "../../Typings/route";
 import COLORS from "../../Utilities/Colors";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -13,6 +14,10 @@ import { horizontalScale, verticalScale } from "../../Utilities/Metrics";
 import CustomIcon from "../../Components/CustomIcon";
 import { CustomText } from "../../Components/CustomText";
 import ICONS from "../../Assets/Icons";
+import Toast from "react-native-toast-message";
+import { fetchData } from "../../APIService/api";
+import { SupportResponse } from "../../Typings/apiResponse";
+import ENDPOINTS from "../../APIService/endPoints";
 
 const questionData = [
   {
@@ -60,11 +65,46 @@ const questionData = [
 ];
 
 const Support: FC<SupportScreenProps> = ({ navigation }) => {
-  const [selectedFaq, setSelectedFaq] = useState<number | null>(null);
+  const [selectedFaq, setSelectedFaq] = useState<string | null>(null);
+  const [supportData, setSupportData] = useState<SupportResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const toggleFaq = (id: number) => {
+  const toggleFaq = (id: string) => {
     setSelectedFaq((prev) => (prev === id ? null : id));
   };
+
+  const getSupportData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetchData<SupportResponse>(
+        ENDPOINTS.contactSupport
+      );
+      console.log(response);
+      if (response.data.success) {
+        setSupportData(response.data.data);
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getSupportData();
+  }, []);
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator color={COLORS.green} size={30} />
+      </View>
+    );
+  }
+
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: COLORS.white }}
@@ -106,7 +146,7 @@ const Support: FC<SupportScreenProps> = ({ navigation }) => {
                 fontFamily="regular"
                 color={COLORS.darkBLue}
               >
-                support@equinglobal.com
+                {supportData?.email}
               </CustomText>
             </View>
           </TouchableOpacity>
@@ -127,7 +167,7 @@ const Support: FC<SupportScreenProps> = ({ navigation }) => {
                 fontFamily="regular"
                 color={COLORS.darkBLue}
               >
-                +1 (555) 567-8901
+                {supportData?.contactNumber}
               </CustomText>
             </View>
           </TouchableOpacity>
@@ -137,23 +177,23 @@ const Support: FC<SupportScreenProps> = ({ navigation }) => {
           <CustomText fontSize={12} fontFamily="bold" color={COLORS.darkBLue}>
             Frequently Asked Questions
           </CustomText>
-          {questionData.map((item, index) => (
+          {supportData?.faq.map((item, index) => (
             <View style={styles.questionWrapper} key={index}>
               <TouchableOpacity
                 style={styles.questionBtn}
-                onPress={() => toggleFaq(item.id)}
+                onPress={() => toggleFaq(item._id)}
               >
                 <CustomText
                   fontSize={14}
                   fontFamily="semiBold"
                   color={COLORS.darkBLue}
                 >
-                  {item.title}
+                  {item.question}
                 </CustomText>
 
                 <CustomIcon
                   Icon={
-                    selectedFaq === item.id
+                    selectedFaq === item._id
                       ? ICONS.decrementIcon
                       : ICONS.incrementIcon
                   }
@@ -162,14 +202,14 @@ const Support: FC<SupportScreenProps> = ({ navigation }) => {
                 />
               </TouchableOpacity>
 
-              {selectedFaq === item.id && (
+              {selectedFaq === item._id && (
                 <View style={{ paddingHorizontal: horizontalScale(10) }}>
                   <CustomText
                     fontSize={12}
                     fontFamily="regular"
                     color={COLORS.darkBLue}
                   >
-                    {item.description}
+                    {item.answer}
                   </CustomText>
                 </View>
               )}

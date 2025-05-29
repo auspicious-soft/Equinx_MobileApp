@@ -62,11 +62,7 @@ export const fetchData = <T>(endpoint: string, params?: any, headers?: any) =>
 export const postData = <T>(endpoint: string, data?: any, headers?: any) =>
   api.post<ApiResponse<T>>(endpoint, data, { headers });
 
-export const postFormData = <T>(
-  endpoint: string,
-  data: FormData,
-  headers?: any
-) =>
+export const postFormData = <T>(endpoint: string, data: FormData) =>
   api.post<ApiResponse<T>>(endpoint, data, {
     headers: {
       "Content-Type": "multipart/form-data",

@@ -18,12 +18,64 @@ const ChangePassword: FC<ChangePasswordScreenProps> = ({ navigation }) => {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [error, setError] = useState({
+    oldPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const validInputs = () => {
+    let valid = true;
+    let newErrors = {
+      oldPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    };
+    if (!oldPassword) {
+      valid = false;
+      newErrors.oldPassword = "Old Password is required.";
+      Toast.show({
+        type: "error",
+        text1: "Old Password is required.",
+      });
+    }
+    if (!newPassword) {
+      valid = false;
+      newErrors.newPassword = "New Password is required.";
+      Toast.show({
+        type: "error",
+        text1: "New Password is required.",
+      });
+    }
+    if (!confirmPassword) {
+      valid = false;
+      newErrors.confirmPassword = "Confirm Password is required.";
+      Toast.show({
+        type: "error",
+        text1: "Confirm Password is required.",
+      });
+    } else if (newPassword !== confirmPassword) {
+      valid = false;
+      newErrors.confirmPassword = "Passwords do not match.";
+      Toast.show({
+        type: "error",
+        text1: "Passwords do not match.",
+      });
+    }
+
+    setError(newErrors);
+    return valid;
+  };
 
   const handlePassword = async () => {
+    if (!validInputs()) {
+      return; // Stop execution if validation fails
+    }
     const data = {
       oldPassword: oldPassword,
       newPassword: newPassword,
     };
+    setIsButtonLoading(true);
     try {
       const response = await putData(ENDPOINTS.changePassword, data);
       console.log(response.data);
@@ -44,6 +96,8 @@ const ChangePassword: FC<ChangePasswordScreenProps> = ({ navigation }) => {
         type: "error",
         text1: error.message || "Something went wrong",
       });
+    } finally {
+      setIsButtonLoading(false);
     }
   };
   return (
@@ -83,7 +137,11 @@ const ChangePassword: FC<ChangePasswordScreenProps> = ({ navigation }) => {
               placeholder="*********"
             />
           </View>
-          <PrimaryButton onPress={handlePassword} title="Save Details" />
+          <PrimaryButton
+            onPress={handlePassword}
+            title="Save Details"
+            isLoading={isButtonLoading}
+          />
           <View style={{ gap: verticalScale(8) }}>
             <CustomText
               fontSize={12}

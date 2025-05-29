@@ -28,6 +28,8 @@ const ENDPOINTS = {
   recordMeal: `api/record-meal`,
   nutrition: `api/get-nutrition`,
   getImageData: "api/get-nutrition-by-image",
+  contactSupport: `api/get-privacy-and-contact-support?type=contact`,
+  privacyPolicy: `api/get-privacy-and-contact-support?type=privacy`,
 };
 
 export default ENDPOINTS;

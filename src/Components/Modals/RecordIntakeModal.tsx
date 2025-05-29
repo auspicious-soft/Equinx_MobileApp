@@ -45,11 +45,13 @@ const RecordIntakeModal: FC<RecordIntakeModalProps> = ({
   getHomeData,
 }) => {
   const [showRecordData, setShowRecordData] = useState(false);
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
 
   const handleSave = async () => {
     const data = {
       waterIntake: selectedRecord,
     };
+    setIsButtonLoading(true);
 
     try {
       const response = await postData(ENDPOINTS.waterIntake, data);
@@ -68,6 +70,8 @@ const RecordIntakeModal: FC<RecordIntakeModalProps> = ({
         type: "error",
         text1: error.message || "Something went wrong",
       });
+    } finally {
+      setIsButtonLoading(false);
     }
   };
 
@@ -147,7 +151,11 @@ const RecordIntakeModal: FC<RecordIntakeModalProps> = ({
                 ))}
               </View>
             )}
-            <PrimaryButton title="Save" onPress={handleSave} />
+            <PrimaryButton
+              title="Save"
+              onPress={handleSave}
+              isLoading={isButtonLoading}
+            />
           </View>
         </View>
       </TouchableOpacity>

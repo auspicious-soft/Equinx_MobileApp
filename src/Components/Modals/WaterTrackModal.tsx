@@ -94,6 +94,7 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
 
   const [containerSize, setContainerSize] = useState<boolean>(false);
   const [dailyGoal, setDailyGoal] = useState<boolean>(false);
+  const [isButtonLoading, setIsButtonLoading] = useState(false);
 
   const toggleSwitch = () => {
     const toValue = isToggled ? 0 : 1;
@@ -121,6 +122,8 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
       waterReminder: isToggled,
     };
 
+    setIsButtonLoading(true);
+
     try {
       const response = await postData(ENDPOINTS.waterTracking, data);
       console.log(response.data);
@@ -139,6 +142,8 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
         type: "error",
         text1: error.message || "Something went wrong",
       });
+    } finally {
+      setIsButtonLoading(false);
     }
   };
 
@@ -466,6 +471,7 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
                 onPress={() => {
                   handleSave();
                 }}
+                isLoading={isButtonLoading}
               />
             </View>
           </View>

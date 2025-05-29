@@ -430,7 +430,25 @@ export interface ThirdMealStatus {
   protein: number;
   fat: number;
   status: boolean;
+  microNutrients: MicroNutrients;
   calories: number;
+}
+
+export interface MicroNutrients {
+  fiber: number;
+  sugar: number;
+  sodium: number;
+  potassium: number;
+  calcium: number;
+  iron: number;
+  vitaminA: number;
+  vitaminC: number;
+  vitaminD: number;
+  vitaminE: number;
+  vitaminK: number;
+  vitaminB1: number;
+  vitaminB2: number;
+  vitaminB3: number;
 }
 
 export interface OtherMealStatus {
@@ -474,4 +492,58 @@ export interface GetMacroFromimageApiResponse {
   protein: number;
   fat: number;
   status: boolean;
+  microNutrients: MicroNutrients;
+}
+
+export interface MicroNutrients {
+  fiber: number;
+  sugar: number;
+  sodium: number;
+  potassium: number;
+  calcium: number;
+  iron: number;
+  vitaminA: number;
+  vitaminC: number;
+  vitaminD: number;
+  vitaminE: number;
+  vitaminK: number;
+  vitaminB1: number;
+  vitaminB2: number;
+  vitaminB3: number;
+}
+
+export interface SupportResponse {
+  _id: string;
+  email: string;
+  contactNumber: string;
+  faq: Faq[];
+  isActive: boolean;
+  publishDate: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+export interface Faq {
+  question: string;
+  answer: string;
+  _id: string;
+}
+
+export interface PrivacyPolicyResponse {
+  _id: string;
+  summary: string;
+  content: Content[];
+  isActive: boolean;
+  publishDate: string;
+  createdAt: string;
+  updatedAt: string;
+  __v: number;
+}
+
+export interface Content {
+  title: string;
+  subtitle: string;
+  pointers: string[];
+  _id: string;
 }

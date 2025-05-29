@@ -446,7 +446,8 @@ const styles = StyleSheet.create({
     height: hp(13.7),
     width: wp(28.9),
     borderRadius: 100,
-    resizeMode: "contain",
+    resizeMode: "cover",
+    // backgroundColor: "red",
   },
   headerView: {
     flexDirection: "row",

@@ -1,6 +1,7 @@
 import React, { FC, useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Image,
   ScrollView,
   StyleSheet,
@@ -10,7 +11,7 @@ import {
 import LinearGradient from "react-native-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Toast from "react-native-toast-message";
-import { fetchData } from "../../APIService/api";
+import { fetchData, postData } from "../../APIService/api";
 import ENDPOINTS from "../../APIService/endPoints";
 import ICONS from "../../Assets/Icons";
 import IMAGES from "../../Assets/Images";
@@ -19,7 +20,7 @@ import { CustomText } from "../../Components/CustomText";
 import PrimaryButton from "../../Components/PrimaryButton";
 import { setPricePlan } from "../../Redux/slices/planPrices";
 import { useAppDispatch, useAppSelector } from "../../Redux/store";
-import { PricePlan } from "../../Typings/apiResponse";
+import { CheckOutResponse, PricePlan } from "../../Typings/apiResponse";
 import { MemberShipScreenProps } from "../../Typings/route";
 import COLORS from "../../Utilities/Colors";
 import {
@@ -28,6 +29,12 @@ import {
   verticalScale,
   wp,
 } from "../../Utilities/Metrics";
+import {
+  initPaymentSheet,
+  initStripe,
+  presentPaymentSheet,
+} from "@stripe/stripe-react-native";
+import { PUBLISHABLE_KEY } from "@env";
 
 const planData = [
   {
@@ -82,13 +89,50 @@ const cardData = [
 ];
 
 const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
-  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const dispatch = useAppDispatch();
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isCheckOutLoading, setIsCheckOutLoading] = useState(false);
+
+  const [isStripeInitialized, setIsStripeInitialized] = useState(false);
+
+  const [selectedProductId, setSelectedProductId] = useState<string | null>(
+    null
+  );
 
   const { plansPrices } = useAppSelector((state) => state.planPrices);
 
+  // Initialize Stripe SDK
+  useEffect(() => {
+    const initializeStripe = async () => {
+      try {
+        if (!PUBLISHABLE_KEY) {
+          throw new Error("Stripe publishable key is not set");
+        }
+        await initStripe({
+          publishableKey: PUBLISHABLE_KEY,
+        });
+        console.log("Stripe initialized successfully");
+        setIsStripeInitialized(true);
+      } catch (error: any) {
+        console.error("Failed to initialize Stripe:", error);
+        Toast.show({
+          type: "error",
+          text1: error.message || "Failed to initialize payment system",
+        });
+      }
+    };
+    initializeStripe();
+  }, []);
+
   const getPricePlan = async () => {
+    // Check if plans already exist in Redux
+    if (plansPrices && plansPrices.length > 0) {
+      // Plans already exist, just set the selected plan
+      setSelectedPlanId(plansPrices[0]._id);
+      setSelectedProductId(plansPrices[0].productId || null);
+      return;
+    }
     setIsLoading(true);
     try {
       const response = await fetchData<PricePlan[]>(ENDPOINTS.getPricePlan);
@@ -97,6 +141,7 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
       if (response.data.success) {
         dispatch(setPricePlan(response.data.data));
         setSelectedPlanId(response.data.data[0]._id);
+        setSelectedProductId(response.data.data[0].productId || null);
       }
     } catch (error: any) {
       Toast.show({
@@ -105,6 +150,71 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Handle checkout
+  const handleCheckOut = async () => {
+    if (!isStripeInitialized) {
+      Toast.show({
+        type: "error",
+        text1: "Payment system is not ready. Please try again.",
+      });
+      return;
+    }
+
+    if (!selectedProductId) {
+      Toast.show({
+        type: "error",
+        text1: "Please select a plan",
+      });
+      return;
+    }
+
+    setIsCheckOutLoading(true);
+    try {
+      const data = { productId: selectedProductId };
+      const response = await postData<CheckOutResponse>(
+        ENDPOINTS.checkOutSession,
+        data
+      );
+
+      if (response.data.success && response.data.data.clientSecret) {
+        const { error: initError } = await initPaymentSheet({
+          paymentIntentClientSecret: response.data.data.clientSecret,
+          merchantDisplayName: "Equin Global",
+        });
+
+        if (initError) {
+          throw new Error(
+            `Payment initialization failed: ${initError.message}`
+          );
+        }
+
+        await openPaymentSheet();
+      } else {
+        throw new Error("Invalid checkout response");
+      }
+    } catch (error: any) {
+      console.error("Checkout error:", error);
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong during checkout",
+      });
+    } finally {
+      setIsCheckOutLoading(false);
+    }
+  };
+
+  const openPaymentSheet = async () => {
+    const { error } = await presentPaymentSheet();
+
+    if (error) {
+      console.log(error);
+
+      Alert.alert(`Error: ${error.message}`);
+    } else {
+      navigation.goBack();
     }
   };
 
@@ -117,7 +227,10 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
 
     return (
       <TouchableOpacity
-        onPress={() => handleSelectPlan(plan._id)}
+        onPress={() => {
+          handleSelectPlan(plan._id);
+          setSelectedProductId(plan.productId || null);
+        }}
         style={{
           flex: 1,
           paddingHorizontal: verticalScale(10),
@@ -267,11 +380,16 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
                   gap: verticalScale(20),
                 }}
               >
-                {plansPrices.map((plan, index) => (
+                {plansPrices.map((plan) => (
                   <PlanCard key={plan._id} plan={plan} />
                 ))}
               </View>
-              <PrimaryButton title="Upgrade now" onPress={() => {}} />
+              <PrimaryButton
+                title="Upgrade now"
+                onPress={handleCheckOut}
+                disabled={isCheckOutLoading || !isStripeInitialized}
+                isLoading={isCheckOutLoading}
+              />
             </View>
 
             <View>

@@ -22,8 +22,6 @@ const CreatePassword: FC<CreatePasswordScreenProps> = ({
   const [isModalVisible, setModalVisible] = React.useState(false);
   const { otp } = route.params;
 
-  console.log(otp);
-
   const closeModal = () => {
     setModalVisible(false);
   };
