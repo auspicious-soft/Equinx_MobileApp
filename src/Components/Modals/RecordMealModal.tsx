@@ -3,6 +3,8 @@ import {
   Alert,
   Image,
   Modal,
+  PermissionsAndroid,
+  Platform,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -27,6 +29,8 @@ import PrimaryButton from "../PrimaryButton";
 import Toast from "react-native-toast-message";
 import ENDPOINTS from "../../APIService/endPoints";
 import { GetMacroFromimageApiResponse } from "../../Typings/apiResponse";
+import { check, PERMISSIONS, RESULTS, request } from "react-native-permissions";
+import { Linking } from "react-native";
 
 type RecordMealModalProps = {
   isVisible: boolean;
@@ -134,8 +138,57 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
     }
   };
 
+  const requestCameraPermission = async () => {
+    try {
+      const permission =
+        Platform.OS === "ios"
+          ? PERMISSIONS.IOS.CAMERA
+          : PERMISSIONS.ANDROID.CAMERA;
+
+      const result = await check(permission);
+
+      if (result === RESULTS.GRANTED) {
+        return true;
+      }
+
+      if (result === RESULTS.DENIED) {
+        const requestResult = await request(permission);
+        return requestResult === RESULTS.GRANTED;
+      }
+
+      if (result === RESULTS.BLOCKED || result === RESULTS.UNAVAILABLE) {
+        Alert.alert(
+          "Camera Permission",
+          "Camera permission is required to take photos. Please enable it in your device settings.",
+          [
+            {
+              text: "Cancel",
+              style: "cancel",
+            },
+            {
+              text: "Open Settings",
+              onPress: () => Linking.openSettings(),
+            },
+          ]
+        );
+        return false;
+      }
+
+      return false;
+    } catch (error) {
+      console.log("Error checking camera permission:", error);
+      return false;
+    }
+  };
+
   // Camera and Gallery functions
-  const openCamera = () => {
+  const openCamera = async () => {
+    const hasPermission = await requestCameraPermission();
+
+    if (!hasPermission) {
+      return;
+    }
+
     const options: CameraOptions = {
       mediaType: "photo",
       quality: 0.8,

@@ -1,5 +1,7 @@
 import {
+  Alert,
   Image,
+  Linking,
   Platform,
   StyleSheet,
   Text,
@@ -43,6 +45,7 @@ import Toast from "react-native-toast-message";
 import { postData, postFormData, putData } from "../../APIService/api";
 import ENDPOINTS from "../../APIService/endPoints";
 import { IMAGE_BASE_URL } from "@env";
+import { check, PERMISSIONS, request, RESULTS } from "react-native-permissions";
 
 type ProfileForm = {
   gender: string;
@@ -119,7 +122,53 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
     setModalVisible(false);
   };
 
-  const openCamera = () => {
+  // Permission for camera
+
+  const requestCameraPermission = async () => {
+    try {
+      const permission =
+        Platform.OS === "ios" ? PERMISSIONS.IOS : PERMISSIONS.ANDROID.CAMERA;
+
+      const result = await check(permission);
+
+      if (result === RESULTS.GRANTED) {
+        return true;
+      }
+
+      if (result == RESULTS.DENIED) {
+        const requestResult = await request(permission);
+        return requestResult === RESULTS.GRANTED;
+      }
+      if (result === RESULTS.BLOCKED || result === RESULTS.UNAVAILABLE) {
+        Alert.alert(
+          "Camera Permission",
+          "Camera permission is required to take photos. Please enable it in your device settings.",
+          [
+            {
+              text: "Cancel",
+              style: "cancel",
+            },
+            {
+              text: "Open Settings",
+              onPress: () => Linking.openSettings(),
+            },
+          ]
+        );
+        return false;
+      }
+    } catch (error) {
+      console.log("Error checking camera permission:", error);
+      return false;
+    }
+  };
+
+  const openCamera = async () => {
+    const hasPermission = await requestCameraPermission();
+
+    if (!hasPermission) {
+      return;
+    }
+
     const options: CameraOptions = {
       mediaType: "photo",
       saveToPhotos: true,
@@ -339,6 +388,7 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
                   <TouchableOpacity
                     onPress={() => setShowCountryPicker(true)}
                     style={styles.countryPickerContainer}
+                    disabled={true}
                   >
                     <CountryPicker
                       {...{
@@ -535,20 +585,19 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: horizontalScale(5),
     flexDirection: "row",
-    borderColor: COLORS.greyishWhite,
+    borderColor: COLORS.white,
   },
   numberWithCallingContainer: {
     flexDirection: "row",
     alignItems: "center",
     gap: horizontalScale(5),
     flex: 1,
-    backgroundColor: COLORS.greyishWhite,
   },
   inputStyle: {
     flex: 1,
     paddingVertical: verticalScale(15),
     marginRight: horizontalScale(5),
-    color: COLORS.slateGrey,
+    color: COLORS.darkBLue,
   },
   optionsContainer: {
     width: "100%",

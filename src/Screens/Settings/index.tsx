@@ -36,6 +36,7 @@ import { SettingResponse } from "../../Typings/apiResponse";
 import { useAppDispatch, useAppSelector } from "../../Redux/store";
 import { setSettingData } from "../../Redux/slices/settingSlice";
 import { IMAGE_BASE_URL } from "@env";
+import RateUs from "../../Components/Modals/RateUs";
 
 const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
   const [isToggled, setIsToggled] = useState(false);
@@ -43,6 +44,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useAppDispatch();
   const [fcmToken, setFcmToken] = useState(null);
+  const [isModalVisible, setModalVisible] = useState(false);
 
   const { settingData } = useAppSelector((state) => state.settingData);
 
@@ -303,7 +305,9 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                     width: 16,
                     height: 16,
                     borderRadius: 8,
-                    backgroundColor: COLORS.green,
+                    backgroundColor: isToggled
+                      ? COLORS.green
+                      : COLORS.slateGrey,
                     transform: [{ translateX }],
                   }}
                 />
@@ -371,7 +375,12 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                 Get Support
               </CustomText>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.profileContainer}>
+            <TouchableOpacity
+              style={styles.profileContainer}
+              onPress={() => {
+                setModalVisible(true);
+              }}
+            >
               <View style={styles.iconBg}>
                 <CustomIcon Icon={ICONS.rateUsIcon} height={16} width={16} />
               </View>
@@ -419,6 +428,11 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
             </CustomText>
           </TouchableOpacity>
         </View>
+
+        <RateUs
+          isVisible={isModalVisible}
+          closeModal={() => setModalVisible(false)}
+        />
       </SafeAreaView>
     </ScrollView>
   );

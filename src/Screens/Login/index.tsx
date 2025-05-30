@@ -100,13 +100,37 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
           response.data.data.token
         );
 
+        //  Saved credentials
+        if (activeCheckBox === "ActiveBox") {
+          await storeLocalStorageData(STORAGE_KEYS.credentials, {
+            email,
+            password,
+          });
+        }
+
+        const isWelcomeScreen = await getLocalStorageData(
+          STORAGE_KEYS.isWelcomeScreen
+        );
+
+        console.log("iswelcome", isWelcomeScreen);
+
         Toast.show({
           type: "success",
           text1: response.data.message,
         });
-        navigation.replace("mainStack", {
-          screen: "Welcome",
-        });
+
+        if (isWelcomeScreen) {
+          navigation.replace("mainStack", {
+            screen: "tabs",
+            params: {
+              screen: "home",
+            },
+          });
+        } else {
+          navigation.replace("mainStack", {
+            screen: "Welcome",
+          });
+        }
       }
     } catch (error: any) {
       Toast.show({
@@ -115,6 +139,21 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
       });
     }
   };
+
+  // Get Credtientials from local storage
+
+  const loadSavedCredintails = async () => {
+    const getCredientials = await getLocalStorageData(STORAGE_KEYS.credentials);
+    if (getCredientials) {
+      setEmail(getCredientials.email);
+      setPassword(getCredientials.password);
+      setActiveCheckBox("ActiveBox");
+    }
+  };
+
+  useEffect(() => {
+    loadSavedCredintails();
+  }, []);
 
   return (
     <KeyboardAvoidingContainer>
@@ -175,7 +214,7 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
                 style={styles.rememberContainer}
                 onPress={toggleCheckBox}
               >
-                <TouchableOpacity>
+                <View>
                   {activeCheckBox === "ActiveBox" ? (
                     <CustomIcon
                       Icon={ICONS.activeCheckBox}
@@ -185,7 +224,7 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
                   ) : (
                     <CustomIcon Icon={ICONS.checkBox} height={13} width={13} />
                   )}
-                </TouchableOpacity>
+                </View>
                 <CustomText fontSize={12} color={COLORS.oldGrey}>
                   Remember me
                 </CustomText>

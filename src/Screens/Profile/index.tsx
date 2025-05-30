@@ -74,6 +74,13 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
     return `${day} ${month},\n${year}`;
   };
 
+  const formatTodayDate = () => {
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.toLocaleString("en-US", { month: "long" });
+    return `Today, ${month} ${day}`;
+  };
+
   const renderFastsData = ({ item }: { item: RecentFast }) => {
     return (
       <TouchableOpacity
@@ -168,7 +175,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
             fontFamily="regular"
             color={COLORS.slateGrey}
           >
-            Today, March 25
+            {formatTodayDate()}
           </CustomText>
           <CircularProgress
             color={COLORS.green}
@@ -176,7 +183,6 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
             progress={0.7}
             radius={30}
             strokeWidth={20}
-            // backgroundStrokeWidth={15}
             progressStrokeWidth={8}
           >
             <CustomText fontSize={10} color={COLORS.darkBLue}>
@@ -191,7 +197,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
           </CustomText>
           <View style={{ gap: verticalScale(8) }}>
             <View style={styles.alignContainer}>
-              <TouchableOpacity style={styles.detailWrapper}>
+              <View style={styles.detailWrapper}>
                 <CustomText
                   fontSize={12}
                   fontFamily="regular"
@@ -206,8 +212,8 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                 >
                   {profileData?.totalFasts}
                 </CustomText>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.detailWrapper}>
+              </View>
+              <View style={styles.detailWrapper}>
                 <CustomText
                   fontSize={12}
                   fontFamily="regular"
@@ -222,10 +228,10 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                 >
                   {`${profileData?.averageLast7Fasts}h`}
                 </CustomText>
-              </TouchableOpacity>
+              </View>
             </View>
             <View style={styles.alignContainer}>
-              <TouchableOpacity style={styles.detailWrapper}>
+              <View style={styles.detailWrapper}>
                 <CustomText
                   fontSize={12}
                   fontFamily="regular"
@@ -240,8 +246,8 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                 >
                   {`${profileData?.longestFast}h`}
                 </CustomText>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.detailWrapper}>
+              </View>
+              <View style={styles.detailWrapper}>
                 <CustomText
                   fontSize={12}
                   fontFamily="regular"
@@ -256,10 +262,10 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                 >
                   {`${profileData?.longestStreak}`}
                 </CustomText>
-              </TouchableOpacity>
+              </View>
             </View>
             <View style={styles.alignContainer}>
-              <TouchableOpacity style={styles.detailWrapper}>
+              <View style={styles.detailWrapper}>
                 <CustomText
                   fontSize={12}
                   fontFamily="regular"
@@ -274,8 +280,8 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                 >
                   {`${profileData?.currentStreak}`}
                 </CustomText>
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.detailWrapper}>
+              </View>
+              <View style={styles.detailWrapper}>
                 <CustomText
                   fontSize={12}
                   fontFamily="regular"
@@ -290,7 +296,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                 >
                   {`${profileData?.weight} lbs`}
                 </CustomText>
-              </TouchableOpacity>
+              </View>
             </View>
             <View style={styles.horizontalContainer}>
               <View
@@ -315,9 +321,9 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                         getBmiCatgeory() === "Underweight"
                           ? "#78C1E5"
                           : getBmiCatgeory() === "Normal Weight"
-                          ? COLORS.green
-                          : getBmiCatgeory() === "Overweight"
                           ? COLORS.greenBg
+                          : getBmiCatgeory() === "Overweight"
+                          ? COLORS.golden
                           : "#E57373", // for Obese
                     },
                   ]}

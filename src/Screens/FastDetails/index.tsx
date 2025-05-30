@@ -197,7 +197,7 @@ const FastDetail: FC<FastDetailsScreenProps> = ({ navigation, route }) => {
                             fontSize={12}
                             color={COLORS.green}
                             fontFamily="medium"
-                          >{`${item.calories} Kcal`}</CustomText>
+                          >{`${item.calories} `}</CustomText>
                         </View>
                       )}
 

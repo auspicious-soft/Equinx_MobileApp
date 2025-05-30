@@ -10,6 +10,8 @@ const STORAGE_KEYS = {
   cachedDiscoverData: "cached_discover_data",
   discoverDataTimestamp: "discover_data_timestamp",
   fcmToken: "fcm_token",
+  credentials: "credentials",
+  isWelcomeScreen: "isWelcomeScreen",
 };
 
 export default STORAGE_KEYS;

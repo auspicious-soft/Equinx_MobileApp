@@ -20,6 +20,8 @@ import {
 import { CustomText } from "../../Components/CustomText";
 import COLORS from "../../Utilities/Colors";
 import PrimaryButton from "../../Components/PrimaryButton";
+import { storeLocalStorageData } from "../../Utilities/Storage";
+import STORAGE_KEYS from "../../Utilities/Constants";
 
 const WelcomeScreen: FC<WelcomeScreenProps> = ({ navigation }) => {
   const imageAnim = React.useRef(new Animated.Value(-hp(50))).current; // Start from top
@@ -52,6 +54,13 @@ const WelcomeScreen: FC<WelcomeScreenProps> = ({ navigation }) => {
       delay: 300, // Delay to stagger animation
     }).start();
   }, [imageAnim, textAnim, buttonAnim]);
+
+  const handleContinue = async () => {
+    await storeLocalStorageData(STORAGE_KEYS.isWelcomeScreen, true);
+    navigation.replace("tabs", {
+      screen: "home",
+    });
+  };
 
   return (
     <ImageBackground
@@ -108,14 +117,7 @@ const WelcomeScreen: FC<WelcomeScreenProps> = ({ navigation }) => {
             width: "100%",
           }}
         >
-          <PrimaryButton
-            title="Containue"
-            onPress={() => {
-              navigation.replace("tabs", {
-                screen: "home",
-              });
-            }}
-          />
+          <PrimaryButton title="Continue" onPress={handleContinue} />
         </Animated.View>
       </SafeAreaView>
     </ImageBackground>

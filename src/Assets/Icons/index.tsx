@@ -73,6 +73,9 @@ import sendIcon from "./sendIcon.svg";
 import chatBotIcon from "./chatBotIcon.svg";
 import shareIcon from "./shareIcon.svg";
 import DeleteIcon from "./deleteIcon.svg";
+import whiteStar from "./whiteStar.svg";
+import greenStar from "./greenStar.svg";
+import rateFruitIcon from "./rateFruitIcon.svg";
 
 const ICONS = {
   AppLogo,
@@ -150,6 +153,9 @@ const ICONS = {
   chatBotIcon,
   shareIcon,
   DeleteIcon,
+  whiteStar,
+  greenStar,
+  rateFruitIcon,
 };
 
 export default ICONS;
