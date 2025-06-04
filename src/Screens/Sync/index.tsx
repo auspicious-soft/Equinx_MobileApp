@@ -14,8 +14,10 @@ import CustomIcon from "../../Components/CustomIcon";
 import { CustomText } from "../../Components/CustomText";
 import COLORS from "../../Utilities/Colors";
 import { horizontalScale, verticalScale } from "../../Utilities/Metrics";
+import { useLanguage } from "../../Context/LanguageContext";
 
 const Sync: FC<SyncScreenProps> = ({ navigation }) => {
+  const { translations } = useLanguage();
   const [isToggled, setIsToggled] = useState(false);
   const toggleAnim = useRef(new Animated.Value(0)).current;
 
@@ -58,15 +60,14 @@ const Sync: FC<SyncScreenProps> = ({ navigation }) => {
             fontFamily="regular"
             color={COLORS.darkBLue}
           >
-            Apple Health
+            {translations.apple_health}
           </CustomText>
           <CustomText
             fontSize={10}
             fontFamily="regular"
             color={COLORS.slateGrey}
           >
-            Seamlessly track your fasting, weight, and activity by syncing with
-            Apple Health.
+            {translations.apple_health_para}
           </CustomText>
         </View>
         <TouchableOpacity onPress={toggleSwitch} activeOpacity={0.8}>

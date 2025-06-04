@@ -10,31 +10,78 @@ import { CustomText } from "../../Components/CustomText";
 import PrimaryButton from "../../Components/PrimaryButton";
 import CalorieCalculator from "../../Components/Modals/CalorieCalculator";
 
-const kcalData = [
+// const kcalData = [
+//   {
+//     id: 1,
+//     kcal: "Less than 1500 kcal",
+//   },
+//   {
+//     id: 2,
+//     kcal: "Between 1500-2000 kcal ",
+//   },
+//   {
+//     id: 3,
+//     kcal: "Between 2000-2500 kcal ",
+//   },
+//   {
+//     id: 4,
+//     kcal: "More than 2500 kcal ",
+//   },
+//   {
+//     id: 5,
+//     kcal: "I’m not sure",
+//   },
+// ];
+
+const questionData = [
   {
-    id: 1,
-    kcal: "Less than 1500 kcal",
-  },
-  {
-    id: 2,
-    kcal: "Between 1500-2000 kcal ",
-  },
-  {
-    id: 3,
-    kcal: "Between 2000-2500 kcal ",
-  },
-  {
-    id: 4,
-    kcal: "More than 2500 kcal ",
-  },
-  {
-    id: 5,
-    kcal: "I’m not sure",
+    _id: "682aba4beebb44f35f3a78f3",
+    text: "How many calories do you consume daily on average?",
+    subtitle:
+      "Estimating your daily intake helps us provide better fasting and meal recommendations.",
+    type: "mcq",
+    next: "info5",
+    options: [
+      {
+        text: "Less than 1500 kcal",
+        value: 33,
+        hasIcon: false,
+        _id: "682aba4beebb44f35f3a78f4",
+      },
+      {
+        text: "Between 1500-2000 kcal",
+        value: 34,
+        hasIcon: false,
+        _id: "682aba4beebb44f35f3a78f5",
+      },
+      {
+        text: "Between 2000-2500 kcal",
+        value: 35,
+        hasIcon: false,
+        _id: "682aba4beebb44f35f3a78f6",
+      },
+      {
+        text: "More than 2500 kcal",
+        value: 36,
+        hasIcon: false,
+        _id: "682aba4beebb44f35f3a78f7",
+      },
+      {
+        text: "I’m not sure",
+        value: 37,
+        hasIcon: false,
+        _id: "682aba4beebb44f35f3a78f8",
+      },
+    ],
+    order: 9,
+    __v: 0,
+    createdAt: "2025-05-19T04:57:47.613Z",
+    updatedAt: "2025-05-19T04:57:47.613Z",
   },
 ];
 
 const Recalculate: FC<RecalculateScreenProps> = ({ navigation }) => {
-  const [isSelected, setIsSelected] = useState<number | null>(null);
+  const [isSelected, setIsSelected] = useState<string | null>("");
   const [selectedKcal, setSelectedKcal] = useState<string | null>(null);
 
   const [isModal, setIsModal] = useState(false);
@@ -43,7 +90,7 @@ const Recalculate: FC<RecalculateScreenProps> = ({ navigation }) => {
     setIsModal(false);
   };
 
-  const handleKcal = (id: number) => {
+  const handleKcal = (id: string) => {
     setIsSelected((prev) => (prev === id ? null : id));
   };
   return (
@@ -67,7 +114,7 @@ const Recalculate: FC<RecalculateScreenProps> = ({ navigation }) => {
           color={COLORS.darkBLue}
           style={{ textAlign: "center" }}
         >
-          How many calories do you consume daily on average?
+          {questionData[0].text}
         </CustomText>
         <CustomText
           fontSize={12}
@@ -75,42 +122,45 @@ const Recalculate: FC<RecalculateScreenProps> = ({ navigation }) => {
           color={COLORS.darkBLue}
           style={{ textAlign: "center" }}
         >
-          Estimating your daily intake helps us provide better fasting and meal
-          recommendations.
+          {questionData[0].subtitle}
         </CustomText>
       </View>
       <View style={{ gap: verticalScale(30) }}>
         <View style={{ gap: verticalScale(10) }}>
-          {kcalData.map((item, index) => (
+          {questionData[0].options.map((item, index) => (
             <TouchableOpacity
               key={index}
               style={[
                 styles.kcalBtn,
                 {
                   borderColor:
-                    isSelected === item.id ? COLORS.green : COLORS.greyishWhite,
+                    isSelected === item._id
+                      ? COLORS.green
+                      : COLORS.greyishWhite,
                   backgroundColor:
-                    isSelected === item.id ? COLORS.greyishWhite : COLORS.white,
+                    isSelected === item._id
+                      ? COLORS.greyishWhite
+                      : COLORS.white,
                 },
               ]}
               onPress={() => {
-                handleKcal(item.id);
+                handleKcal(item._id);
 
-                if (item.kcal !== "I’m not sure") {
+                if (item.text !== "I’m not sure") {
                   setSelectedKcal(
-                    item.kcal.split(" ")[item.kcal.split(" ").length - 2] +
+                    item.text.split(" ")[item.text.split(" ").length - 2] +
                       " " +
-                      item.kcal.split(" ")[item.kcal.split(" ").length - 1]
+                      item.text.split(" ")[item.text.split(" ").length - 1]
                   );
                 } else {
-                  setSelectedKcal(item.kcal);
+                  setSelectedKcal(item.text);
                 }
               }}
             >
               <CustomText fontSize={14} fontFamily="regular">
-                {item.kcal}
+                {item.text}
               </CustomText>
-              {isSelected === item.id && (
+              {isSelected === item._id && (
                 <CustomIcon
                   Icon={ICONS.WhiteTickwithBlueBg}
                   height={15}

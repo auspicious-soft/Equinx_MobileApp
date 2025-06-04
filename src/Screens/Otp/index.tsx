@@ -87,7 +87,7 @@ const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
       if (response.data.success) {
         Toast.show({
           type: "success",
-          text1: response.data.message,
+          text1: "Otp verified successfully",
         });
 
         if (isFrom === "register") {
@@ -100,9 +100,10 @@ const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
       }
     } catch (error: any) {
       console.log(error, "API ERROR");
+      setOtp(["", "", "", "", "", ""]);
       Toast.show({
         type: "error",
-        text1: error.message || "Something went wrong",
+        text1: "Invalid otp",
       });
     }
   };

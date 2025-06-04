@@ -9,6 +9,7 @@ import PrimaryButton from "../PrimaryButton";
 import { postData } from "../../APIService/api";
 import ENDPOINTS from "../../APIService/endPoints";
 import Toast from "react-native-toast-message";
+import { useLanguage } from "../../Context/LanguageContext";
 
 const recordData = [
   {
@@ -44,6 +45,8 @@ const RecordIntakeModal: FC<RecordIntakeModalProps> = ({
   setSelectedRecord,
   getHomeData,
 }) => {
+  const { translations } = useLanguage();
+
   const [showRecordData, setShowRecordData] = useState(false);
   const [isButtonLoading, setIsButtonLoading] = useState(false);
 
@@ -104,7 +107,7 @@ const RecordIntakeModal: FC<RecordIntakeModalProps> = ({
               fontSize={14}
               style={{ textAlign: "center" }}
             >
-              Record Intake
+              {translations.record_intake}
             </CustomText>
           </View>
 
@@ -121,7 +124,7 @@ const RecordIntakeModal: FC<RecordIntakeModalProps> = ({
               }}
             >
               <CustomText fontSize={16} color={COLORS.darkBLue}>
-                {selectedRecord} ml
+                {selectedRecord} {translations.ml}
               </CustomText>
               <CustomIcon Icon={ICONS.DropdownIcon} height={8} width={8} />
             </TouchableOpacity>
@@ -145,14 +148,14 @@ const RecordIntakeModal: FC<RecordIntakeModalProps> = ({
                           : COLORS.darkBLue
                       }
                     >
-                      {item.size} ml
+                      {item.size} {translations.ml}
                     </CustomText>
                   </TouchableOpacity>
                 ))}
               </View>
             )}
             <PrimaryButton
-              title="Save"
+              title={translations.Save}
               onPress={handleSave}
               isLoading={isButtonLoading}
             />

@@ -5,12 +5,14 @@ import { CustomText } from "../CustomText";
 import COLORS from "../../Utilities/Colors";
 import PrimaryButton from "../PrimaryButton";
 import { Meal } from "../../Typings/apiResponse";
+import { useLanguage } from "../../Context/LanguageContext";
 
 type MealModalProps = {
   isVisible: boolean;
   closeModal: () => void;
   data: Meal;
   onpress: () => void;
+  selectedMeal: string | null;
 };
 
 const MealModal: FC<MealModalProps> = ({
@@ -18,7 +20,10 @@ const MealModal: FC<MealModalProps> = ({
   closeModal,
   data,
   onpress,
+  selectedMeal,
 }) => {
+  const { translations } = useLanguage();
+
   return (
     <Modal
       visible={isVisible}
@@ -42,7 +47,7 @@ const MealModal: FC<MealModalProps> = ({
               fontSize={14}
               style={{ textAlign: "center" }}
             >
-              Meal Plan
+              {translations.meal_Plan}
             </CustomText>
           </View>
           <View style={styles.whiteBox}>
@@ -58,7 +63,7 @@ const MealModal: FC<MealModalProps> = ({
                     color={COLORS.lightGrey}
                     fontFamily="semiBold"
                   >
-                    Breakfast
+                    {selectedMeal}
                   </CustomText>
                   <CustomText
                     fontSize={14}
@@ -97,7 +102,7 @@ const MealModal: FC<MealModalProps> = ({
                 </View>
               </View>
             )}
-            <PrimaryButton title="Okay" onPress={closeModal} />
+            <PrimaryButton title={translations.okay} onPress={closeModal} />
           </View>
         </View>
       </TouchableOpacity>

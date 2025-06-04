@@ -5,7 +5,6 @@ import {
   ImageBackground,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -37,36 +36,42 @@ import {
 } from "../../Typings/apiResponse";
 import { useAppDispatch, useAppSelector } from "../../Redux/store";
 import { setMyPlan } from "../../Redux/slices/MyPlan";
-
-const mealData = [
-  {
-    name: "Breakfast",
-    image: IMAGES.breakFastImg,
-    title: "Breakfast for Intermittent Fasting",
-  },
-  {
-    name: "Lunch",
-    image: IMAGES.snackImg,
-    title: "Lunch for Intermittent Fasting",
-  },
-  {
-    name: "Dinner",
-    image: IMAGES.dinnerImg,
-    title: "Dinner for Intermittent Fasting",
-  },
-];
+import { useLanguage } from "../../Context/LanguageContext";
 
 const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
+  const { nutrition } = useAppSelector((state) => state.nutrition);
+  const { translations } = useLanguage();
+  const [selectedMeal, setSelectedMeal] = useState<string | null>(null);
+
   const [activeDay, setActiveDay] = useState<string | null>("1");
   const [activeData, setActiveData] = useState<MyPlanData | null>(null);
   const [isVisibleModal, setIsVisibleModal] = useState(false);
   const dispatch = useAppDispatch();
   const { myPlan } = useAppSelector((state) => state.myPlan);
+  const { settingData } = useAppSelector((state) => state.settingData);
   const [selectedMealData, setSelectedMealData] = useState<Meal | null>(null);
   const closeModal = () => {
     setIsVisibleModal(false);
   };
   const [isLoading, setIsLoading] = useState(false);
+
+  const mealData = [
+    {
+      name: translations.breakfast,
+      image: IMAGES.breakFastImg,
+      title: translations.breakfast_intermittent,
+    },
+    {
+      name: translations.lunch,
+      image: IMAGES.snackImg,
+      title: translations.lunch_intermittent,
+    },
+    {
+      name: translations.dinner,
+      image: IMAGES.dinnerImg,
+      title: translations.dinner_intermittent,
+    },
+  ];
 
   const getMyPlan = async () => {
     setIsLoading(true);
@@ -110,7 +115,7 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
           fontSize={14}
           color={isActive ? COLORS.white : COLORS.darkBLue}
         >
-          {` Day ${item.planId.day} `}
+          {` ${translations.day} ${item.planId.day} `}
         </CustomText>
       </TouchableOpacity>
     );
@@ -119,6 +124,14 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
   const renderFoodData = ({ item, index }: { item: any; index: number }) => {
     const calorie = activeData?.planId?.meals[index]?.calories;
 
+    const firstMealStatus = activeData?.firstMealStatus?.status || false;
+    const secondMealStatus = activeData?.secondMealStatus?.status || false;
+    const thirdMealStatus = activeData?.thirdMealStatus?.status || false;
+
+    const getStatus = [firstMealStatus, secondMealStatus, thirdMealStatus];
+
+    const isMeal = ["Breakfast", "Lunch", "Dinner"];
+
     return (
       <TouchableOpacity
         style={{ gap: verticalScale(5) }}
@@ -126,6 +139,7 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
         onPress={() => {
           setSelectedMealData(activeData?.planId?.meals[index]!);
           setIsVisibleModal(true);
+          setSelectedMeal(isMeal[index]);
         }}
       >
         <CustomText
@@ -160,29 +174,25 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
                   </CustomText>
                 </View>
               )}
-              {/* {item.firstMealStatus.status === true ? (
+              {getStatus[index] ? (
                 <CustomText
                   fontSize={10}
                   color={
-                    item.firstMealStatus.status === true
-                      ? COLORS.green
-                      : COLORS.darkBLue
+                    getStatus[index] === true ? COLORS.green : COLORS.darkBLue
                   }
                 >
-                  Completed
+                  {translations.completed}
                 </CustomText>
               ) : (
                 <CustomText
                   fontSize={10}
                   color={
-                    item.firstMealStatus.status === false
-                      ? COLORS.darkBLue
-                      : COLORS.green
+                    getStatus[index] === false ? COLORS.darkBLue : COLORS.green
                   }
                 >
-                  pending
+                  {translations.pending}
                 </CustomText>
-              )} */}
+              )}
             </View>
           </View>
         </View>
@@ -297,35 +307,43 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
                     color={COLORS.darkBLue}
                     fontFamily="bold"
                   >
-                    Stay on track{" "}
+                    {translations.stay_on_track}{" "}
                     <CustomText
                       fontSize={22}
                       color={COLORS.green}
                       fontFamily="bold"
                     >
-                      Miley Jones
+                      {settingData?.editProfile.fullName}
                     </CustomText>
                   </CustomText>
                   <CustomText fontSize={12} color={COLORS.darkBLue}>
-                    Here's your plan for today.
+                    {translations.plan_for_today}
                   </CustomText>
                 </View>
                 <View style={styles.progressContainer}>
                   <CustomText fontSize={16} color={COLORS.lightGrey}>
-                    Today, March 25
+                    {translations.Today}, March 25
                   </CustomText>
 
                   <CircularProgress
                     color={COLORS.green}
-                    backgroundColor={COLORS.white}
-                    progress={0.7}
+                    backgroundColor={COLORS.greyishWhite}
+                    progress={
+                      Math.min(
+                        nutrition?.todayMeal?.stats?.overall?.percentage! / 100,
+                        1
+                      ) || 0
+                    }
                     radius={30}
                     strokeWidth={20}
                     // backgroundStrokeWidth={15}
                     progressStrokeWidth={8}
                   >
                     <CustomText fontSize={10} color={COLORS.darkBLue}>
-                      65%
+                      {`${Math.min(
+                        nutrition?.todayMeal?.stats?.overall?.percentage || 0,
+                        100
+                      )}%`}
                     </CustomText>
                   </CircularProgress>
                 </View>
@@ -369,10 +387,10 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
                   color={COLORS.darkBLue}
                   fontFamily="bold"
                 >
-                  Buy a plan to stay on track
+                  {translations.buy_plan}
                 </CustomText>
                 <CustomText fontSize={12} color={COLORS.darkBLue}>
-                  Check out a membership plan that suits your needs.
+                  {translations.checkout_member}
                 </CustomText>
               </View>
               <TouchableOpacity
@@ -387,7 +405,7 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
               >
                 <View>
                   <CustomText fontSize={18} color={COLORS.green}>
-                    View Plans
+                    {translations.viewPlan}
                   </CustomText>
                   <View
                     style={{
@@ -409,7 +427,7 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
             style={{ gap: verticalScale(10), marginTop: verticalScale(12) }}
           >
             <CustomText fontSize={18} color={COLORS.darkBLue} fontFamily="bold">
-              Essential Tips for Success
+              {translations.Essentials_tips}
             </CustomText>
             <FlatList
               renderItem={renderTipsData}
@@ -429,6 +447,7 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
             isVisible={isVisibleModal}
             onpress={() => {}}
             data={selectedMealData}
+            selectedMeal={selectedMeal}
           />
         )}
       </SafeAreaView>

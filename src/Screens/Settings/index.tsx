@@ -19,7 +19,6 @@ import {
   verticalScale,
   wp,
 } from "../../Utilities/Metrics";
-import IMAGES from "../../Assets/Images";
 import { CustomText } from "../../Components/CustomText";
 import CustomIcon from "../../Components/CustomIcon";
 import ICONS from "../../Assets/Icons";
@@ -37,12 +36,18 @@ import { useAppDispatch, useAppSelector } from "../../Redux/store";
 import { setSettingData } from "../../Redux/slices/settingSlice";
 import { IMAGE_BASE_URL } from "@env";
 import RateUs from "../../Components/Modals/RateUs";
+import { useLanguage } from "../../Context/LanguageContext";
+import IMAGES from "../../Assets/Images";
+import { setNotification } from "../../Redux/slices/NotificationSlice";
+// import NotificationService from "../../Services/NotificationService";
 
 const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
+  const dispatch = useAppDispatch();
+  const { notification } = useAppSelector((state) => state.notification);
+  const { translations } = useLanguage();
   const [isToggled, setIsToggled] = useState(false);
   const toggleAnim = useRef(new Animated.Value(0)).current;
   const [isLoading, setIsLoading] = useState(false);
-  const dispatch = useAppDispatch();
   const [fcmToken, setFcmToken] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
 
@@ -59,6 +64,11 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
     }).start();
 
     setIsToggled(!isToggled);
+    if (isToggled) {
+      dispatch(setNotification(true));
+    } else {
+      dispatch(setNotification(false));
+    }
   };
 
   const translateX = toggleAnim.interpolate({
@@ -85,13 +95,13 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
   };
 
   const handleLogOut = () => {
-    Alert.alert("Logout", "Are you sure you want to log out?", [
+    Alert.alert(translations.logOut, translations.are_you_sure, [
       {
-        text: "Cancel",
+        text: translations.cancel,
         style: "cancel",
       },
       {
-        text: "Confirm",
+        text: translations.confirm,
         onPress: async () => {
           const data = {
             fcmToken: fcmToken,
@@ -166,12 +176,16 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
       <SafeAreaView style={styles.safeAreaContainer}>
         <View style={styles.headerView}>
           <View style={styles.circleView}>
-            <Image
-              source={{
-                uri: IMAGE_BASE_URL + settingData?.editProfile.profilePic,
-              }}
-              style={styles.userImg}
-            />
+            {settingData?.editProfile.profilePic ? (
+              <Image
+                source={{
+                  uri: IMAGE_BASE_URL + settingData?.editProfile.profilePic,
+                }}
+                style={styles.userImg}
+              />
+            ) : (
+              <Image source={IMAGES.userPlaceholder} style={styles.userImg} />
+            )}
           </View>
           <View
             style={{
@@ -200,7 +214,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                   fontFamily="regular"
                   color={COLORS.green}
                 >
-                  Edit Profile
+                  {translations.edit_profile}
                 </CustomText>
                 <View
                   style={{
@@ -216,7 +230,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
 
         <View style={{ gap: verticalScale(6) }}>
           <CustomText fontFamily="bold" fontSize={12}>
-            Account
+            {translations.account}
           </CustomText>
           <View style={{ gap: verticalScale(4) }}>
             <TouchableOpacity
@@ -229,7 +243,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                 <CustomIcon Icon={ICONS.userIcon} height={16} width={16} />
               </View>
               <CustomText fontSize={14} fontFamily="regular">
-                My Profile
+                {translations.My_profile}
               </CustomText>
             </TouchableOpacity>
             <TouchableOpacity
@@ -242,7 +256,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                 <CustomIcon Icon={ICONS.lockIcon} height={16} width={16} />
               </View>
               <CustomText fontSize={14} fontFamily="regular">
-                Change Password
+                {translations.change_password}
               </CustomText>
             </TouchableOpacity>
             <TouchableOpacity
@@ -259,7 +273,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                 />
               </View>
               <CustomText fontSize={14} fontFamily="regular">
-                Membership
+                {translations.membership}
               </CustomText>
             </TouchableOpacity>
           </View>
@@ -267,7 +281,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
 
         <View style={{ gap: verticalScale(6) }}>
           <CustomText fontFamily="bold" fontSize={12}>
-            App
+            {translations.app}
           </CustomText>
           <View style={{ gap: verticalScale(4) }}>
             <TouchableOpacity
@@ -286,7 +300,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                   <CustomIcon Icon={ICONS.notifyIcon} height={16} width={16} />
                 </View>
                 <CustomText fontSize={14} fontFamily="regular">
-                  Notifications
+                  {translations.notifications}
                 </CustomText>
               </View>
 
@@ -323,7 +337,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                 <CustomIcon Icon={ICONS.networkIcon} height={16} width={16} />
               </View>
               <CustomText fontSize={14} fontFamily="regular">
-                Language
+                {translations.languages}
               </CustomText>
             </TouchableOpacity>
             {isIOS && (
@@ -337,7 +351,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                   <CustomIcon Icon={ICONS.heartIcon} height={16} width={16} />
                 </View>
                 <CustomText fontSize={14} fontFamily="regular">
-                  Sync
+                  {translations.sync_your_data}
                 </CustomText>
               </TouchableOpacity>
             )}
@@ -351,7 +365,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                 <CustomIcon Icon={ICONS.bookIcon} height={16} width={16} />
               </View>
               <CustomText fontSize={14} fontFamily="regular">
-                Learn How to Fast
+                {translations.learn_fast}
               </CustomText>
             </TouchableOpacity>
           </View>
@@ -359,7 +373,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
 
         <View style={{ gap: verticalScale(6) }}>
           <CustomText fontFamily="bold" fontSize={12}>
-            Support
+            {translations.support}
           </CustomText>
           <View style={{ gap: verticalScale(4) }}>
             <TouchableOpacity
@@ -372,7 +386,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                 <CustomIcon Icon={ICONS.supportIcon} height={16} width={16} />
               </View>
               <CustomText fontSize={14} fontFamily="regular">
-                Get Support
+                {translations.get_support}
               </CustomText>
             </TouchableOpacity>
             <TouchableOpacity
@@ -385,7 +399,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                 <CustomIcon Icon={ICONS.rateUsIcon} height={16} width={16} />
               </View>
               <CustomText fontSize={14} fontFamily="regular">
-                Rate Us
+                {translations.rate_us}
               </CustomText>
             </TouchableOpacity>
             <TouchableOpacity style={styles.profileContainer}>
@@ -393,7 +407,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                 <CustomIcon Icon={ICONS.policyIcon} height={16} width={16} />
               </View>
               <CustomText fontSize={14} fontFamily="regular">
-                Terms & Conditions
+                {translations.terms_conditions}
               </CustomText>
             </TouchableOpacity>
             <TouchableOpacity
@@ -406,7 +420,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                 <CustomIcon Icon={ICONS.policyIcon} height={16} width={16} />
               </View>
               <CustomText fontSize={14} fontFamily="regular">
-                Privacy Policy
+                {translations.privacy_policy}
               </CustomText>
             </TouchableOpacity>
           </View>
@@ -414,7 +428,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
 
         <View style={{ gap: verticalScale(6) }}>
           <CustomText fontFamily="bold" fontSize={12}>
-            Sign Out
+            {translations.signOut}
           </CustomText>
           <TouchableOpacity
             style={styles.profileContainer}
@@ -424,7 +438,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
               <CustomIcon Icon={ICONS.supportIcon} height={16} width={16} />
             </View>
             <CustomText fontSize={14} fontFamily="regular">
-              Log Out
+              {translations.log_out}
             </CustomText>
           </TouchableOpacity>
         </View>

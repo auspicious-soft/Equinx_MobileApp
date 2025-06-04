@@ -28,19 +28,27 @@ import RecordIntakeModal from "../../Components/Modals/RecordIntakeModal";
 import moment from "moment-timezone";
 import { fetchData, postData } from "../../APIService/api";
 import ENDPOINTS from "../../APIService/endPoints";
-import { HomeDataResponse } from "../../Typings/apiResponse";
+import {
+  HomeDataResponse,
+  NutritionResponse,
+  SettingResponse,
+} from "../../Typings/apiResponse";
 import { useAppDispatch, useAppSelector } from "../../Redux/store";
 import Toast from "react-native-toast-message";
 import { setHomeData } from "../../Redux/slices/homeDataSlice";
+import { useLanguage } from "../../Context/LanguageContext";
+import { setNutrition } from "../../Redux/slices/NutritionSlice";
+import { setSettingData } from "../../Redux/slices/settingSlice";
 
 interface FastingMethod {
   type: "16:8" | "5:2";
   fastingDays?: number[]; // For 5:2, e.g., [1, 4] for Monday and Thursday (0 = Sunday)
 }
-
 const Home: FC<HomeScreenProps> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const { homeData } = useAppSelector((state) => state.homeData);
+  const { settingData } = useAppSelector((state) => state.settingData);
+  const { translations } = useLanguage();
   const [isModal, setIsModal] = useState(false);
   const [recordModal, setRecordModal] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState("");
@@ -49,6 +57,8 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
   const [fastingStatus, setFastingStatus] = useState<
     "Fasting" | "Eating" | "Low-Calorie"
   >("Eating");
+  let diff: number;
+
   const [isLoading, setIsLoading] = useState(false);
   const [isToggled, setIsToggled] = useState(false);
   const [isButtonLoading, setIsButtonLoading] = useState(false);
@@ -76,10 +86,87 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
   const closeModal = () => setIsModal(false);
   const closeRecordModal = () => setRecordModal(false);
 
+  const getHomeData = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetchData<HomeDataResponse>(ENDPOINTS.home);
+      console.log(response);
+
+      if (response.data.success) {
+        dispatch(setHomeData(response.data.data));
+        setSelectedContainer(response.data.data.waterIntake.containerType);
+        setSelectedContainerValue(response.data.data.waterIntake.containerSize);
+        setSelectedDailyGoal(response.data.data.waterIntake.goal);
+        setIsToggled(response.data.data.waterIntake.waterReminder);
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleFastingToday = async () => {
+    setIsButtonLoading(true);
+    try {
+      const response = await postData(ENDPOINTS.fastingToday);
+      console.log(response);
+      if (response.data.success) {
+        Toast.show({
+          type: "success",
+          text1: response.data.message,
+        });
+        getHomeData();
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "success",
+        text1: "Fasting record already exists for today",
+      });
+    } finally {
+      setIsButtonLoading(false);
+    }
+  };
+
+  const handleGetNutrition = async () => {
+    try {
+      const response = await fetchData<NutritionResponse>(ENDPOINTS.nutrition);
+      if (response.data.success) {
+        dispatch(setNutrition(response.data.data));
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    }
+  };
+
+  const fetchUser = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetchData<SettingResponse>(ENDPOINTS.settings);
+      // console.log("userData response", response);
+      if (response.data.success) {
+        dispatch(setSettingData(response.data.data));
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     const updateTimer = () => {
       const now = moment().tz(moment.tz.guess());
-      let diff: number;
+
       let totalDuration: number;
 
       if (fastingMethod.type === "16:8") {
@@ -159,53 +246,10 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
     return () => clearInterval(intervalId);
   }, [fastingMethod]);
 
-  const getHomeData = async () => {
-    setIsLoading(true);
-    try {
-      const response = await fetchData<HomeDataResponse>(ENDPOINTS.home);
-      console.log(response);
-
-      if (response.data.success) {
-        dispatch(setHomeData(response.data.data));
-        setSelectedContainer(response.data.data.waterIntake.containerType);
-        setSelectedContainerValue(response.data.data.waterIntake.containerSize);
-        setSelectedDailyGoal(response.data.data.waterIntake.goal);
-        setIsToggled(response.data.data.waterIntake.waterReminder);
-      }
-    } catch (error: any) {
-      Toast.show({
-        type: "error",
-        text1: error.message || "Something went wrong",
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleFastingToday = async () => {
-    setIsButtonLoading(true);
-    try {
-      const response = await postData(ENDPOINTS.fastingToday);
-      console.log(response);
-      if (response.data.success) {
-        Toast.show({
-          type: "success",
-          text1: response.data.message,
-        });
-        getHomeData();
-      }
-    } catch (error: any) {
-      Toast.show({
-        type: "success",
-        text1: "Fasting record already exists for today",
-      });
-    } finally {
-      setIsButtonLoading(false);
-    }
-  };
-
   useEffect(() => {
     getHomeData();
+    handleGetNutrition();
+    fetchUser();
   }, []);
 
   if (isLoading) {
@@ -234,9 +278,9 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
       >
         <View style={styles.headerContainer}>
           <CustomText fontSize={22} color={COLORS.darkBLue} fontFamily="bold">
-            Good Morning{" "}
+            {translations.good_morning}{" "}
             <CustomText fontSize={22} color={COLORS.green} fontFamily="bold">
-              Miley Jones
+              {settingData?.editProfile.fullName}
             </CustomText>
           </CustomText>
           <CustomText
@@ -244,7 +288,7 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
             color={COLORS.darkBLue}
             fontFamily="regular"
           >
-            Ready to crush your fast today?
+            {translations.ready_to_crush}
           </CustomText>
         </View>
 
@@ -269,7 +313,7 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
                 color={COLORS.darkBLue}
                 fontFamily="regular"
               >
-                {fastingMethod.type} fasting schedule
+                {fastingMethod.type} {translations.fasting_schedule}
               </CustomText>
               {fastingMethod.type === "5:2" &&
                 fastingStatus === "Low-Calorie" && (
@@ -292,7 +336,7 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
                 color={COLORS.darkBLue}
                 fontFamily="regular"
               >
-                {fastingStatus} Time Remaining
+                {fastingStatus} {translations.time_remaining}
               </CustomText>
               <CustomText
                 fontSize={28}
@@ -303,8 +347,8 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
               </CustomText>
             </CircularProgress>
             <PrimaryButton
-              title={`Start Your ${fastingMethod.type} ${
-                isFasting ? "Fasting" : "Eating"
+              title={`${translations.start_Your} ${fastingMethod.type} ${
+                isFasting ? translations.fasting : translations.eating
               }`}
               onPress={handleFastingToday}
               isLoading={isButtonLoading}
@@ -318,7 +362,7 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
         <View style={{ gap: verticalScale(10) }}>
           <View style={styles.penContainer}>
             <CustomText fontSize={18} fontFamily="bold" color={COLORS.darkBLue}>
-              Water Tracker
+              {translations.water_tracker}
             </CustomText>
             <TouchableOpacity
               style={styles.penBtn}
@@ -335,13 +379,13 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
               style={{ textAlign: "center" }}
               fontFamily="bold"
             >
-              {Number(homeData?.waterIntake.today) / 1000} Litres{" "}
+              {Number(homeData?.waterIntake.today) / 1000} {translations.Liters}{" "}
               <CustomText
                 fontSize={18}
                 color={COLORS.darkBLue}
                 fontFamily="regular"
               >
-                today
+                {translations.today}
               </CustomText>
             </CustomText>
             <View style={styles.dailyGoalContainer}>
@@ -350,18 +394,18 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
                 color={COLORS.darkBLue}
                 fontFamily="regular"
               >
-                Daily Goal
+                {translations.daily_goal}
               </CustomText>
               <CustomText
                 fontSize={12}
                 color={COLORS.green}
                 fontFamily="regular"
               >
-                {homeData?.waterIntake.goal} liters
+                {homeData?.waterIntake.goal} {translations.liters}
               </CustomText>
             </View>
             <PrimaryButton
-              title="Record intake"
+              title={translations.record_intake}
               onPress={() => setRecordModal(true)}
               style={{ width: wp(75) }}
             />
@@ -370,7 +414,7 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
 
         <View style={{ gap: 10 }}>
           <CustomText fontSize={18} color={COLORS.darkBLue} fontFamily="bold">
-            Quick Stats
+            {translations.quick_stats}
           </CustomText>
           <View style={styles.statsWrapper}>
             <View style={styles.statsInsideCards}>
@@ -381,13 +425,13 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
                 }}
               >
                 <CustomText fontSize={12} color={COLORS.darkBLue}>
-                  You've fasted
+                  {translations.you_have_fasted}
                 </CustomText>
                 <CustomText fontSize={18} color={COLORS.green}>
-                  {`${homeData?.thisWeekFastingDays} day!`}
+                  {`${homeData?.thisWeekFastingDays} ${translations.days}`}
                 </CustomText>
                 <CustomText fontSize={12} color={COLORS.darkBLue}>
-                  in a row
+                  {translations.in_a_row}
                 </CustomText>
               </View>
               <Image
@@ -410,13 +454,13 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
                 }}
               >
                 <CustomText fontSize={12} color={COLORS.darkBLue}>
-                  Total Hours Fasted
+                  {translations.total_hours_fasted}
                 </CustomText>
                 <CustomText fontSize={18} color={COLORS.green}>
-                  {`${homeData?.thisWeekFastingHours} hours`}
+                  {`${homeData?.thisWeekFastingHours} ${translations.hours}`}
                 </CustomText>
                 <CustomText fontSize={12} color={COLORS.darkBLue}>
-                  This Week
+                  {translations.this_week}
                 </CustomText>
               </View>
               <Image
@@ -448,15 +492,14 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
             borderRadius={12}
           >
             <CustomText fontSize={14} color={COLORS.white} fontFamily="bold">
-              Need Guidance? Ask Your Fasting Coach
+              {translations.need_guidance}
             </CustomText>
             <CustomText fontSize={12} color={COLORS.white} fontFamily="regular">
-              Get personalized tips, motivation, and fasting insights from our
-              AI coach.
+              {translations.get_personlized_tips}
             </CustomText>
           </ImageBackground>
           <PrimaryButton
-            title="Start Chat"
+            title={translations.start_chat}
             onPress={() => {
               navigation.navigate("chats");
             }}

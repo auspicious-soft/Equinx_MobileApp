@@ -1,10 +1,4 @@
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ScrollView, StyleSheet, TouchableOpacity, View } from "react-native";
 import React, { FC, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import COLORS from "../../Utilities/Colors";
@@ -13,42 +7,56 @@ import CustomIcon from "../../Components/CustomIcon";
 import { CustomText } from "../../Components/CustomText";
 import ICONS from "../../Assets/Icons";
 import { LanguageScreenProps } from "../../Typings/route";
+import { useLanguage } from "../../Context/LanguageContext";
+import Toast from "react-native-toast-message";
 
-const language = [
+const languages = [
   {
     id: 1,
     title: "English",
+    code: "en",
   },
-  {
-    id: 2,
-    title: "French",
-  },
-  {
-    id: 3,
-    title: "Mandarin",
-  },
-  {
-    id: 4,
-    title: "Portuguese",
-  },
-  {
-    id: 5,
-    title: "Russian",
-  },
+  // {
+  //   id: 2,
+  //   title: "French",
+  // },
+  // {
+  //   id: 3,
+  //   title: "Mandarin",
+  // },
+  // {
+  //   id: 4,
+  //   title: "Portuguese",
+  // },
+  // {
+  //   id: 5,
+  //   title: "Russian",
+  // },
   {
     id: 6,
     title: "Turkish",
+    code: "tr",
   },
-  {
-    id: 7,
-    title: "Korean",
-  },
+  // {
+  //   id: 7,
+  //   title: "Korean",
+  // },
 ];
 
 const LanguageScreen: FC<LanguageScreenProps> = ({ navigation }) => {
+  const { language, setAppLanguage } = useLanguage();
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(
-    "English"
+    language
   );
+
+  const handleLanguageChange = (langCode: string) => {
+    setSelectedLanguage(langCode);
+    setAppLanguage(langCode);
+    Toast.show({
+      type: "success",
+      text1: "Language changed successfully",
+    });
+  };
   return (
     <ScrollView
       style={{ flex: 1, backgroundColor: COLORS.white }}
@@ -69,14 +77,14 @@ const LanguageScreen: FC<LanguageScreenProps> = ({ navigation }) => {
           </CustomText>
         </View>
         <View>
-          {language.map((item, index) => {
-            const isSelected = item.title === selectedLanguage;
+          {languages.map((item, index) => {
+            const isSelected = item.code === selectedLanguage;
 
             return (
               <TouchableOpacity
                 key={index}
                 style={styles.languageBtn}
-                onPress={() => setSelectedLanguage(item.title)}
+                onPress={() => handleLanguageChange(item.code)}
               >
                 {isSelected && (
                   <CustomIcon Icon={ICONS.greenTick} height={20} width={20} />

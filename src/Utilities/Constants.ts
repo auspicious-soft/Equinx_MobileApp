@@ -12,6 +12,7 @@ const STORAGE_KEYS = {
   fcmToken: "fcm_token",
   credentials: "credentials",
   isWelcomeScreen: "isWelcomeScreen",
+  language_key: "app_language",
 };
 
 export default STORAGE_KEYS;

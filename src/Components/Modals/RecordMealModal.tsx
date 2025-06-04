@@ -31,6 +31,7 @@ import ENDPOINTS from "../../APIService/endPoints";
 import { GetMacroFromimageApiResponse } from "../../Typings/apiResponse";
 import { check, PERMISSIONS, RESULTS, request } from "react-native-permissions";
 import { Linking } from "react-native";
+import { useLanguage } from "../../Context/LanguageContext";
 
 type RecordMealModalProps = {
   isVisible: boolean;
@@ -63,6 +64,8 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
   refreshData,
   isPlanActive = false, // Default to false
 }) => {
+  const { translations } = useLanguage();
+
   const [activeTab, setActiveTab] = useState<"recordMeal" | "catpureMeal">(
     initialTab
   );
@@ -399,7 +402,7 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                 fontSize={14}
                 style={{ textAlign: "center" }}
               >
-                Record Meal
+                {translations.record_meal}
               </CustomText>
             </View>
             <View
@@ -440,7 +443,7 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                         : COLORS.darkBLue
                     }
                   >
-                    Record a Meal
+                    {translations.record_a_meal}
                   </CustomText>
                 </TouchableOpacity>
                 {isPlanActive && ( // Only show Capture Meal tab if user has active plan
@@ -486,7 +489,7 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                       fontFamily="regular"
                       color={COLORS.darkBLue}
                     >
-                      Meal Type
+                      {translations.meal_type}
                     </CustomText>
                     <TouchableOpacity
                       style={styles.typeContainer}
@@ -520,7 +523,7 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                       fontFamily="regular"
                       color={COLORS.darkBLue}
                     >
-                      gms of carbs
+                      {translations.gms_of_carbs}
                     </CustomText>
                     <CustomInput
                       onChangeText={setCarbs}
@@ -540,7 +543,7 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                       fontFamily="regular"
                       color={COLORS.darkBLue}
                     >
-                      gms of proteins
+                      {translations.gms_of_protein}
                     </CustomText>
                     <CustomInput
                       onChangeText={setProtine}
@@ -560,7 +563,7 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                       fontFamily="regular"
                       color={COLORS.darkBLue}
                     >
-                      gms of fat
+                      {translations.gms_of_fat}
                     </CustomText>
                     <CustomInput
                       onChangeText={setFat}
@@ -573,7 +576,7 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
 
                   <PrimaryButton
                     onPress={handleRecordMeal}
-                    title="Record"
+                    title={translations.Record}
                     isLoading={isButtonLoading}
                   />
                 </>
@@ -592,7 +595,7 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                           fontFamily="regular"
                           color={COLORS.darkBLue}
                         >
-                          gms of carbs
+                          {translations.gms_of_carbs}
                         </CustomText>
                         <CustomInput
                           onChangeText={setCarbs}
@@ -603,7 +606,7 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                       {/* Other macro input fields... */}
                       <PrimaryButton
                         onPress={handleAcceptApiMacros}
-                        title="Accept & Record"
+                        title={translations.accept_and_record}
                       />
                       <TouchableOpacity
                         style={styles.retakeButton}
@@ -614,7 +617,7 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                           fontFamily="regular"
                           color={COLORS.darkBLue}
                         >
-                          Retake Photo
+                          {translations.retake_photo}
                         </CustomText>
                       </TouchableOpacity>
                     </>
@@ -628,7 +631,7 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                             fontFamily="regular"
                             color={COLORS.darkBLue}
                           >
-                            Meal Type
+                            {translations.meal_type}
                           </CustomText>
                           <TouchableOpacity
                             style={styles.typeContainer}
@@ -709,7 +712,7 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                                 fontFamily="medium"
                                 color={COLORS.darkBLue}
                               >
-                                Take Photo
+                                {translations.take_photo}
                               </CustomText>
                             </TouchableOpacity>
                             <TouchableOpacity
@@ -726,7 +729,7 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                                 fontFamily="medium"
                                 color={COLORS.darkBLue}
                               >
-                                Choose Gallery
+                                {translations.choose_gallery}
                               </CustomText>
                             </TouchableOpacity>
                           </View>
@@ -734,7 +737,7 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                       </View>
                       <PrimaryButton
                         onPress={handleCaptureMeal}
-                        title={"Analyze Meal"}
+                        title={translations.analyze_meal}
                         disabled={!selectedImage || isUploading}
                         isLoading={isUploading}
                       />

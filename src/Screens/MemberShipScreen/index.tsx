@@ -35,6 +35,7 @@ import {
   presentPaymentSheet,
 } from "@stripe/stripe-react-native";
 import { PUBLISHABLE_KEY } from "@env";
+import { useLanguage } from "../../Context/LanguageContext";
 
 const planData = [
   {
@@ -63,33 +64,9 @@ const planData = [
   },
 ];
 
-const basicFeatureList = ["Yes", "Yes", "Yes", "Limited", "Limited", "Limited"];
-
-const cardData = [
-  {
-    id: "1",
-    heading: "Capture Your Meal",
-    title: "Tailor your experience with Equin Global Plus",
-    IMG: IMAGES.captureMealImg,
-    description:
-      "Take a photo of your food to get a detailed analysis of the calories, fat, protein, and carbs on your plate.",
-    name: "",
-    subHeading: "",
-  },
-  {
-    id: "2",
-    heading: "See What People Say",
-    title: "",
-    IMG: IMAGES.peopleSayImg,
-    description:
-      "My customized fasting plan really helped me with my stomach cramps and bloating problems.",
-    name: "Yasmin K.",
-    subHeading: "Improved digestion",
-  },
-];
-
 const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
   const dispatch = useAppDispatch();
+  const { translations } = useLanguage();
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isCheckOutLoading, setIsCheckOutLoading] = useState(false);
@@ -99,6 +76,36 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
   const [selectedProductId, setSelectedProductId] = useState<string | null>(
     null
   );
+
+  const basicFeatureList = [
+    "Yes",
+    "Yes",
+    "Yes",
+    "Limited",
+    "Limited",
+    "Limited",
+  ];
+
+  const cardData = [
+    {
+      id: "1",
+      heading: translations.capture_your_meal,
+      title: translations.tailor_experience,
+      IMG: IMAGES.captureMealImg,
+      description: translations.take_photo_of_food,
+      name: "",
+      subHeading: "",
+    },
+    {
+      id: "2",
+      heading: translations.what_people_say,
+      title: "",
+      IMG: IMAGES.peopleSayImg,
+      description: translations.bloating_problems,
+      name: translations.name,
+      subHeading: translations.improved_digestion,
+    },
+  ];
 
   const { plansPrices } = useAppSelector((state) => state.planPrices);
 
@@ -355,7 +362,7 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
                 fontFamily="bold"
                 style={{ textAlign: "center" }}
               >
-                Reach the healthiest version of you!
+                {translations.reach_healthiest_version}
               </CustomText>
               <CustomText
                 fontSize={14}
@@ -363,8 +370,7 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
                 fontFamily="regular"
                 style={{ textAlign: "center" }}
               >
-                Learn the science behind fasting and its benefits for your
-                overall health.
+                {translations.learn_behind_science}
               </CustomText>
             </View>
 
@@ -385,7 +391,7 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
                 ))}
               </View>
               <PrimaryButton
-                title="Upgrade now"
+                title={translations.Upgrade_Now}
                 onPress={handleCheckOut}
                 disabled={isCheckOutLoading || !isStripeInitialized}
                 isLoading={isCheckOutLoading}
@@ -404,14 +410,14 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
                   fontFamily="bold"
                   color={COLORS.darkBLue}
                 >
-                  Perks of Having a Membership
+                  {translations.pearks_having_membership}
                 </CustomText>
                 <CustomText
                   fontSize={14}
                   fontFamily="regular"
                   color={COLORS.darkBLue}
                 >
-                  Customize your personal journey with Equin Global Plus
+                  {translations.customize_global_plus}
                 </CustomText>
 
                 <View
@@ -441,7 +447,7 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
                         fontFamily="medium"
                         color={COLORS.lightGrey}
                       >
-                        Free
+                        {translations.free}
                       </CustomText>
                     </View>
                     <View
@@ -459,7 +465,7 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
                         fontFamily="medium"
                         color={COLORS.green}
                       >
-                        Plus
+                        {translations.Plus}
                       </CustomText>
                     </View>
                   </View>
@@ -474,15 +480,17 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
                           key={index}
                           style={{
                             flexDirection: "row",
-                            justifyContent: "space-between",
+                            // justifyContent: "space-between",
                             alignItems: "center",
                             paddingVertical: verticalScale(8),
+                            // backgroundColor: "yellow",
                           }}
                         >
                           <CustomText
                             fontSize={14}
                             color={COLORS.darkBLue}
                             fontFamily="medium"
+                            style={{ flex: 1 }}
                           >
                             {key}
                           </CustomText>
@@ -490,8 +498,13 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
                           <View
                             style={{
                               flexDirection: "row",
-                              gap: horizontalScale(75),
+                              // gap: horizontalScale(75),
                               paddingEnd: horizontalScale(10),
+                              // backgroundColor: "red",
+                              justifyContent: "space-between",
+                              // flex: 1,
+                              width: wp(36),
+                              paddingStart: horizontalScale(12),
                             }}
                           >
                             {basicFeatureList[index] === "Yes" ? (

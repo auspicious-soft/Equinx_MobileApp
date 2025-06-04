@@ -13,8 +13,10 @@ import PrimaryButton from "../../Components/PrimaryButton";
 import Toast from "react-native-toast-message";
 import { putData } from "../../APIService/api";
 import ENDPOINTS from "../../APIService/endPoints";
+import { useLanguage } from "../../Context/LanguageContext";
 
 const ChangePassword: FC<ChangePasswordScreenProps> = ({ navigation }) => {
+  const { translations } = useLanguage();
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -112,7 +114,7 @@ const ChangePassword: FC<ChangePasswordScreenProps> = ({ navigation }) => {
             <CustomIcon Icon={ICONS.BackArrow} />
           </TouchableOpacity>
           <CustomText fontSize={22} fontFamily="bold" color={COLORS.darkBLue}>
-            Change Password
+            {translations.change_password}
           </CustomText>
         </View>
 
@@ -121,25 +123,25 @@ const ChangePassword: FC<ChangePasswordScreenProps> = ({ navigation }) => {
             <CustomInput
               onChangeText={setOldPassword}
               value={oldPassword}
-              label="Old Password"
+              label={translations.old_password}
               placeholder="*********"
             />
             <CustomInput
               onChangeText={setNewPassword}
               value={newPassword}
-              label="New Password"
+              label={translations.new_password}
               placeholder="*********"
             />
             <CustomInput
               onChangeText={setConfirmPassword}
               value={confirmPassword}
-              label="Confirm Password"
+              label={translations.confirm_password}
               placeholder="*********"
             />
           </View>
           <PrimaryButton
             onPress={handlePassword}
-            title="Save Details"
+            title={translations.save_details}
             isLoading={isButtonLoading}
           />
           <View style={{ gap: verticalScale(8) }}>
@@ -149,7 +151,7 @@ const ChangePassword: FC<ChangePasswordScreenProps> = ({ navigation }) => {
               color={COLORS.darkBLue}
               style={{ textAlign: "center" }}
             >
-              Or
+              {translations.or}
             </CustomText>
             <TouchableOpacity
               style={styles.profileContainer}
@@ -163,7 +165,7 @@ const ChangePassword: FC<ChangePasswordScreenProps> = ({ navigation }) => {
                 <CustomIcon Icon={ICONS.userIcon} height={16} width={16} />
               </View>
               <CustomText fontSize={14} fontFamily="regular">
-                Reset Password
+                {translations.reset_password}
               </CustomText>
             </TouchableOpacity>
           </View>

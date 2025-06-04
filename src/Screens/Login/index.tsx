@@ -16,6 +16,7 @@ import { postData } from "../../APIService/api";
 import ENDPOINTS from "../../APIService/endPoints";
 import Toast from "react-native-toast-message";
 import {
+  deleteLocalStorageData,
   getLocalStorageData,
   storeLocalStorageData,
 } from "../../Utilities/Storage";
@@ -106,6 +107,8 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
             email,
             password,
           });
+        } else {
+          await deleteLocalStorageData(STORAGE_KEYS.credentials);
         }
 
         const isWelcomeScreen = await getLocalStorageData(

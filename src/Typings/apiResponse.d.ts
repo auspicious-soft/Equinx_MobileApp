@@ -547,3 +547,32 @@ export interface Content {
   pointers: string[];
   _id: string;
 }
+
+export interface RatingResponse {
+  _id: string;
+  rating: number;
+}
+
+export interface PricePlanInfoResponse {
+  _id: string;
+  type: string;
+  months: number;
+  price: number;
+  productId: string;
+  priceText: string;
+  description: string;
+  perks: Perks;
+  __v: number;
+  createdAt: string;
+  updatedAt: string;
+  isSubscribed: boolean;
+}
+
+export interface Perks {
+  fastingTimer: string;
+  fastingStages: string;
+  customFastingGoal: string;
+  nutritionScoring: string;
+  advancedAnalysis: string;
+  learningCenter: string;
+}

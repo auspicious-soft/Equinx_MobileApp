@@ -1,11 +1,16 @@
 import { Image, Modal, StyleSheet, TouchableOpacity, View } from "react-native";
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { horizontalScale, verticalScale, wp } from "../../Utilities/Metrics";
 import COLORS from "../../Utilities/Colors";
 import CustomIcon from "../CustomIcon";
 import ICONS from "../../Assets/Icons";
 import { CustomText } from "../CustomText";
 import PrimaryButton from "../PrimaryButton";
+import Toast from "react-native-toast-message";
+import { fetchData, postData } from "../../APIService/api";
+import ENDPOINTS from "../../APIService/endPoints";
+import { RatingResponse } from "../../Typings/apiResponse";
+import { useLanguage } from "../../Context/LanguageContext";
 
 const stars = [
   {
@@ -37,8 +42,13 @@ type RateUsModalProps = {
 
 const RateUs: FC<RateUsModalProps> = ({ isVisible, closeModal }) => {
   const [rating, setRating] = useState<number | null>(null);
+  const [hasRated, setHasRated] = useState(false);
+
+  const { translations } = useLanguage();
 
   const handleStarPress = (starId: number) => {
+    if (hasRated) return; // Prevent interaction if already rated
+
     // If the same star is clicked again, reduce rating by 1
     if (rating === starId) {
       setRating(starId - 1 > 0 ? starId - 1 : null);
@@ -46,6 +56,47 @@ const RateUs: FC<RateUsModalProps> = ({ isVisible, closeModal }) => {
       setRating(starId);
     }
   };
+
+  const handleRating = async () => {
+    const data = {
+      rating: rating,
+    };
+
+    try {
+      const response = await postData(ENDPOINTS.rating, data);
+      if (response.data.success) {
+        setHasRated(true);
+        Toast.show({
+          type: "success",
+          text1: response.data.message,
+        });
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    }
+  };
+
+  const getRating = async () => {
+    try {
+      const response = await fetchData<RatingResponse>(ENDPOINTS.rating);
+      if (response.data.success) {
+        setRating(response.data.data.rating);
+        setHasRated(true); // Set hasRated to true if rating exists
+      }
+    } catch (error: any) {
+      // If error occurs, user likely hasn't rated yet
+      setHasRated(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isVisible) {
+      getRating(); // Fetch rating when modal becomes visible
+    }
+  }, [isVisible]);
 
   return (
     <Modal
@@ -67,13 +118,14 @@ const RateUs: FC<RateUsModalProps> = ({ isVisible, closeModal }) => {
           <CustomIcon Icon={ICONS.rateFruitIcon} height={100} width={100} />
           <View style={styles.rateContainer}>
             <CustomText fontSize={22} color={COLORS.darkBLue} fontFamily="bold">
-              Please Rate us!
+              {translations.please_rate_us}
             </CustomText>
             <View style={styles.starContainer}>
               {stars.map((item, index) => (
                 <TouchableOpacity
                   key={index}
                   onPress={() => handleStarPress(item.id)}
+                  disabled={hasRated}
                 >
                   <CustomIcon
                     Icon={
@@ -89,10 +141,14 @@ const RateUs: FC<RateUsModalProps> = ({ isVisible, closeModal }) => {
             </View>
           </View>
           <PrimaryButton
-            title="Submit"
-            onPress={closeModal}
+            title={translations.submit}
+            onPress={() => {
+              handleRating();
+              closeModal();
+            }}
             isFullWidth={false}
             style={styles.btnStyle}
+            disabled={hasRated || rating === null}
           />
         </View>
       </TouchableOpacity>

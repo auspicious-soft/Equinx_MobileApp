@@ -11,6 +11,8 @@ import settingDataReducer from "./slices/settingSlice";
 import profileDataReducer from "./slices/ProfileSlice";
 import FastsDataSliceReducer from "./slices/DateMeal";
 import NutritionReducer from "./slices/NutritionSlice";
+import pricePlanInfoReducer from "./slices/planPriceInfo";
+import NotificationReducer from "./slices/NotificationSlice";
 
 export const store = configureStore({
   reducer: {
@@ -25,6 +27,8 @@ export const store = configureStore({
     profileData: profileDataReducer,
     fastsData: FastsDataSliceReducer,
     nutrition: NutritionReducer,
+    planPricesInfo: pricePlanInfoReducer,
+    notification: NotificationReducer,
   },
 });
 

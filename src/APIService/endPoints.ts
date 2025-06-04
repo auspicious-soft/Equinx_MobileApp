@@ -30,6 +30,8 @@ const ENDPOINTS = {
   getImageData: "api/get-nutrition-by-image",
   contactSupport: `api/get-privacy-and-contact-support?type=contact`,
   privacyPolicy: `api/get-privacy-and-contact-support?type=privacy`,
+  rating: "api/rate-app",
+  pricePlanInfo: "api/get-price-plan-info",
 };
 
 export default ENDPOINTS;

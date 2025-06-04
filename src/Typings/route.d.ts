@@ -144,7 +144,7 @@ export type ChatScreenProps = NativeStackScreenProps<
   "chats"
 >;
 export type SettingsScreenProps = NativeStackScreenProps<
-  BottomTabParams & MainStackParams & AuthStackParams,
+  BottomTabParams & MainStackParams & AuthStackParams & RootStackParams,
   "settings"
 >;
 

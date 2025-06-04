@@ -22,8 +22,10 @@ import { useAppDispatch, useAppSelector } from "../../Redux/store";
 import { ChatResponse } from "../../Typings/apiResponse";
 import { setChatData } from "../../Redux/slices/ChatSlice";
 import TypingLoader from "../../Components/TypingLoader";
+import { useLanguage } from "../../Context/LanguageContext";
 
 const Chat = () => {
+  const { translations } = useLanguage();
   const [sendMessage, setSendMessage] = useState("");
   const [isSending, setIsSending] = useState(false); // Track sending state
   const dispatch = useAppDispatch();
@@ -33,6 +35,9 @@ const Chat = () => {
 
   // Send message to API and update chat
   const handleSendMessage = async () => {
+    if (sendMessage.trim() === "") {
+      return;
+    }
     const data = {
       content: sendMessage,
     };
@@ -119,7 +124,7 @@ const Chat = () => {
         color={COLORS.darkBLue}
         style={{ marginBottom: verticalScale(10) }}
       >
-        AI Life Coach Assistant
+        {translations.coach_assistant}
       </CustomText>
       <KeyboardAvoidingContainer style={{ flex: 1, gap: verticalScale(10) }}>
         <FlatList

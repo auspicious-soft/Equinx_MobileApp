@@ -16,7 +16,11 @@ import { CustomText } from "../../Components/CustomText";
 import ICONS from "../../Assets/Icons";
 import PrimaryButton from "../../Components/PrimaryButton";
 import Toast from "react-native-toast-message";
-import { CheckOutResponse, PricePlan } from "../../Typings/apiResponse";
+import {
+  CheckOutResponse,
+  PricePlan,
+  PricePlanInfoResponse,
+} from "../../Typings/apiResponse";
 import { fetchData, postData } from "../../APIService/api";
 import ENDPOINTS from "../../APIService/endPoints";
 import { useAppDispatch, useAppSelector } from "../../Redux/store";
@@ -27,11 +31,16 @@ import {
   presentPaymentSheet,
 } from "@stripe/stripe-react-native";
 import { PUBLISHABLE_KEY } from "@env";
+import { setPricePlanInfo } from "../../Redux/slices/planPriceInfo";
+import { useLanguage } from "../../Context/LanguageContext";
 
 const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
   const [selectedProductId, setSelectedProductId] = useState<string | null>(
     null
   );
+
+  const { translations } = useLanguage();
+
   const [selectedPlan, setSelectedPlan] = useState<PricePlan | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isStripeInitialized, setIsStripeInitialized] = useState(false);
@@ -39,6 +48,7 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
   const [isCheckOutLoading, setIsCheckOutLoading] = useState(false);
   const dispatch = useAppDispatch();
   const { plansPrices } = useAppSelector((state) => state.planPrices);
+  const { planPricesInfo } = useAppSelector((state) => state.planPricesInfo);
 
   // Initialize Stripe SDK
   useEffect(() => {
@@ -69,10 +79,16 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
       setIsLoading(true);
       try {
         const response = await fetchData<PricePlan[]>(ENDPOINTS.getPricePlan);
+
         if (response.data.success) {
           dispatch(setPricePlan(response.data.data));
+
+          // Set default to first plan initially
           setSelectedProductId(response.data.data[0]?.productId || null);
           setSelectedPlan(response.data.data[0] || null);
+
+          // Now fetch price plan info to check for subscribed plan
+          await fetchPricePlanInfo(response.data.data);
         } else {
           throw new Error("Failed to fetch price plans");
         }
@@ -155,6 +171,42 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
     }
   };
 
+  // Move fetchPricePlanInfo to a separate function
+  const fetchPricePlanInfo = async (availablePlans: PricePlan[]) => {
+    try {
+      const response = await fetchData<PricePlanInfoResponse[]>(
+        ENDPOINTS.pricePlanInfo
+      );
+
+      if (response.data.success) {
+        dispatch(setPricePlanInfo(response.data.data));
+
+        // Find the subscribed plan
+        const subscribedPlan = response.data.data.find(
+          (plan) => plan.isSubscribed
+        );
+
+        if (subscribedPlan) {
+          // Set the subscribed plan as the selected plan
+          setSelectedProductId(subscribedPlan.productId);
+
+          // Find the corresponding plan in availablePlans
+          const planDetails = availablePlans.find(
+            (p) => p.productId === subscribedPlan.productId
+          );
+          if (planDetails) {
+            setSelectedPlan(planDetails);
+          }
+        }
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    }
+  };
+
   // Add this helper function to calculate expiry date
   const calculateExpiryDate = (months: number) => {
     const date = new Date();
@@ -202,7 +254,8 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
           style={{ textAlign: "center" }}
         >
           {plan.months}
-          {"\n"}Months
+          {"\n"}
+          {translations.months}
         </CustomText>
         <CustomText
           color={COLORS.darkBLue}
@@ -259,7 +312,7 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
           <CustomIcon Icon={ICONS.BackArrow} />
         </TouchableOpacity>
         <CustomText fontSize={22} fontFamily="bold" color={COLORS.darkBLue}>
-          Membership
+          {translations.memberShip}
         </CustomText>
       </View>
       <View style={styles.headerContainer}>
@@ -272,7 +325,7 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
             {selectedPlan?.type} Plan
           </CustomText>
           <CustomText fontSize={20} fontFamily="semiBold" color={COLORS.green}>
-            {selectedPlan?.months} Months
+            {selectedPlan?.months} {translations.months}
           </CustomText>
         </View>
         <View style={{ gap: verticalScale(10) }}>
@@ -282,7 +335,7 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
             color={COLORS.slateGrey}
             style={{ textAlign: "right" }}
           >
-            Expires on
+            {translations.expire}
           </CustomText>
           <CustomText
             fontSize={14}
@@ -295,7 +348,7 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
       </View>
       <View style={{ gap: verticalScale(30) }}>
         <CustomText fontSize={12} fontFamily="bold" color={COLORS.darkBLue}>
-          Upgrade your plan
+          {translations.upgrade_your_plan}
         </CustomText>
         <View
           style={{
@@ -309,7 +362,7 @@ const UserMemberShip: FC<UserMemberShipScreenProps> = ({ navigation }) => {
           ))}
         </View>
         <PrimaryButton
-          title="Upgrade Plan"
+          title={translations.upgrade_Plan}
           onPress={handleCheckOut}
           disabled={isCheckOutLoading || !isStripeInitialized}
           isLoading={isCheckOutLoading}

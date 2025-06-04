@@ -32,6 +32,7 @@ const IMAGES = {
   taskCompleteImg: require("./taskCompleteImg.png"),
   achievementImg: require("./achiementImg.png"),
   blurImg: require("./blurImg.png"),
+  userPlaceholder: require("./userPlaceHolder.png"),
 };
 
 export default IMAGES;

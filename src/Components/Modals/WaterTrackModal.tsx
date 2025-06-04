@@ -24,6 +24,7 @@ import PrimaryButton from "../PrimaryButton";
 import { postData } from "../../APIService/api";
 import ENDPOINTS from "../../APIService/endPoints";
 import Toast from "react-native-toast-message";
+import { useLanguage } from "../../Context/LanguageContext";
 
 const containerSizeData = [
   {
@@ -91,6 +92,8 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
   getHomeData,
 }) => {
   const toggleAnim = useRef(new Animated.Value(0)).current;
+
+  const { translations } = useLanguage();
 
   const [containerSize, setContainerSize] = useState<boolean>(false);
   const [dailyGoal, setDailyGoal] = useState<boolean>(false);
@@ -178,7 +181,7 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
               fontSize={14}
               style={{ textAlign: "center" }}
             >
-              Water Tracking Options
+              {translations.water_Option}
             </CustomText>
           </View>
 
@@ -193,7 +196,7 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
                 fontFamily="regular"
                 color={COLORS.darkBLue}
               >
-                Select Container
+                {translations.Select_Container}
               </CustomText>
               <View
                 style={{
@@ -229,7 +232,7 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
                     fontFamily="regular"
                     color={COLORS.darkBLue}
                   >
-                    Select Container
+                    {translations.Select_Container}
                   </CustomText>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -259,7 +262,7 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
                     fontFamily="regular"
                     color={COLORS.darkBLue}
                   >
-                    Select Container
+                    {translations.Select_Container}
                   </CustomText>
                 </TouchableOpacity>
               </View>
@@ -290,7 +293,7 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
                   fontFamily="regular"
                   color={COLORS.darkBLue}
                 >
-                  Set Container Size
+                  {translations.Set_Container_Size}
                 </CustomText>
                 <TouchableOpacity
                   onPress={() => {
@@ -309,7 +312,7 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
                     fontFamily="regular"
                     color={COLORS.darkBLue}
                   >
-                    {selectedConatinerValue} ml
+                    {selectedConatinerValue} {translations.ml}
                   </CustomText>
                   <CustomIcon
                     Icon={
@@ -341,7 +344,7 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
                             ? COLORS.green
                             : COLORS.darkBLue
                         }
-                      >{`${item.size} ml`}</CustomText>
+                      >{`${item.size} ${translations.ml}`}</CustomText>
                     </TouchableOpacity>
                   ))}
                 </View>
@@ -360,7 +363,7 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
                     fontFamily="regular"
                     color={COLORS.darkBLue}
                   >
-                    Set Daily Goal
+                    {translations.Set_Daily_Goal}
                   </CustomText>
                   <TouchableOpacity
                     onPress={() => {
@@ -378,7 +381,7 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
                       fontFamily="regular"
                       color={COLORS.darkBLue}
                     >
-                      {selectedDailyGoal} ml
+                      {selectedDailyGoal} {translations.ml}
                     </CustomText>
                     <CustomIcon
                       Icon={
@@ -409,7 +412,7 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
                               ? COLORS.green
                               : COLORS.darkBLue
                           }
-                        >{`${item.size} ml`}</CustomText>
+                        >{`${item.size} ${translations.ml}`}</CustomText>
                       </TouchableOpacity>
                     ))}
                   </View>
@@ -429,7 +432,7 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
                     fontFamily="regular"
                     color={COLORS.darkBLue}
                   >
-                    Water Reminder
+                    {translations.Enable_Water_Reminder}
                   </CustomText>
 
                   <TouchableOpacity onPress={toggleSwitch} activeOpacity={0.8}>
@@ -463,11 +466,11 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
                   fontFamily="regular"
                   color={COLORS.darkBLue}
                 >
-                  Receive notifications to make drinking water a habit.
+                  {translations.Receive_Notification}
                 </CustomText>
               </View>
               <PrimaryButton
-                title="Save"
+                title={translations.Save}
                 onPress={() => {
                   handleSave();
                 }}

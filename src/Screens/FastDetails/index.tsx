@@ -28,6 +28,7 @@ import { FastsDataResponse, Meal } from "../../Typings/apiResponse";
 import { useAppDispatch, useAppSelector } from "../../Redux/store";
 import { setFastsData } from "../../Redux/slices/DateMeal";
 import FastsMealModal from "../../Components/Modals/FastsMealModal";
+import { useLanguage } from "../../Context/LanguageContext";
 
 // const mealData = [
 //   {
@@ -53,13 +54,13 @@ import FastsMealModal from "../../Components/Modals/FastsMealModal";
 
 const FastDetail: FC<FastDetailsScreenProps> = ({ navigation, route }) => {
   const dispatch = useAppDispatch();
+
+  const { translations } = useLanguage();
   const { fastsData } = useAppSelector((state) => state.fastsData);
   const { date } = route.params;
   const [isLoading, setIsLoading] = useState(false);
   const [isModal, setIsModal] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
-
-  console.log("date ", date);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -96,21 +97,21 @@ const FastDetail: FC<FastDetailsScreenProps> = ({ navigation, route }) => {
 
     if (ratio < 0.5) {
       return {
-        message: "You need to drink more water!",
+        message: translations.need_more_water,
         textColor: COLORS.golden,
         bgColor: "#EFFFF3",
         Color: COLORS.golden,
       };
     } else if (ratio >= 0.5 && ratio < 1) {
       return {
-        message: "Keep up the good work! You are almost there.",
-        textColor: "#78C1E5",
-        bgColor: "#78C1E5",
+        message: translations.keep_good_Work,
+        textColor: "#89B7E3",
+        bgColor: "#EFFAFF",
         Color: "#78C1E5",
       };
     } else {
       return {
-        message: "Perfect! You consumed a lot of water.",
+        message: translations.perfect_consumed_water,
         textColor: COLORS.green,
         bgColor: "#F0F8F0",
         Color: COLORS.green,
@@ -153,7 +154,7 @@ const FastDetail: FC<FastDetailsScreenProps> = ({ navigation, route }) => {
 
         <View style={{ gap: verticalScale(15) }}>
           <CustomText fontSize={16} fontFamily="bold" color={COLORS.darkBLue}>
-            Your Meals
+            {translations.yourMeals}
           </CustomText>
 
           {fastsData?.meal?.planId?.meals ? (
@@ -207,7 +208,7 @@ const FastDetail: FC<FastDetailsScreenProps> = ({ navigation, route }) => {
                           fontSize={10}
                           color={COLORS.green}
                         >
-                          Complete
+                          {translations.completed}
                         </CustomText>
                       ) : (
                         <CustomText
@@ -215,7 +216,7 @@ const FastDetail: FC<FastDetailsScreenProps> = ({ navigation, route }) => {
                           fontSize={10}
                           color={COLORS.darkBLue}
                         >
-                          Pending
+                          {translations.pending}
                         </CustomText>
                       )}
                     </View>
@@ -238,7 +239,7 @@ const FastDetail: FC<FastDetailsScreenProps> = ({ navigation, route }) => {
 
         <View style={{ gap: verticalScale(10) }}>
           <CustomText fontSize={18} fontFamily="bold" color={COLORS.darkBLue}>
-            Water Intake
+            {translations.water_intake}
           </CustomText>
           {fastsData?.waterIntake &&
             (() => {
@@ -268,7 +269,7 @@ const FastDetail: FC<FastDetailsScreenProps> = ({ navigation, route }) => {
                       fontFamily="bold"
                       color={textColor}
                     >
-                      {consumedLitres} Litres
+                      {consumedLitres} {translations.Liters}
                     </CustomText>
                     <CustomText
                       fontSize={12}
@@ -284,14 +285,14 @@ const FastDetail: FC<FastDetailsScreenProps> = ({ navigation, route }) => {
                       fontFamily="regular"
                       color={COLORS.darkBLue}
                     >
-                      Goal
+                      {translations.goal}
                     </CustomText>
                     <CustomText
                       fontSize={12}
                       fontFamily="regular"
                       color={COLORS.green}
                     >
-                      {goalLitres} Litres
+                      {goalLitres} {translations.Liters}
                     </CustomText>
                   </View>
                 </View>

@@ -18,8 +18,10 @@ import Toast from "react-native-toast-message";
 import { fetchData } from "../../APIService/api";
 import ENDPOINTS from "../../APIService/endPoints";
 import { PrivacyPolicyResponse } from "../../Typings/apiResponse";
+import { useLanguage } from "../../Context/LanguageContext";
 
 const Policy: FC<PolicyScreenProps> = ({ navigation }) => {
+  const { translations } = useLanguage();
   const [policyData, setPolicyData] = useState<PrivacyPolicyResponse | null>(
     null
   );
@@ -74,7 +76,7 @@ const Policy: FC<PolicyScreenProps> = ({ navigation }) => {
             <CustomIcon Icon={ICONS.BackArrow} />
           </TouchableOpacity>
           <CustomText fontSize={22} fontFamily="bold" color={COLORS.darkBLue}>
-            Privacy Policy
+            {translations.privacy_policy}
           </CustomText>
         </View>
         <CustomText fontSize={12} fontFamily="regular" color={COLORS.darkBLue}>

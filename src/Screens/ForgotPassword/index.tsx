@@ -17,17 +17,30 @@ import Toast from "react-native-toast-message";
 
 const ForgotPassword: FC<ForgotPasswordScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState({
+    email: "",
+  });
 
   const validInputs = () => {
     let valid = true;
-    let newErrors = "";
+    let newErrors = {
+      email: "",
+    };
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!email) {
       valid = false;
-      newErrors = "Email is required.";
+      newErrors.email = "Email is required.";
       Toast.show({
         type: "error",
         text1: "Email is required.",
+      });
+    } else if (!emailRegex.test(email)) {
+      valid = false;
+      newErrors.email = "Invalid email format.";
+      Toast.show({
+        type: "error",
+        text1: "Invalid email format.",
       });
     }
 

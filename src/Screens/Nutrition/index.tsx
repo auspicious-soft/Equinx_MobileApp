@@ -32,26 +32,7 @@ import {
 } from "../../Utilities/Metrics";
 import CircularProgress from "../../Components/CircularProgress";
 import { NutritionScreenProps } from "../../Typings/route";
-
-const microNutrients = [
-  // "carbs",
-  // "protein",
-  // "fat",
-  "fiber",
-  "sugar",
-  "sodium",
-  "potassium",
-  "calcium",
-  "iron",
-  "vitaminA",
-  "vitaminC",
-  "vitaminD",
-  "vitaminE",
-  "vitaminK",
-  "vitaminB1",
-  "vitaminB2",
-  "vitaminB3",
-];
+import { useLanguage } from "../../Context/LanguageContext";
 
 const noData = [
   // "--",
@@ -77,6 +58,27 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
   const dispatch = useAppDispatch();
 
   const { nutrition } = useAppSelector((state) => state.nutrition);
+  const { translations } = useLanguage();
+
+  const microNutrients = [
+    // "carbs",
+    // "protein",
+    // "fat",
+    translations.fiber,
+    translations.sugar,
+    translations.sodium,
+    translations.potassium,
+    translations.calcium,
+    translations.iron,
+    translations.vitaminA,
+    translations.vitaminC,
+    translations.vitaminD,
+    translations.vitaminE,
+    translations.vitaminK,
+    translations.vitaminB1,
+    translations.vitaminB2,
+    translations.vitaminB3,
+  ];
 
   const [recordMealModal, setRecordMealModal] = useState(false);
   const [captureMealModal, setCaptureMealModal] = useState(false);
@@ -111,29 +113,28 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
 
     if (remaining > 800) {
       return {
-        message:
-          "Let’s go! You’re making progress, but you still need more fuel.",
+        message: translations.need_more_fuel,
         backgroundColor: "#FFF8E1",
         borderColor: "#FBC02D",
         textColor: "#FBC02D",
       };
     } else if (remaining > 0) {
       return {
-        message: "Great! You are almost there!",
+        message: translations.Great_you_almost,
         backgroundColor: "#E3F2FD",
         borderColor: "#64B5F6",
         textColor: "#64B5F6",
       };
     } else if (remaining === 0) {
       return {
-        message: "Perfect! You have consumed sufficient calories.",
+        message: translations.perfect_sufficient_calories,
         backgroundColor: "#E8F5E9",
         borderColor: "#66BB6A",
         textColor: "#66BB6A",
       };
     } else {
       return {
-        message: "Be careful! You have consumed more than required calories.",
+        message: translations.be_careful_more_calories,
         backgroundColor: "#FFEBEE",
         borderColor: "#E57373",
         textColor: "#E57373",
@@ -160,7 +161,6 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
     setIsLoading(true);
     try {
       const response = await fetchData<NutritionResponse>(ENDPOINTS.nutrition);
-      console.log("nutrition response", response);
       if (response.data.success) {
         dispatch(setNutrition(response.data.data));
       }
@@ -177,11 +177,6 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
   useEffect(() => {
     handleGetNutrition();
   }, [refreshData]);
-
-  // Helper function to calculate progress ratio with a cap at 1.0 (100%)
-  const calculateProgress = (consumed: number, target: number): number => {
-    return Math.min(consumed / target, 1) || 0;
-  };
 
   if (isLoading) {
     return (
@@ -203,14 +198,14 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
 
         <View style={styles.header}>
           <CustomText fontSize={22} fontFamily="bold" color={COLORS.darkBLue}>
-            Track Your Nutrition
+            {translations.track_your_nurtition}
           </CustomText>
           <CustomText
             fontSize={12}
             fontFamily="regular"
             color={COLORS.darkBLue}
           >
-            Log your meals and track your daily nutrition intake.
+            {translations.lof_your_meals_track}
           </CustomText>
         </View>
 
@@ -250,7 +245,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                   color={COLORS.darkBLue}
                   fontFamily="regular"
                 >
-                  Consumed
+                  {translations.consumed}
                 </CustomText>
               </View>
               <View style={{ flex: 1, gap: verticalScale(12) }}>
@@ -261,7 +256,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                       fontSize={12}
                       color={COLORS.darkBLue}
                     >
-                      Fats
+                      {translations.Fats}
                     </CustomText>
                     <CustomText
                       fontFamily="regular"
@@ -290,7 +285,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                       fontSize={12}
                       color={COLORS.darkBLue}
                     >
-                      Carbs
+                      {translations.Carbs}
                     </CustomText>
                     <CustomText
                       fontFamily="regular"
@@ -319,7 +314,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                       fontSize={12}
                       color={COLORS.darkBLue}
                     >
-                      Protien
+                      {translations.Protein}
                     </CustomText>
                     <CustomText
                       fontFamily="regular"
@@ -367,7 +362,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                   fontFamily="regular"
                   fontSize={12}
                 >
-                  Remaining Calories
+                  {translations.Remaining_Calories}
                 </CustomText>
                 <CustomText color={textColor} fontFamily="bold" fontSize={12}>
                   {`${Math.abs(
@@ -377,7 +372,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                       (nutrition?.todayMeal?.stats?.carbs?.consumed +
                         nutrition?.todayMeal?.stats?.protein?.consumed +
                         nutrition?.todayMeal?.stats?.fat?.consumed)
-                  )} kcal`}
+                  )} ${translations.kcal}`}
                 </CustomText>
               </View>
             </View>
@@ -391,7 +386,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
           >
             <View style={styles.blurContainer}>
               <PrimaryButton
-                title="Upgrade Your Plan"
+                title={translations.upgrade_your_plan}
                 onPress={() => {
                   navigation.navigate("MemberShip");
                 }}
@@ -404,7 +399,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
         {/* Log Your Meals */}
         <View style={{ gap: verticalScale(10) }}>
           <CustomText fontSize={16} fontFamily="bold" color={COLORS.darkBLue}>
-            Log Your Meals
+            {translations.log_your_meal}
           </CustomText>
 
           <View style={styles.mealCard}>
@@ -458,13 +453,14 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                   justifyContent: "space-between",
                 }}
               >
-                {nutrition?.todayMeal?.firstMealStatus.calories && (
+                {nutrition?.todayMeal?.firstMealStatus.calories !==
+                  undefined && (
                   <View style={styles.kcalContainer}>
                     <CustomText
                       fontSize={12}
                       color={COLORS.green}
                       fontFamily="medium"
-                    >{`${nutrition.todayMeal?.firstMealStatus.calories} Kcal`}</CustomText>
+                    >{`${nutrition.todayMeal?.firstMealStatus?.calories} ${translations.kcal}`}</CustomText>
                   </View>
                 )}
                 <CustomText
@@ -477,8 +473,8 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                   }
                 >
                   {nutrition?.todayMeal?.firstMealStatus.status === true
-                    ? "Completed"
-                    : "Pending"}
+                    ? `${translations.completed}`
+                    : `${translations.pending}`}
                 </CustomText>
               </View>
             </View>
@@ -536,13 +532,14 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                   justifyContent: "space-between",
                 }}
               >
-                {nutrition?.todayMeal?.secondMealStatus.calories && (
+                {nutrition?.todayMeal?.secondMealStatus?.calories !==
+                  undefined && (
                   <View style={styles.kcalContainer}>
                     <CustomText
                       fontSize={12}
                       color={COLORS.green}
                       fontFamily="medium"
-                    >{`${nutrition.todayMeal?.secondMealStatus.calories} Kcal`}</CustomText>
+                    >{`${nutrition.todayMeal?.secondMealStatus?.calories} ${translations.kcal}`}</CustomText>
                   </View>
                 )}
                 <CustomText
@@ -555,8 +552,8 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                   }
                 >
                   {nutrition?.todayMeal?.secondMealStatus.status === true
-                    ? "Completed"
-                    : "Pending"}
+                    ? `${translations.completed}`
+                    : `${translations.pending}`}
                 </CustomText>
               </View>
             </View>
@@ -613,13 +610,14 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                   justifyContent: "space-between",
                 }}
               >
-                {nutrition?.todayMeal?.thirdMealStatus.calories && (
+                {nutrition?.todayMeal?.thirdMealStatus?.calories !==
+                  undefined && (
                   <View style={styles.kcalContainer}>
                     <CustomText
                       fontSize={12}
                       color={COLORS.green}
                       fontFamily="medium"
-                    >{`${nutrition.todayMeal?.thirdMealStatus.calories} Kcal`}</CustomText>
+                    >{`${nutrition.todayMeal?.thirdMealStatus?.calories} ${translations.kcal}`}</CustomText>
                   </View>
                 )}
                 <CustomText
@@ -632,8 +630,8 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                   }
                 >
                   {nutrition?.todayMeal?.thirdMealStatus.status === true
-                    ? "Completed"
-                    : "Pending"}
+                    ? `${translations.completed}`
+                    : `${translations.pending}`}
                 </CustomText>
               </View>
             </View>
@@ -697,7 +695,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                       fontSize={12}
                       color={COLORS.green}
                       fontFamily="medium"
-                    >{`${nutrition.todayMeal?.otherMealStatus.calories} Kcal`}</CustomText>
+                    >{`${nutrition.todayMeal?.otherMealStatus.calories} ${translations.kcal}`}</CustomText>
                   </View>
                 )}
                 {nutrition?.todayMeal?.otherMealStatus.status === true && (
@@ -711,8 +709,8 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                     }
                   >
                     {nutrition?.todayMeal?.otherMealStatus.status === true
-                      ? "Completed"
-                      : "Pending"}
+                      ? `${translations.completed}`
+                      : `${translations.pending}`}
                   </CustomText>
                 )}
               </View>
@@ -737,16 +735,17 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
             borderRadius={12}
           >
             <CustomText fontSize={14} color={COLORS.white} fontFamily="bold">
-              Need Help Regarding Your Nutrition?
+              {translations.need_help_nutrition}
             </CustomText>
             <CustomText fontSize={12} color={COLORS.white} fontFamily="regular">
-              Get personalized tips, motivation, and fasting insights from our
-              AI coach.
+              {translations.get_personlized_tips}
             </CustomText>
           </ImageBackground>
           <PrimaryButton
-            title="Start Chat"
-            onPress={() => setAchievementModal(true)}
+            title={translations.start_chat}
+            onPress={() => {
+              navigation.navigate("chats");
+            }}
           />
         </View>
 
@@ -760,15 +759,14 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                 fontFamily="bold"
                 color={COLORS.darkBLue}
               >
-                Macro balance
+                {translations.macro_balance}
               </CustomText>
               <CustomText
                 fontSize={14}
                 fontFamily="regular"
                 color={COLORS.darkBLue}
               >
-                Track your macros and optimize your daily nutrition for better
-                results.
+                {translations.track_your_macros}
               </CustomText>
             </View>
             <ImageBackground
@@ -785,19 +783,18 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
               borderRadius={12}
             >
               <CustomText fontSize={14} color={COLORS.white} fontFamily="bold">
-                Unlock Macrobalance
+                {translations.unlock_macros}
               </CustomText>
               <CustomText
                 fontSize={12}
                 color={COLORS.white}
                 fontFamily="regular"
               >
-                Upgrade to plus member to fine tune all your macronutrients
-                needs.
+                {translations.upgrade_macronutrients_need}
               </CustomText>
             </ImageBackground>
             <PrimaryButton
-              title="Upgrade"
+              title={translations.upgrade}
               onPress={() => {
                 navigation.navigate("MemberShip");
               }}
@@ -818,15 +815,14 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                   fontFamily="bold"
                   color={COLORS.darkBLue}
                 >
-                  Macro balance
+                  {translations.macro_balance}
                 </CustomText>
                 <CustomText
                   fontSize={14}
                   fontFamily="regular"
                   color={COLORS.darkBLue}
                 >
-                  Track your macros and optimize your daily nutrition for better
-                  results.
+                  {translations.track_your_macros}
                 </CustomText>
               </View>
 
@@ -848,7 +844,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                   color={COLORS.darkBLue}
                   style={{ textAlign: "center" }}
                 >
-                  Great job! Your macros are well-balanced.
+                  {translations.great_job}
                 </CustomText>
               </View>
 
@@ -858,7 +854,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                   fontSize={12}
                   color={COLORS.darkBLue}
                 >
-                  Daily kcal intake required
+                  {translations.daily_intake_required}
                 </CustomText>
                 <CustomText
                   fontFamily="bold"
@@ -868,14 +864,12 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                   {nutrition?.todayMeal.planId.total_calories}
                 </CustomText>
               </View>
-              <PrimaryButton
-                title="Recalculate"
-                // onPress={() => {
-                //   closeModal();
-                //   navigation.navigate("Recalculate");
-                // }}
-                onPress={() => {}}
-              />
+              {/* <PrimaryButton
+                title={translations.Recalculated}
+                onPress={() => {
+                  navigation.navigate("Recalculate");
+                }}
+              /> */}
             </View>
 
             <View
@@ -892,11 +886,11 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                   fontFamily="bold"
                   color={COLORS.darkBLue}
                 >
-                  Breakdown of Macronutrients
+                  {translations.breakdown_macronutrients}
                 </CustomText>
                 <View style={styles.seeMoreContainer}>
                   <CustomText fontSize={14} color={COLORS.darkBLue}>
-                    Breakfast
+                    {translations.breakfast}
                   </CustomText>
                   <TouchableOpacity
                     onPress={() => {
@@ -911,7 +905,9 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                       fontFamily="medium"
                       color={COLORS.green}
                     >
-                      {breakfastItemsToShow === 4 ? "See more" : "See less"}
+                      {breakfastItemsToShow === 4
+                        ? translations.see_more
+                        : translations.see_less}
                     </CustomText>
                   </TouchableOpacity>
                 </View>
@@ -922,7 +918,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                       fontFamily="medium"
                       color={COLORS.slateGrey}
                     >
-                      Macronutrient
+                      {translations.macronutrient}
                     </CustomText>
 
                     {microNutrients
@@ -953,7 +949,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                         fontFamily="medium"
                         color={COLORS.slateGrey}
                       >
-                        Consumed
+                        {translations.consumed}
                       </CustomText>
 
                       {nutrition?.todayMeal.firstMealStatus.microNutrients
@@ -988,7 +984,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                 </View>
                 <View style={styles.seeMoreContainer}>
                   <CustomText fontSize={14} color={COLORS.darkBLue}>
-                    Lunch
+                    {translations.lunch}
                   </CustomText>
                   <TouchableOpacity
                     onPress={() => {
@@ -1003,7 +999,9 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                       fontFamily="medium"
                       color={COLORS.green}
                     >
-                      {lunchItemsToShow === 4 ? "See more" : "See less"}
+                      {lunchItemsToShow === 4
+                        ? translations.see_more
+                        : translations.see_less}
                     </CustomText>
                   </TouchableOpacity>
                 </View>
@@ -1014,7 +1012,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                       fontFamily="medium"
                       color={COLORS.slateGrey}
                     >
-                      Macronutrient
+                      {translations.macronutrient}
                     </CustomText>
                     {microNutrients
                       .slice(0, lunchItemsToShow)
@@ -1044,7 +1042,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                         fontFamily="medium"
                         color={COLORS.slateGrey}
                       >
-                        Consumed
+                        {translations.consumed}
                       </CustomText>
                       {nutrition?.todayMeal.secondMealStatus.microNutrients
                         ? Object.entries(
@@ -1078,7 +1076,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                 </View>
                 <View style={styles.seeMoreContainer}>
                   <CustomText fontSize={14} color={COLORS.darkBLue}>
-                    Dinner
+                    {translations.dinner}
                   </CustomText>
                   <TouchableOpacity
                     onPress={() => {
@@ -1093,7 +1091,9 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                       fontFamily="medium"
                       color={COLORS.green}
                     >
-                      {dinnerItemsToShow === 4 ? "See more" : "See less"}
+                      {dinnerItemsToShow === 4
+                        ? translations.see_more
+                        : translations.see_less}
                     </CustomText>
                   </TouchableOpacity>
                 </View>
@@ -1104,7 +1104,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                       fontFamily="medium"
                       color={COLORS.slateGrey}
                     >
-                      Macronutrient
+                      {translations.macronutrient}
                     </CustomText>
                     {microNutrients
                       .slice(0, dinnerItemsToShow)
@@ -1134,7 +1134,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                         fontFamily="medium"
                         color={COLORS.slateGrey}
                       >
-                        Consumed
+                        {translations.consumed}
                       </CustomText>
                       {nutrition?.todayMeal.thirdMealStatus.microNutrients
                         ? Object.entries(
@@ -1168,7 +1168,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                 </View>
                 <View style={styles.seeMoreContainer}>
                   <CustomText fontSize={14} color={COLORS.darkBLue}>
-                    Other
+                    {translations.other}
                   </CustomText>
                   <TouchableOpacity
                     onPress={() => {
@@ -1183,7 +1183,9 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                       fontFamily="medium"
                       color={COLORS.green}
                     >
-                      {otherItemsToShow === 4 ? "See more" : "See less"}
+                      {otherItemsToShow === 4
+                        ? translations.see_more
+                        : translations.see_less}
                     </CustomText>
                   </TouchableOpacity>
                 </View>
@@ -1194,7 +1196,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                       fontFamily="medium"
                       color={COLORS.slateGrey}
                     >
-                      Macronutrient
+                      {translations.macronutrient}
                     </CustomText>
                     {microNutrients
                       .slice(0, otherItemsToShow)
@@ -1224,7 +1226,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                         fontFamily="medium"
                         color={COLORS.slateGrey}
                       >
-                        Consumed
+                        {translations.consumed}
                       </CustomText>
                       {nutrition?.todayMeal.otherMealStatus.microNutrients
                         ? Object.entries(
@@ -1271,14 +1273,14 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                 fontFamily="bold"
                 color={COLORS.darkBLue}
               >
-                Capture Your Meal
+                {translations.capture_your_meal}
               </CustomText>
               <CustomText
                 fontSize={14}
                 fontFamily="regular"
                 color={COLORS.darkBLue}
               >
-                Tailor your experience with Equin Global Plus
+                {translations.tailor_experience}
               </CustomText>
             </View>
             <ImageBackground
@@ -1291,7 +1293,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
               borderRadius={12}
             ></ImageBackground>
             <PrimaryButton
-              title="Capture Meal"
+              title={translations.Capture_meal}
               onPress={() => {
                 setMealType("breakfast");
                 setCaptureMealModal(true);

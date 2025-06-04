@@ -46,6 +46,8 @@ import { postData, postFormData, putData } from "../../APIService/api";
 import ENDPOINTS from "../../APIService/endPoints";
 import { IMAGE_BASE_URL } from "@env";
 import { check, PERMISSIONS, request, RESULTS } from "react-native-permissions";
+import { useLanguage } from "../../Context/LanguageContext";
+import IMAGES from "../../Assets/Images";
 
 type ProfileForm = {
   gender: string;
@@ -76,9 +78,20 @@ const GENDER_OPTIONS = [
   { label: "Other", value: "Other" },
 ];
 
+// Helper function to convert country code to flag emoji
+const getFlagEmoji = (countryCode: string) => {
+  const codePoints = countryCode
+    .toUpperCase()
+    .split("")
+    .map((char) => 127397 + char.charCodeAt(0));
+  return String.fromCodePoint(...codePoints);
+};
+
 const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
   const { userData } = route.params;
   const dispatch = useAppDispatch();
+
+  const { translations } = useLanguage();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -309,8 +322,8 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
       setProfileForm({
         gender: userData?.gender,
         dob: userData?.dob,
-        height: userData?.height.toString(),
-        weight: userData?.weight.toString(),
+        height: userData?.height.toLocaleString(),
+        weight: userData?.weight.toLocaleString(),
       })
     );
   }, [userData]);
@@ -334,7 +347,7 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
             <CustomIcon Icon={ICONS.BackArrow} />
           </TouchableOpacity>
           <CustomText fontSize={22} fontFamily="bold" color={COLORS.darkBLue}>
-            Edit Profile
+            {translations.edit_profile}
           </CustomText>
         </View>
 
@@ -360,20 +373,21 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
               </TouchableOpacity>
             </View>
           </TouchableOpacity>
+
           <View style={{ gap: verticalScale(10) }}>
             <CustomText fontSize={12} fontFamily="bold" color={COLORS.darkBLue}>
-              Personal Details
+              {translations.personal_details}
             </CustomText>
             <View style={{ gap: verticalScale(10) }}>
               <CustomInput
-                label="Full Name"
+                label={translations.full_name}
                 value={name}
                 onChangeText={setName}
                 placeholder="Enter your name"
                 disabled={true}
               />
               <CustomInput
-                label="Email Address"
+                label={translations.email_address}
                 value={email}
                 onChangeText={setEmail}
                 placeholder="Enter your email"
@@ -382,36 +396,30 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
 
               <View style={{ gap: verticalScale(5) }}>
                 <CustomText fontSize={12} color={COLORS.oldGrey}>
-                  Phone Number
+                  {translations.phone_number}
                 </CustomText>
                 <View style={styles.phoneInputContainer}>
-                  <TouchableOpacity
-                    onPress={() => setShowCountryPicker(true)}
-                    style={styles.countryPickerContainer}
-                    disabled={true}
-                  >
-                    <CountryPicker
-                      {...{
-                        countryCode,
-                        withFlag: true,
-                        withFilter: true,
-                        withCallingCode: true,
-                        withCountryNameButton: false,
-                        onSelect,
-                      }}
-                      visible={showCountryPicker}
-                      onClose={() => setShowCountryPicker(false)}
-                      theme={{
-                        onBackgroundTextColor: COLORS.lightGrey,
-                        flagSizeButton: 20,
-                      }}
-                    />
-                    {/* <CustomIcon
-                      Icon={ICONS.ArrowDownIcon}
-                      height={10}
-                      width={10}
-                    /> */}
-                  </TouchableOpacity>
+                  <View style={styles.countryPickerContainer}>
+                    {/* Display flag emoji based on country code */}
+
+                    {countryCode ? (
+                      <CustomText
+                        fontSize={20}
+                        color={COLORS.oldGrey}
+                        fontFamily="regular"
+                      >
+                        {getFlagEmoji(countryCode)}
+                      </CustomText>
+                    ) : (
+                      <CustomText
+                        fontSize={12}
+                        color={COLORS.oldGrey}
+                        fontFamily="regular"
+                      >
+                        Not selected
+                      </CustomText>
+                    )}
+                  </View>
                   <View style={styles.numberWithCallingContainer}>
                     <CustomText fontSize={14} color={COLORS.oldGrey}>
                       {`${country ? `(${country?.callingCode})` : ""}`}
@@ -434,7 +442,7 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
 
         <View style={{ gap: verticalScale(10) }}>
           <CustomText fontSize={12} fontFamily="bold" color={COLORS.darkBLue}>
-            Other details
+            {translations.Other_details}
           </CustomText>
 
           <KeyboardAvoidingContainer
@@ -445,7 +453,7 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
           >
             <View style={styles.optionsContainer}>
               <CustomInput
-                label="Select your gender"
+                label={translations.select_gender}
                 type="dropdown"
                 placeholder="Gender"
                 value={profileForm.gender}
@@ -455,7 +463,7 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
               />
               <View style={styles.inputRow}>
                 <CustomInput
-                  label="Date of Birth"
+                  label={translations.date_of_birth}
                   type="date"
                   placeholder="Select"
                   value={profileForm.dob}
@@ -465,7 +473,7 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
                   accessibilityLabel="Select date of birth"
                 />
                 <CustomInput
-                  label="Age"
+                  label={translations.age}
                   placeholder="Age"
                   value={profileForm.age}
                   onChangeText={handleProfileChange("age")}
@@ -476,7 +484,7 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
               </View>
               <View style={styles.inputRow}>
                 <CustomInput
-                  label="Height"
+                  label={translations.height}
                   type="number"
                   placeholder="180 cm"
                   value={profileForm.height}
@@ -485,7 +493,7 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
                   accessibilityLabel="Enter height"
                 />
                 <CustomInput
-                  label="Weight"
+                  label={translations.weight}
                   type="number"
                   placeholder="180 lbs"
                   value={profileForm.weight}
@@ -496,7 +504,7 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
               </View>
               {bmi && (
                 <CustomInput
-                  label="Your BMI is"
+                  label={translations.bmi}
                   type="text"
                   value={bmi}
                   onChangeText={() => {}}
@@ -505,7 +513,7 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
               )}
             </View>
             <PrimaryButton
-              title="Save Details"
+              title={translations.save_details}
               onPress={userUpdateData}
               isLoading={isButtonLoading}
             />
@@ -583,7 +591,7 @@ const styles = StyleSheet.create({
     borderEndWidth: 1.5,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: horizontalScale(5),
+    paddingHorizontal: horizontalScale(10),
     flexDirection: "row",
     borderColor: COLORS.white,
   },

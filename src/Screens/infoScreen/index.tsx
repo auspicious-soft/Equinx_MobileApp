@@ -85,7 +85,10 @@ const InfoScreen: FC<InfoScreenProps> = ({ navigation, route }) => {
         totalQuestions: QueastionResponse.data.questions.length,
       });
     } else if (screenData && screenData?.nextScreen === "planScreen") {
-      navigation.replace("planScreen");
+      // navigation.replace("planScreen");
+      navigation.replace("authStack", {
+        screen: "login",
+      });
     } else {
       navigation.navigate("infoScreen", {
         index: currentIndex + 1,

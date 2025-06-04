@@ -1,5 +1,7 @@
 import {
   ActivityIndicator,
+  Alert,
+  Linking,
   ScrollView,
   StyleSheet,
   Text,
@@ -18,6 +20,7 @@ import Toast from "react-native-toast-message";
 import { fetchData } from "../../APIService/api";
 import { SupportResponse } from "../../Typings/apiResponse";
 import ENDPOINTS from "../../APIService/endPoints";
+import { useLanguage } from "../../Context/LanguageContext";
 
 const questionData = [
   {
@@ -65,12 +68,22 @@ const questionData = [
 ];
 
 const Support: FC<SupportScreenProps> = ({ navigation }) => {
+  const { translations } = useLanguage();
   const [selectedFaq, setSelectedFaq] = useState<string | null>(null);
   const [supportData, setSupportData] = useState<SupportResponse | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const toggleFaq = (id: string) => {
     setSelectedFaq((prev) => (prev === id ? null : id));
+  };
+
+  const openEmail = () => {
+    const url = "mailto:equinglobal@gmail.com";
+    Linking.openURL(url);
+  };
+
+  const openContact = () => {
+    Linking.openURL("tel:+919882211037");
   };
 
   const getSupportData = async () => {
@@ -122,14 +135,14 @@ const Support: FC<SupportScreenProps> = ({ navigation }) => {
             <CustomIcon Icon={ICONS.BackArrow} />
           </TouchableOpacity>
           <CustomText fontSize={22} fontFamily="bold" color={COLORS.darkBLue}>
-            Support
+            {translations.support}
           </CustomText>
         </View>
         <View style={{ gap: verticalScale(6) }}>
           <CustomText fontFamily="bold" fontSize={12} color={COLORS.darkBLue}>
-            Reach Us
+            {translations.reach_us}
           </CustomText>
-          <TouchableOpacity style={styles.contactContainer}>
+          <TouchableOpacity style={styles.contactContainer} onPress={openEmail}>
             <View style={styles.iconBg}>
               <CustomIcon Icon={ICONS.emailIcon} height={18} width={18} />
             </View>
@@ -139,7 +152,7 @@ const Support: FC<SupportScreenProps> = ({ navigation }) => {
                 fontFamily="regular"
                 color={COLORS.slateGrey}
               >
-                Send us an email
+                {translations.send_email}
               </CustomText>
               <CustomText
                 fontSize={14}
@@ -150,7 +163,10 @@ const Support: FC<SupportScreenProps> = ({ navigation }) => {
               </CustomText>
             </View>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.contactContainer}>
+          <TouchableOpacity
+            style={styles.contactContainer}
+            onPress={openContact}
+          >
             <View style={styles.iconBg}>
               <CustomIcon Icon={ICONS.callIcon} height={18} width={18} />
             </View>
@@ -160,7 +176,7 @@ const Support: FC<SupportScreenProps> = ({ navigation }) => {
                 fontFamily="regular"
                 color={COLORS.slateGrey}
               >
-                Call Us
+                {translations.call_us}
               </CustomText>
               <CustomText
                 fontSize={14}
@@ -175,7 +191,7 @@ const Support: FC<SupportScreenProps> = ({ navigation }) => {
 
         <View style={{ gap: verticalScale(6) }}>
           <CustomText fontSize={12} fontFamily="bold" color={COLORS.darkBLue}>
-            Frequently Asked Questions
+            {translations.faq_Question}
           </CustomText>
           {supportData?.faq.map((item, index) => (
             <View style={styles.questionWrapper} key={index}>

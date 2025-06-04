@@ -62,12 +62,21 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
       });
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
     if (!email) {
       valid = false;
       newErrors.email = "Email is required.";
       Toast.show({
         type: "error",
         text1: "Email is required.",
+      });
+    } else if (!emailRegex.test(email)) {
+      valid = false;
+      newErrors.email = "Invalid email format.";
+      Toast.show({
+        type: "error",
+        text1: "Invalid email format.",
       });
     }
 
@@ -158,6 +167,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
               paddingTop: verticalScale(40),
               paddingHorizontal: horizontalScale(20),
             }}
+            keyboardShouldPersistTaps="handled"
           >
             <Image source={IMAGES.mealImage_2} style={styles.mealImageStyle} />
 

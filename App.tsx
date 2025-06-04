@@ -20,6 +20,7 @@ import NotificationService from "./src/Services/NotificationService";
 import COLORS from "./src/Utilities/Colors";
 import STORAGE_KEYS from "./src/Utilities/Constants";
 import { storeLocalStorageData } from "./src/Utilities/Storage";
+import { LanguageProvider } from "./src/Context/LanguageContext";
 
 LogBox.ignoreAllLogs(true);
 
@@ -136,22 +137,24 @@ const App = () => {
   return (
     <>
       <SafeAreaProvider>
-        <StripeProvider publishableKey={PUBLISHABLE_KEY}>
-          <StatusBar
-            animated={true}
-            backgroundColor={statusBarConfig.backgroundColor}
-            barStyle={statusBarConfig.barStyle}
-            translucent={
-              Platform.OS === "android"
-                ? statusBarConfig.translucent
-                : undefined
-            }
-          />
-          <NavigationContainer onStateChange={handleNavigationStateChange}>
-            <Routing />
-            {__DEV__ && <NetworkLogger />}
-          </NavigationContainer>
-        </StripeProvider>
+        <LanguageProvider>
+          <StripeProvider publishableKey={PUBLISHABLE_KEY}>
+            <StatusBar
+              animated={true}
+              backgroundColor={statusBarConfig.backgroundColor}
+              barStyle={statusBarConfig.barStyle}
+              translucent={
+                Platform.OS === "android"
+                  ? statusBarConfig.translucent
+                  : undefined
+              }
+            />
+            <NavigationContainer onStateChange={handleNavigationStateChange}>
+              <Routing />
+              {__DEV__ && <NetworkLogger />}
+            </NavigationContainer>
+          </StripeProvider>
+        </LanguageProvider>
       </SafeAreaProvider>
       <Toast />
     </>

@@ -30,21 +30,25 @@ import { ProfileResponse, RecentFast } from "../../Typings/apiResponse";
 import ENDPOINTS from "../../APIService/endPoints";
 import { fetchData } from "../../APIService/api";
 import { setProfileData } from "../../Redux/slices/ProfileSlice";
+import { useLanguage } from "../../Context/LanguageContext";
 
 const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
   const dispatch = useAppDispatch();
+  const { translations } = useLanguage();
+  const { nutrition } = useAppSelector((state) => state.nutrition);
+  const { settingData } = useAppSelector((state) => state.settingData);
   const { profileData } = useAppSelector((state) => state.profileData);
   const [isLoading, setIsLoading] = useState(false);
 
   const getBmiCatgeory = () => {
     if (profileData?.bmi < 18.5) {
-      return "Underweight";
+      return translations.underWeight;
     } else if (profileData?.bmi >= 18.5 && profileData?.bmi < 25) {
-      return "Normal Weight";
+      return translations.normal;
     } else if (profileData?.bmi >= 25 && profileData?.bmi < 30) {
-      return "Overweight";
+      return translations.overWeight;
     } else {
-      return "Obese";
+      return translations.obese;
     }
   };
 
@@ -105,7 +109,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
         </View>
         <View style={{ gap: verticalScale(5) }}>
           <CustomText fontFamily="medium" color={COLORS.darkBLue} fontSize={14}>
-            {`${item.calories} Kcal consumed`}
+            {`${item.calories} ${translations.kcal} ${translations.consumed}`}
           </CustomText>
           <View
             style={{
@@ -120,7 +124,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                 color={COLORS.green}
                 fontSize={14}
               >
-                View details
+                {translations.view_details}
               </CustomText>
               <View style={{ height: 1, backgroundColor: COLORS.green }} />
             </View>
@@ -162,9 +166,9 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
             <CustomIcon Icon={ICONS.BackArrow} />
           </TouchableOpacity>
           <CustomText fontSize={22} fontFamily="bold" color={COLORS.darkBLue}>
-            Hello{" "}
+            {translations.hello}{" "}
             <CustomText fontSize={22} fontFamily="bold" color={COLORS.green}>
-              Miley Jones
+              {settingData?.editProfile.fullName}
             </CustomText>
           </CustomText>
         </View>
@@ -180,20 +184,28 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
           <CircularProgress
             color={COLORS.green}
             backgroundColor={COLORS.white}
-            progress={0.7}
+            progress={
+              Math.min(
+                nutrition?.todayMeal?.stats?.overall?.percentage! / 100,
+                1
+              ) || 0
+            }
             radius={30}
             strokeWidth={20}
             progressStrokeWidth={8}
           >
             <CustomText fontSize={10} color={COLORS.darkBLue}>
-              65%
+              {`${Math.min(
+                nutrition?.todayMeal?.stats?.overall?.percentage || 0,
+                100
+              )}%`}
             </CustomText>
           </CircularProgress>
         </View>
 
         <View style={{ gap: verticalScale(5) }}>
           <CustomText fontSize={12} fontFamily="bold" color={COLORS.darkBLue}>
-            My Progress
+            {translations.my_progress}
           </CustomText>
           <View style={{ gap: verticalScale(8) }}>
             <View style={styles.alignContainer}>
@@ -203,7 +215,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                   fontFamily="regular"
                   color={COLORS.darkBLue}
                 >
-                  Total fasts
+                  {translations.total_fast}
                 </CustomText>
                 <CustomText
                   fontSize={18}
@@ -219,7 +231,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                   fontFamily="regular"
                   color={COLORS.darkBLue}
                 >
-                  LAST 7 FASTS (AVG.)
+                  {translations.last_7_fasts}
                 </CustomText>
                 <CustomText
                   fontSize={18}
@@ -237,7 +249,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                   fontFamily="regular"
                   color={COLORS.darkBLue}
                 >
-                  Longest Fast
+                  {translations.longest_fast}
                 </CustomText>
                 <CustomText
                   fontSize={18}
@@ -253,7 +265,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                   fontFamily="regular"
                   color={COLORS.darkBLue}
                 >
-                  Longest Streak
+                  {translations.longest_streak}
                 </CustomText>
                 <CustomText
                   fontSize={18}
@@ -271,7 +283,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                   fontFamily="regular"
                   color={COLORS.darkBLue}
                 >
-                  Current Streak
+                  {translations.current_streak}
                 </CustomText>
                 <CustomText
                   fontSize={18}
@@ -287,7 +299,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                   fontFamily="regular"
                   color={COLORS.darkBLue}
                 >
-                  Weight
+                  {translations.weight}
                 </CustomText>
                 <CustomText
                   fontSize={18}
@@ -311,7 +323,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                   color={COLORS.darkBLue}
                   fontFamily="regular"
                 >
-                  Body Mass Index (BMI)
+                  {translations.body_mass}
                 </CustomText>
                 <View
                   style={[
@@ -352,7 +364,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                 fontFamily="medium"
                 color={COLORS.darkBLue}
               >
-                Connect to Apple Health
+                {translations.connect_to_apple}
               </CustomText>
               <TouchableOpacity style={styles.arrowContainer}>
                 <View>
@@ -361,7 +373,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                     fontFamily="regular"
                     color={COLORS.green}
                   >
-                    Connect Now
+                    {translations.connect_now}
                   </CustomText>
                   <View style={{ height: 1, backgroundColor: COLORS.green }} />
                 </View>
@@ -383,7 +395,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                 color={COLORS.darkBLue}
                 fontFamily="bold"
               >
-                Recent fasts
+                {translations.recent_fasts}
               </CustomText>
               {profileData.recentFasts.length > 5 && (
                 <TouchableOpacity style={styles.filterContainer}>
@@ -393,7 +405,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
                     color={COLORS.slateGrey}
                     fontFamily="regular"
                   >
-                    Filter Data
+                    {translations.filter_date}
                   </CustomText>
                 </TouchableOpacity>
               )}
@@ -412,7 +424,7 @@ const Profile: FC<ProfileScreenProps> = ({ navigation }) => {
         {profileData?.recentFasts.length > 5 && (
           <TouchableOpacity style={{ alignSelf: "center" }} onPress={() => {}}>
             <CustomText fontSize={14} fontFamily="regular" color={COLORS.green}>
-              View More
+              {translations.view_more}
             </CustomText>
             <View style={{ height: 1, backgroundColor: COLORS.green }} />
           </TouchableOpacity>

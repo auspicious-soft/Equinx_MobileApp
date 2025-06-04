@@ -5,6 +5,7 @@ import { CustomText } from "../CustomText";
 import COLORS from "../../Utilities/Colors";
 import PrimaryButton from "../PrimaryButton";
 import { Meal } from "../../Typings/apiResponse";
+import { useLanguage } from "../../Context/LanguageContext";
 
 type FastsMealModalProps = {
   isVisible: boolean;
@@ -19,6 +20,8 @@ const FastsMealModal: FC<FastsMealModalProps> = ({
   data,
   onpress,
 }) => {
+  const { translations } = useLanguage();
+
   return (
     <Modal
       visible={isVisible}
@@ -42,7 +45,7 @@ const FastsMealModal: FC<FastsMealModalProps> = ({
               fontSize={14}
               style={{ textAlign: "center" }}
             >
-              Meal Plan
+              {translations.meal_Plan}
             </CustomText>
           </View>
           <View style={styles.whiteBox}>
