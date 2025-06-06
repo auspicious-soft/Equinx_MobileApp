@@ -21,6 +21,7 @@ import COLORS from "./src/Utilities/Colors";
 import STORAGE_KEYS from "./src/Utilities/Constants";
 import { storeLocalStorageData } from "./src/Utilities/Storage";
 import { LanguageProvider } from "./src/Context/LanguageContext";
+import notifee, { EventType } from "@notifee/react-native";
 
 LogBox.ignoreAllLogs(true);
 
@@ -99,12 +100,51 @@ const App = () => {
     }
   };
 
+  // useEffect(() => {
+  //   const initNotifications = async () => {
+  //     await NotificationService.initializeNotifications();
+  //   };
+  //   initNotifications();
+  // }, []);
+
   useEffect(() => {
-    const initNotifications = async () => {
-      await NotificationService.initializeNotifications();
+    // Set up foreground event listener
+    const unsubscribeForeground = notifee.onForegroundEvent(
+      ({ type, detail }) => {
+        switch (type) {
+          case EventType.DISMISSED:
+            console.log("User dismissed notification:", detail.notification);
+            break;
+          case EventType.PRESS:
+            console.log("User pressed notification:", detail.notification);
+            // You can navigate to a specific screen based on notification data
+            // if (detail.notification.data?.screen) {
+            //   // Navigate to detail.notification.data.screen
+            // }
+            break;
+        }
+      }
+    );
+
+    // Set up background event listener
+    // This is crucial for handling interactions when the app is in the background or killed state.
+    notifee.onBackgroundEvent(async ({ type, detail }) => {
+      if (type === EventType.PRESS) {
+        console.log(
+          "User pressed background notification:",
+          detail.notification
+        );
+        // Handle background press, e.g., open app to a specific screen
+        // This often involves using linking from react-native
+      }
+    });
+
+    return () => {
+      unsubscribeForeground();
     };
-    initNotifications();
   }, []);
+
+
 
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {

@@ -39,6 +39,7 @@ import LearnFast from "../Screens/LearnFast";
 import Support from "../Screens/Support";
 import Policy from "../Screens/Policy";
 import { Keyboard } from "react-native";
+import TermsConditions from "../Screens/TermsConditions";
 
 const RootStack = createNativeStackNavigator<RootStackParams>();
 const Auth = createNativeStackNavigator<AuthStackParams>();
@@ -152,6 +153,7 @@ const Routing = () => {
         <Main.Screen name="LearnFast" component={LearnFast} />
         <Main.Screen name="Support" component={Support} />
         <Main.Screen name="Policy" component={Policy} />
+        <Main.Screen name="Terms" component={TermsConditions} />
       </Main.Navigator>
     );
   }

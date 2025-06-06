@@ -576,3 +576,21 @@ export interface Perks {
   advancedAnalysis: string;
   learningCenter: string;
 }
+
+export interface TermsResponse {
+  _id: string;
+  isActive: boolean;
+  __v: number;
+  content: Content[];
+  createdAt: string;
+  publishDate: string;
+  summary: string;
+  updatedAt: string;
+}
+
+export interface Content {
+  title: string;
+  subtitle: string;
+  pointers: string[];
+  _id: string;
+}

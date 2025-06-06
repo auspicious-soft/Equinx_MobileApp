@@ -214,7 +214,39 @@
     "dinner_intermittent": "Dinner for Intermittent Fasting",
     "start_Your": "Start Your",
     "eating": "Eating",
-    "fasting": "Fasting"
+    "fasting": "Fasting",
+    "unlocking_fasting_title": "Unlocking the Power of Intermittent Fasting",
+    "unlocking_fasting_description": "Discover how timed eating can help transform your health and sharpen your mind.",
+
+    "unlocking_fasting_main_desc": "Intermittent fasting is a simple yet powerful way to improve health and energy. It cycles between periods of eating and fasting, helping your body burn fat more efficiently while supporting overall well-being.",
+    "unlocking_fasting_section_1_title": "Choosing Your Fasting Plan",
+    "unlocking_fasting_section_1_content": "There are different fasting schedules, but the most popular one is 16:8—fast for 16 hours and eat within an 8-hour window. More advanced options like 18:6 or OMAD (One Meal a Day) offer deeper benefits but require gradual adaptation.",
+    "unlocking_fasting_section_2_title": "Staying on Track",
+    "unlocking_fasting_section_2_content": "During fasting hours, drink water, herbal tea, or black coffee to stay hydrated. Avoid sugary drinks or snacks that break your fast. When it’s time to eat, focus on nutritious meals that fuel your body properly.",
+    "unlocking_fasting_section_3_title": "Overcoming Challenges",
+    "unlocking_fasting_section_3_content": "Feeling hungry at first is normal. Your body will adjust. Start slow, stay consistent, and listen to your body. If you feel low on energy, ensure you’re getting enough electrolytes and quality sleep.",
+
+    "science_fasting_title": "Why Fasting Works: Science Behind the Habit",
+    "science_fasting_description": "Learn the biological benefits of fasting—from fat burn to hormonal balance.",
+
+    "science_fasting_main_desc": "Fasting is more than skipping meals — it triggers metabolic changes that promote fat burning, repair cells, and boost brain function.",
+    "science_fasting_section_1_title": "Understanding Autophagy",
+    "science_fasting_section_1_content": "Fasting activates autophagy — your body’s way of cleaning out damaged cells and regenerating new ones, reducing inflammation and aging.",
+    "science_fasting_section_2_title": "Balancing Hormones",
+    "science_fasting_section_2_content": "Fasting improves insulin sensitivity and growth hormone levels, helping regulate weight, energy, and mood naturally.",
+    "science_fasting_section_3_title": "Boosting Brain Health",
+    "science_fasting_section_3_content": "Ketones produced during fasting fuel the brain better than glucose, enhancing mental clarity and reducing risk of neurodegenerative diseases.",
+
+    "smart_fasting_title": "Smart Fasting for Beginners: Start Right Today",
+    "smart_fasting_description": "A guide to starting intermittent fasting without the confusion or crash.",
+
+    "smart_fasting_main_desc": "Starting intermittent fasting doesn’t have to be overwhelming. Follow simple steps to ease into it and enjoy the long-term health rewards.",
+    "smart_fasting_section_1_title": "Start with a Light Schedule",
+    "smart_fasting_section_1_content": "Begin with 12:12 fasting — 12 hours fasting and 12 eating. Gradually move to 14:10 or 16:8 as your body adapts.",
+    "smart_fasting_section_2_title": "Hydrate and Fuel Smartly",
+    "smart_fasting_section_2_content": "Stay hydrated and break your fast with fiber-rich, protein-packed meals. Avoid processed or high-sugar foods.",
+    "smart_fasting_section_3_title": "Track Your Progress",
+    "smart_fasting_section_3_content": "Keep a journal or use an app to track fasting hours, meals, and how you feel. This helps build consistency and motivation."
   },
   "tr": {
     "language": "Türkçe",
@@ -432,6 +464,38 @@
     "dinner_intermittent": "Aralıklı Oruç için Akşam Yemeği",
     "start_Your": "Başla",
     "eating": "Yeme",
-    "fasting": "Oruç"
+    "fasting": "Oruç",
+    "unlocking_fasting_title": "Aralıklı Orucun Gücünü Keşfet",
+    "unlocking_fasting_description": "Zamanlı beslenmenin sağlığınızı nasıl dönüştürebileceğini ve zihninizi nasıl keskinleştirebileceğini keşfedin.",
+    "unlocking_fasting_heading": "Aralıklı Orucun Gücünü Keşfet",
+    "unlocking_fasting_main_desc": "Aralıklı oruç, sağlığı ve enerjiyi artırmanın basit ama etkili bir yoludur. Yemek yeme ve oruç tutma dönemleri arasında döngü oluşturarak, vücudun yağ yakımını daha verimli hale getirir ve genel iyiliği destekler.",
+    "unlocking_fasting_section_1_title": "Oruç Planını Seçmek",
+    "unlocking_fasting_section_1_content": "Farklı oruç planları vardır ancak en yaygını 16:8 modelidir — 16 saat oruç, 8 saat yemek yeme. Daha gelişmiş seçenekler olan 18:6 veya OMAD (Günde Tek Öğün) daha derin faydalar sağlar fakat yavaşça uyum gerektirir.",
+    "unlocking_fasting_section_2_title": "Süreklilik Sağlamak",
+    "unlocking_fasting_section_2_content": "Oruç süresince su, bitki çayı veya şekersiz kahve içerek susuz kalmamaya dikkat edin. Şekerli içeceklerden ve atıştırmalıklardan kaçının. Yemek vaktinde besleyici ve doyurucu gıdalar tüketin.",
+    "unlocking_fasting_section_3_title": "Zorlukların Üstesinden Gelmek",
+    "unlocking_fasting_section_3_content": "Başlangıçta aç hissetmek normaldir. Vücudunuz zamanla alışacaktır. Yavaş başlayın, istikrarlı olun ve vücudunuzu dinleyin. Enerjiniz düşükse, yeterli elektrolit ve kaliteli uyku aldığınızdan emin olun.",
+
+    "science_fasting_title": "Neden Oruç? Alışkanlığın Bilimsel Temelleri",
+    "science_fasting_description": "Yağ yakımından hormon dengesine kadar orucun biyolojik faydalarını öğrenin.",
+    "science_fasting_heading": "Neden Oruç? Alışkanlığın Bilimsel Temelleri",
+    "science_fasting_main_desc": "Oruç sadece öğün atlamak değildir — vücutta yağ yakımını başlatan, hücre yenilemesini destekleyen ve beyin işlevini artıran metabolik değişiklikleri tetikler.",
+    "science_fasting_section_1_title": "Otofaji Nedir?",
+    "science_fasting_section_1_content": "Oruç, vücudun hasarlı hücreleri temizleyip yenilerini oluşturduğu otofaji sürecini başlatır. Bu süreç iltihabı azaltır ve yaşlanmayı yavaşlatır.",
+    "science_fasting_section_2_title": "Hormon Dengesini Sağlamak",
+    "science_fasting_section_2_content": "Oruç, insülin hassasiyetini artırır ve büyüme hormonunu dengeler. Bu da doğal olarak kilo kontrolünü, enerjiyi ve ruh halini düzenler.",
+    "science_fasting_section_3_title": "Beyin Sağlığını Desteklemek",
+    "science_fasting_section_3_content": "Oruç sırasında üretilen ketonlar, beyin için glikozdan daha verimli bir yakıttır. Bu durum zihinsel berraklığı artırır ve nörolojik hastalıklara karşı koruma sağlar.",
+
+    "smart_fasting_title": "Yeni Başlayanlar İçin Akıllı Oruç",
+    "smart_fasting_description": "Karmaşa veya düşüş yaşamadan aralıklı oruca başlamanın rehberi.",
+    "smart_fasting_heading": "Yeni Başlayanlar İçin Akıllı Oruç",
+    "smart_fasting_main_desc": "Aralıklı oruca başlamak göz korkutucu olmak zorunda değil. Basit adımları takip ederek kolayca alışabilir ve uzun vadeli sağlık faydalarını deneyimleyebilirsiniz.",
+    "smart_fasting_section_1_title": "Hafif Bir Programla Başlayın",
+    "smart_fasting_section_1_content": "12:12 oruçla başlayın — 12 saat oruç, 12 saat yemek. Vücudunuz alıştıkça 14:10 veya 16:8 gibi modellere geçiş yapabilirsiniz.",
+    "smart_fasting_section_2_title": "Sıvı Tüketin ve Akıllıca Beslenin",
+    "smart_fasting_section_2_content": "Bol su için ve orucunuzu lif ve protein açısından zengin gıdalarla açın. İşlenmiş ve şekerli yiyeceklerden kaçının.",
+    "smart_fasting_section_3_title": "İlerlemenizi Takip Edin",
+    "smart_fasting_section_3_content": "Bir günlük tutun ya da uygulama kullanarak oruç saatlerinizi, öğünlerinizi ve nasıl hissettiğinizi takip edin. Bu, alışkanlık kazanmanıza ve motivasyonunuzu artırmanıza yardımcı olur."
   }
 }

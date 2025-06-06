@@ -23,7 +23,7 @@ import ENDPOINTS from "../../APIService/endPoints";
 import { getLocalStorageData } from "../../Utilities/Storage";
 import STORAGE_KEYS from "../../Utilities/Constants";
 
-const initialSeconds = 5;
+const initialSeconds = 59;
 
 const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
   const { isFrom, email } = route.params;
@@ -33,11 +33,12 @@ const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
   const inputs = useRef<(TextInput | null)[]>([]);
   const [fcmToken, setFcmToken] = useState(null);
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   // const validInputs = () => {
   //   let valid = true;
   //   let newErrors = "";
-  //   if (!otp.some((item) => item.trim() === "")) {
+  //   if (!otp.some) {
   //     valid = false;
   //     newErrors = "Please enter a valid OTP.";
   //     Toast.show({
@@ -78,6 +79,8 @@ const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
             email: email,
           };
 
+    setIsLoading(true);
+
     try {
       const response = await postData(
         isFrom === "register" ? ENDPOINTS.otp : ENDPOINTS.forgotPasswordOtp,
@@ -85,10 +88,10 @@ const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
       );
       console.log(response.data);
       if (response.data.success) {
-        Toast.show({
-          type: "success",
-          text1: "Otp verified successfully",
-        });
+        // Toast.show({
+        //   type: "success",
+        //   text1: "Otp verified successfully",
+        // });
 
         if (isFrom === "register") {
           setModalVisible(true);
@@ -101,10 +104,13 @@ const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
     } catch (error: any) {
       console.log(error, "API ERROR");
       setOtp(["", "", "", "", "", ""]);
+      inputs.current[0]?.focus();
       Toast.show({
         type: "error",
         text1: "Invalid otp",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -210,7 +216,6 @@ const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
             style={{
               gap: verticalScale(10),
               height: hp(100),
-              paddingBottom: verticalScale(20),
               paddingTop: verticalScale(40),
               paddingHorizontal: horizontalScale(20),
             }}
@@ -255,7 +260,11 @@ const otpScreen: FC<OTPScreenProps> = ({ navigation, route }) => {
               <View
                 style={{ marginTop: verticalScale(10), gap: verticalScale(10) }}
               >
-                <PrimaryButton title="Verify" onPress={handleNavigation} />
+                <PrimaryButton
+                  title="Verify"
+                  onPress={handleNavigation}
+                  isLoading={isLoading}
+                />
 
                 {timeInSeconds !== 0 ? (
                   <View style={styles.footerContainer}>

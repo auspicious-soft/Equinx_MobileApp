@@ -39,21 +39,20 @@ import { setMyPlan } from "../../Redux/slices/MyPlan";
 import { useLanguage } from "../../Context/LanguageContext";
 
 const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
-  const { nutrition } = useAppSelector((state) => state.nutrition);
+  const dispatch = useAppDispatch();
   const { translations } = useLanguage();
+  const { myPlan } = useAppSelector((state) => state.myPlan);
+  const { nutrition } = useAppSelector((state) => state.nutrition);
+  const { settingData } = useAppSelector((state) => state.settingData);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isVisibleModal, setIsVisibleModal] = useState(false);
   const [selectedMeal, setSelectedMeal] = useState<string | null>(null);
-
   const [activeDay, setActiveDay] = useState<string | null>("1");
   const [activeData, setActiveData] = useState<MyPlanData | null>(null);
-  const [isVisibleModal, setIsVisibleModal] = useState(false);
-  const dispatch = useAppDispatch();
-  const { myPlan } = useAppSelector((state) => state.myPlan);
-  const { settingData } = useAppSelector((state) => state.settingData);
   const [selectedMealData, setSelectedMealData] = useState<Meal | null>(null);
   const closeModal = () => {
     setIsVisibleModal(false);
   };
-  const [isLoading, setIsLoading] = useState(false);
 
   const mealData = [
     {
@@ -73,6 +72,90 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
     },
   ];
 
+  const fastingTips = [
+    {
+      id: "1",
+      date: "18 March",
+      title: translations.unlocking_fasting_title,
+      shortDescription: translations.unlocking_fasting_description,
+      image: IMAGES.benefitImg, // Replace with your local asset path
+      details: {
+        heading: "Unlocking the Power of Intermittent Fasting",
+        mainImage: IMAGES.captureMealImg, // Replace with your image
+        description: translations.unlocking_fasting_main_desc,
+        sections: [
+          {
+            title: translations.unlocking_fasting_section_1_title,
+            content: translations.unlocking_fasting_section_1_content,
+            image: IMAGES.macroMealImg,
+          },
+          {
+            title: translations.unlocking_fasting_section_2_title,
+            content: translations.unlocking_fasting_section_2_content,
+          },
+          {
+            title: translations.unlocking_fasting_section_3_title,
+            content: translations.unlocking_fasting_section_3_content,
+          },
+        ],
+      },
+    },
+    {
+      id: "2",
+      date: "23 April",
+      title: translations.science_fasting_title,
+      shortDescription: translations.science_fasting_description,
+      image: IMAGES.fastingImg,
+      details: {
+        heading: "Why Fasting Works: Science Behind the Habit",
+        mainImage: IMAGES.metabolisomImg,
+        description: translations.science_fasting_main_desc,
+        sections: [
+          {
+            title: translations.science_fasting_section_1_title,
+            content: translations.science_fasting_section_1_content,
+            image: IMAGES.brainImg, // Replace with your image
+          },
+          {
+            title: translations.science_fasting_section_2_title,
+            content: translations.science_fasting_section_2_content,
+          },
+          {
+            title: translations.science_fasting_section_3_title,
+            content: translations.science_fasting_section_3_content,
+          },
+        ],
+      },
+    },
+    {
+      id: "3",
+      date: "30 April",
+      title: translations.smart_fasting_title,
+      shortDescription: translations.smart_fasting_description,
+      image: IMAGES.exploringImg,
+      details: {
+        heading: "Smart Fasting for Beginners: Start Right Today",
+        mainImage: IMAGES.watchImg,
+        description: translations.smart_fasting_main_desc,
+        sections: [
+          {
+            title: translations.smart_fasting_section_1_title,
+            content: translations.smart_fasting_section_1_content,
+            image: IMAGES.hydrateImg,
+          },
+          {
+            title: translations.smart_fasting_section_2_title,
+            content: translations.smart_fasting_section_2_content,
+          },
+          {
+            title: translations.smart_fasting_section_3_title,
+            content: translations.smart_fasting_section_3_content,
+          },
+        ],
+      },
+    },
+  ];
+
   const getMyPlan = async () => {
     setIsLoading(true);
     try {
@@ -81,9 +164,9 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
       if (response.data.success) {
         dispatch(setMyPlan(response.data.data));
         if (response.data.data.hasActivePlan) {
-          setActiveDay(response.data.data.plan[2].planId._id);
+          setActiveDay(response.data.data.plan[0].planId._id);
         }
-        setActiveData(response.data.data.plan[2]);
+        setActiveData(response.data.data.plan[0]);
       }
     } catch (error: any) {
       Toast.show({
@@ -200,17 +283,16 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
     );
   };
 
-  const renderTipsData = ({
-    item,
-    index,
-  }: {
-    item: EssentialTip;
-    index: any;
-  }) => {
+  const renderTipsData = ({ item }: { item: any }) => {
     const IMG = [IMAGES.benefitImg, IMAGES.fastingImg, IMAGES.exploringImg];
     return (
-      <View style={styles.tipsWrapper}>
-        <Image source={IMG[index]} style={styles.tipIMG} />
+      <TouchableOpacity
+        onPress={() => {
+          navigation.navigate("LearnFast", { data: item.details });
+        }}
+        style={styles.tipsWrapper}
+      >
+        <Image source={item.image} style={styles.tipIMG} />
         <View
           style={{
             flex: 1,
@@ -222,11 +304,12 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
             color={COLORS.lightGrey}
             style={{ marginBottom: verticalScale(8) }}
           >
-            {new Date(item.publishDate).toLocaleDateString("en-GB", {
+            {/* {new Date(item.date).toLocaleDateString("en-GB", {
               day: "numeric",
               month: "long",
               timeZone: "UTC",
-            })}
+            })} */}
+            {item.date}
           </CustomText>
 
           <CustomText
@@ -238,10 +321,10 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
             {item.title}
           </CustomText>
           <CustomText fontSize={12} color={COLORS.lightGrey}>
-            {item.description}
+            {item.shortDescription}
           </CustomText>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 
@@ -431,8 +514,8 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
             </CustomText>
             <FlatList
               renderItem={renderTipsData}
-              data={myPlan?.essentialTips}
-              keyExtractor={({ _id }) => _id.toString()}
+              data={fastingTips}
+              keyExtractor={({ id }) => id.toString()}
               showsHorizontalScrollIndicator={false}
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{

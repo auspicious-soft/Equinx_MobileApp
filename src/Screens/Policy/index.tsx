@@ -31,7 +31,8 @@ const Policy: FC<PolicyScreenProps> = ({ navigation }) => {
     setIsLoading(true);
     try {
       const response = await fetchData<PrivacyPolicyResponse>(
-        ENDPOINTS.privacyPolicy
+        ENDPOINTS.privacyPolicy,
+        { type: "privacy" }
       );
       console.log(response);
       if (response) {

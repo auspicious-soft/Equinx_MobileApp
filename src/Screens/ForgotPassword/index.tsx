@@ -17,6 +17,7 @@ import Toast from "react-native-toast-message";
 
 const ForgotPassword: FC<ForgotPasswordScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState("");
+  const [isLoading, setIsLaoding] = useState(false);
   const [error, setError] = useState({
     email: "",
   });
@@ -56,10 +57,11 @@ const ForgotPassword: FC<ForgotPasswordScreenProps> = ({ navigation }) => {
       email: email,
     };
 
-    const response = await postData(ENDPOINTS.forgotPassword, data);
-    console.log(response.data);
+    setIsLaoding(true);
 
     try {
+      const response = await postData(ENDPOINTS.forgotPassword, data);
+      console.log(response.data);
       if (response.data.success) {
         Toast.show({
           type: "success",
@@ -75,6 +77,8 @@ const ForgotPassword: FC<ForgotPasswordScreenProps> = ({ navigation }) => {
         type: "error",
         text1: error.message || "Something went wrong",
       });
+    } finally {
+      setIsLaoding(false);
     }
   };
   return (
@@ -124,7 +128,11 @@ const ForgotPassword: FC<ForgotPasswordScreenProps> = ({ navigation }) => {
                   paddingVertical: verticalScale(15),
                 }}
               />
-              <PrimaryButton onPress={handleForgotPassword} title="Confirm" />
+              <PrimaryButton
+                onPress={handleForgotPassword}
+                title="Confirm"
+                isLoading={isLoading}
+              />
               <View style={styles.rememberPasswordContainer}>
                 <CustomText fontSize={12} color={COLORS.oldGrey}>
                   Remember Password?

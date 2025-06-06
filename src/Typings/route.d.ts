@@ -65,9 +65,12 @@ export type MainStackParams = {
   UserMemberShip: undefined;
   LanguageScreen: undefined;
   Sync: undefined;
-  LearnFast: undefined;
+  LearnFast?: {
+    data?: any;
+  };
   Support: undefined;
   Policy: undefined;
+  Terms: undefined;
 };
 
 export type BottomTabParams = {
@@ -206,4 +209,8 @@ export type SupportScreenProps = NativeStackScreenProps<
 export type PolicyScreenProps = NativeStackScreenProps<
   BottomTabParams & MainStackParams,
   "Policy"
+>;
+export type TermsCondtionScreenProps = NativeStackScreenProps<
+  BottomTabParams & MainStackParams,
+  "Terms"
 >;

@@ -90,7 +90,8 @@ const Support: FC<SupportScreenProps> = ({ navigation }) => {
     setIsLoading(true);
     try {
       const response = await fetchData<SupportResponse>(
-        ENDPOINTS.contactSupport
+        ENDPOINTS.privacyPolicy,
+        { type: "contact" }
       );
       console.log(response);
       if (response.data.success) {

@@ -114,9 +114,9 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
     if (remaining > 800) {
       return {
         message: translations.need_more_fuel,
-        backgroundColor: "#FFF8E1",
-        borderColor: "#FBC02D",
-        textColor: "#FBC02D",
+        backgroundColor: "#EFFFF3",
+        borderColor: COLORS.golden,
+        textColor: COLORS.golden,
       };
     } else if (remaining > 0) {
       return {
@@ -347,7 +347,11 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                 },
               ]}
             >
-              <CustomText fontFamily="medium" fontSize={14} color={textColor}>
+              <CustomText
+                fontFamily="medium"
+                fontSize={14}
+                color={COLORS.darkBLue}
+              >
                 {message}
               </CustomText>
               <View

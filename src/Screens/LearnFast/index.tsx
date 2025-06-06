@@ -22,7 +22,8 @@ import { CustomText } from "../../Components/CustomText";
 import IMAGES from "../../Assets/Images";
 import { useLanguage } from "../../Context/LanguageContext";
 
-const LearnFast: FC<LearnFastScreenProps> = ({ navigation }) => {
+const LearnFast: FC<LearnFastScreenProps> = ({ navigation, route }) => {
+  const { data } = route.params;
   const { translations } = useLanguage();
   return (
     <ScrollView
@@ -45,55 +46,142 @@ const LearnFast: FC<LearnFastScreenProps> = ({ navigation }) => {
           </CustomText>
         </View>
 
-        <View style={{ gap: verticalScale(5) }}>
-          <Image source={IMAGES.captureMealImg} style={styles.imgStyle} />
-          <CustomText
-            fontSize={14}
-            fontFamily="regular"
-            color={COLORS.darkBLue}
-          >
-            {translations.Fast_para}
-          </CustomText>
-        </View>
-        <View style={{ gap: verticalScale(8) }}>
-          <View style={{ gap: verticalScale(5) }}>
-            <CustomText fontSize={14} fontFamily="bold" color={COLORS.darkBLue}>
-              {translations.choose_your_fasting}
-            </CustomText>
-            <CustomText
-              fontSize={14}
-              fontFamily="regular"
-              color={COLORS.darkBLue}
-            >
-              {translations.fastingPlan_para}
-            </CustomText>
-          </View>
-          <Image source={IMAGES.macroMealImg} style={styles.imgStyle} />
-        </View>
-        <View style={{ gap: verticalScale(4) }}>
-          <CustomText fontSize={14} color={COLORS.darkBLue} fontFamily="bold">
-            {translations.staying_on_track}
-          </CustomText>
-          <CustomText
-            fontSize={14}
-            color={COLORS.darkBLue}
-            fontFamily="regular"
-          >
-            {translations.staying_on_track_para}
-          </CustomText>
-        </View>
-        <View style={{ gap: verticalScale(4) }}>
-          <CustomText fontSize={14} color={COLORS.darkBLue} fontFamily="bold">
-            {translations.overcoming_challenges}
-          </CustomText>
-          <CustomText
-            fontSize={14}
-            color={COLORS.darkBLue}
-            fontFamily="regular"
-          >
-            {translations.ovrecoming_challenges_para}
-          </CustomText>
-        </View>
+        {data ? (
+          <>
+            <View style={{ gap: verticalScale(5) }}>
+              <Image source={data.mainImage} style={styles.imgStyle} />
+              <CustomText
+                fontSize={14}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {/* {translations.Fast_para} */}
+                {data.description}
+              </CustomText>
+            </View>
+            <View style={{ gap: verticalScale(8) }}>
+              <View style={{ gap: verticalScale(5) }}>
+                <CustomText
+                  fontSize={14}
+                  fontFamily="bold"
+                  color={COLORS.darkBLue}
+                >
+                  {/* {translations.choose_your_fasting} */}
+                  {data.sections[0].title}
+                </CustomText>
+                <CustomText
+                  fontSize={14}
+                  fontFamily="regular"
+                  color={COLORS.darkBLue}
+                >
+                  {/* {translations.fastingPlan_para} */}
+                  {data.sections[0].content}
+                </CustomText>
+              </View>
+              <Image source={data.sections[0].image} style={styles.imgStyle} />
+            </View>
+            <View style={{ gap: verticalScale(4) }}>
+              <CustomText
+                fontSize={14}
+                color={COLORS.darkBLue}
+                fontFamily="bold"
+              >
+                {/* {translations.staying_on_track} */}
+                {data.sections[1].title}
+              </CustomText>
+              <CustomText
+                fontSize={14}
+                color={COLORS.darkBLue}
+                fontFamily="regular"
+              >
+                {/* {translations.staying_on_track_para} */}
+                {data.sections[1].content}
+              </CustomText>
+            </View>
+            <View style={{ gap: verticalScale(4) }}>
+              <CustomText
+                fontSize={14}
+                color={COLORS.darkBLue}
+                fontFamily="bold"
+              >
+                {/* {translations.overcoming_challenges} */}
+                {data.sections[2].title}
+              </CustomText>
+              <CustomText
+                fontSize={14}
+                color={COLORS.darkBLue}
+                fontFamily="regular"
+              >
+                {/* {translations.ovrecoming_challenges_para} */}
+                {data.sections[2].content}
+              </CustomText>
+            </View>
+          </>
+        ) : (
+          <>
+            <View style={{ gap: verticalScale(5) }}>
+              <Image source={IMAGES.captureMealImg} style={styles.imgStyle} />
+              <CustomText
+                fontSize={14}
+                fontFamily="regular"
+                color={COLORS.darkBLue}
+              >
+                {translations.Fast_para}
+              </CustomText>
+            </View>
+            <View style={{ gap: verticalScale(8) }}>
+              <View style={{ gap: verticalScale(5) }}>
+                <CustomText
+                  fontSize={14}
+                  fontFamily="bold"
+                  color={COLORS.darkBLue}
+                >
+                  {translations.choose_your_fasting}
+                </CustomText>
+                <CustomText
+                  fontSize={14}
+                  fontFamily="regular"
+                  color={COLORS.darkBLue}
+                >
+                  {translations.fastingPlan_para}
+                </CustomText>
+              </View>
+              <Image source={IMAGES.macroMealImg} style={styles.imgStyle} />
+            </View>
+            <View style={{ gap: verticalScale(4) }}>
+              <CustomText
+                fontSize={14}
+                color={COLORS.darkBLue}
+                fontFamily="bold"
+              >
+                {translations.staying_on_track}
+              </CustomText>
+              <CustomText
+                fontSize={14}
+                color={COLORS.darkBLue}
+                fontFamily="regular"
+              >
+                {translations.staying_on_track_para}
+              </CustomText>
+            </View>
+            <View style={{ gap: verticalScale(4) }}>
+              <CustomText
+                fontSize={14}
+                color={COLORS.darkBLue}
+                fontFamily="bold"
+              >
+                {translations.overcoming_challenges}
+              </CustomText>
+              <CustomText
+                fontSize={14}
+                color={COLORS.darkBLue}
+                fontFamily="regular"
+              >
+                {translations.ovrecoming_challenges_para}
+              </CustomText>
+            </View>
+          </>
+        )}
       </SafeAreaView>
     </ScrollView>
   );

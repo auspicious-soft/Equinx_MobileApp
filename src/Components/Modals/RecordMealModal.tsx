@@ -69,10 +69,41 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
   const [activeTab, setActiveTab] = useState<"recordMeal" | "catpureMeal">(
     initialTab
   );
-  const [carbs, setCarbs] = useState(Mealcarbs || "");
-  const [protine, setProtine] = useState(Mealprotine || "");
-  const [fat, setFat] = useState(Mealfat || "");
+  const [carbs, setCarbs] = useState("");
+  const [protine, setProtine] = useState("");
+  const [fat, setFat] = useState("");
   const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [error, setError] = useState({
+    carbs: "",
+    protine: "",
+    fat: "",
+  });
+
+  const handleValidInputs = () => {
+    let isValid = true;
+    const errors = {
+      carbs: "",
+      protine: "",
+      fat: "",
+    };
+
+    if (!carbs) {
+      errors.carbs = "Please record a carbs";
+      isValid = false;
+    }
+    if (!protine) {
+      errors.protine = "Please record a protine";
+      isValid = false;
+    }
+    if (!fat) {
+      errors.fat = "Please record a fat";
+      isValid = false;
+    }
+    setError(errors);
+    return isValid;
+  };
+
+  console.log(carbs);
 
   const [isType, setIsType] = useState(false);
 
@@ -107,6 +138,9 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
   };
 
   const handleRecordMeal = async () => {
+    if (!handleValidInputs()) {
+      return;
+    }
     const data = {
       mealId: mealId,
       finishedMeal: handleMealType(),
@@ -132,10 +166,10 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
         // handleEmptyInput();
       }
     } catch (error: any) {
-      Toast.show({
-        type: "error",
-        text1: error.message || "Something went wrong",
-      });
+      // Toast.show({
+      //   type: "error",
+      //   text1: error.message || "Something went wrong",
+      // });
     } finally {
       setIsButtonLoading(false);
     }
@@ -354,13 +388,13 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
     }
   };
 
-  useEffect(() => {
-    if (Mealcarbs && Mealfat && Mealprotine) {
-      setCarbs(Mealcarbs);
-      setProtine(Mealprotine);
-      setFat(Mealfat);
-    }
-  }, [Mealcarbs, Mealprotine, Mealfat]);
+  // useEffect(() => {
+  //   if (Mealcarbs && Mealfat && Mealprotine) {
+  //     setCarbs(Mealcarbs);
+  //     setProtine(Mealprotine);
+  //     setFat(Mealfat);
+  //   }
+  // }, [Mealcarbs, Mealprotine, Mealfat]);
 
   useEffect(() => {
     if (isVisible) {
@@ -525,13 +559,25 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                     >
                       {translations.gms_of_carbs}
                     </CustomText>
+
                     <CustomInput
                       onChangeText={setCarbs}
                       value={carbs}
+                      placeholder="record your carbs "
                       inputStyle={{
                         paddingVertical: verticalScale(10),
                       }}
                     />
+
+                    {error.carbs && (
+                      <CustomText
+                        fontSize={10}
+                        fontFamily="regular"
+                        color="red"
+                      >
+                        {error.carbs}
+                      </CustomText>
+                    )}
                   </View>
                   <View
                     style={{
@@ -548,10 +594,21 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                     <CustomInput
                       onChangeText={setProtine}
                       value={protine}
+                      placeholder="record your protine "
                       inputStyle={{
                         paddingVertical: verticalScale(10),
                       }}
                     />
+
+                    {error.protine && (
+                      <CustomText
+                        fontSize={10}
+                        fontFamily="regular"
+                        color="red"
+                      >
+                        {error.protine}
+                      </CustomText>
+                    )}
                   </View>
                   <View
                     style={{
@@ -568,10 +625,21 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                     <CustomInput
                       onChangeText={setFat}
                       value={fat}
+                      placeholder="record your fat "
                       inputStyle={{
                         paddingVertical: verticalScale(10),
                       }}
                     />
+
+                    {error.fat && (
+                      <CustomText
+                        fontSize={10}
+                        fontFamily="regular"
+                        color="red"
+                      >
+                        {error.fat}
+                      </CustomText>
+                    )}
                   </View>
 
                   <PrimaryButton

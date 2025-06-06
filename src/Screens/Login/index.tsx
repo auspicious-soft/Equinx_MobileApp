@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import { Alert, Image, StyleSheet, TouchableOpacity, View } from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ICONS from "../../Assets/Icons";
@@ -22,8 +22,16 @@ import {
 } from "../../Utilities/Storage";
 import STORAGE_KEYS from "../../Utilities/Constants";
 import { loginAPiResponse } from "../../Typings/apiResponse";
+import {
+  GoogleSignin,
+  statusCodes,
+} from "@react-native-google-signin/google-signin";
+import auth, { onAuthStateChanged } from "@react-native-firebase/auth";
 
 const Login: FC<LoginScreenProps> = ({ navigation }) => {
+  const [initializing, setInitializing] = useState(true); // For Firebase Auth status
+  const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState<string | null>("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [activeCheckBox, setActiveCheckBox] = useState<
@@ -69,6 +77,40 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
     );
   };
 
+  const signIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices({
+        showPlayServicesUpdateDialog: true,
+      });
+      const userInfo = await GoogleSignin.signIn();
+      console.log("Google Sign-In Success:", userInfo);
+    } catch (error: any) {
+      console.error("Google Sign-In Error:", error);
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        Alert.alert("Sign In Cancelled", "User cancelled the sign in flow.");
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        Alert.alert(
+          "Sign In In Progress",
+          "Operation (e.g. sign in) is already in progress."
+        );
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        Alert.alert(
+          "Play Services Not Available",
+          "Google Play Services not available or outdated."
+        );
+      } else {
+        Alert.alert("Sign In Error", error.message);
+      }
+    }
+  };
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId:
+        "203391657684-114uktiehnnml86as45u99jmhsmov837.apps.googleusercontent.com",
+    });
+  }, []);
+
   const getFcmToken = async () => {
     const getToken = await getLocalStorageData(STORAGE_KEYS.fcmToken);
     console.log(getToken);
@@ -91,6 +133,8 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
       authType: "Email",
       fcmToken: fcmToken,
     };
+
+    setIsLoading(true);
 
     try {
       const response = await postData<loginAPiResponse>(ENDPOINTS.signin, data);
@@ -140,6 +184,8 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
         type: "error",
         text1: error.message || "Something went wrong",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -241,7 +287,12 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
               </TouchableOpacity>
             </View>
 
-            <PrimaryButton title="Log in" onPress={handleLogin} textSize={20} />
+            <PrimaryButton
+              title="Log in"
+              onPress={handleLogin}
+              textSize={20}
+              isLoading={isLoading}
+            />
 
             <View style={styles.footerTextContainer}>
               <View style={styles.dontAccountContainer}>
@@ -262,18 +313,21 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
             </View>
 
             <View style={styles.footerContainer}>
-              <TouchableOpacity style={styles.googleBtnContainer}>
+              <TouchableOpacity
+                style={styles.googleBtnContainer}
+                onPress={signIn}
+              >
                 <CustomIcon Icon={ICONS.googleIcon} height={17} width={17} />
                 <CustomText fontSize={12} color={COLORS.oldGrey}>
                   Google
                 </CustomText>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.googleBtnContainer}>
+              {/* <TouchableOpacity style={styles.googleBtnContainer}>
                 <CustomIcon Icon={ICONS.faceBookIcon} height={17} width={17} />
                 <CustomText fontSize={12} color={COLORS.oldGrey}>
                   Facebook
                 </CustomText>
-              </TouchableOpacity>
+              </TouchableOpacity> */}
             </View>
           </View>
         </SafeAreaView>

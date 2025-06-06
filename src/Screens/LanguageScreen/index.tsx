@@ -44,7 +44,7 @@ const languages = [
 ];
 
 const LanguageScreen: FC<LanguageScreenProps> = ({ navigation }) => {
-  const { language, setAppLanguage } = useLanguage();
+  const { language, setAppLanguage, translations } = useLanguage();
   const [selectedLanguage, setSelectedLanguage] = useState<string | null>(
     language
   );
@@ -73,7 +73,7 @@ const LanguageScreen: FC<LanguageScreenProps> = ({ navigation }) => {
             <CustomIcon Icon={ICONS.BackArrow} />
           </TouchableOpacity>
           <CustomText fontSize={22} fontFamily="bold" color={COLORS.darkBLue}>
-            Language
+            {translations.language}
           </CustomText>
         </View>
         <View>

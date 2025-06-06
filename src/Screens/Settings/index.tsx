@@ -358,7 +358,9 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
             <TouchableOpacity
               style={styles.profileContainer}
               onPress={() => {
-                navigation.navigate("LearnFast");
+                navigation.navigate("LearnFast", {
+                  data: null,
+                });
               }}
             >
               <View style={styles.iconBg}>
@@ -402,7 +404,12 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                 {translations.rate_us}
               </CustomText>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.profileContainer}>
+            <TouchableOpacity
+              style={styles.profileContainer}
+              onPress={() => {
+                navigation.navigate("Terms");
+              }}
+            >
               <View style={styles.iconBg}>
                 <CustomIcon Icon={ICONS.policyIcon} height={16} width={16} />
               </View>

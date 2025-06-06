@@ -8,7 +8,14 @@ import {
   Animated,
   Easing,
 } from "react-native";
-import React, { FC, useState, useRef, Dispatch, SetStateAction } from "react";
+import React, {
+  FC,
+  useState,
+  useRef,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+} from "react";
 import {
   horizontalScale,
   hp,
@@ -98,6 +105,40 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
   const [containerSize, setContainerSize] = useState<boolean>(false);
   const [dailyGoal, setDailyGoal] = useState<boolean>(false);
   const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [error, setError] = useState({
+    containerSize: "",
+    dailyGoal: "",
+    containerType: "",
+  });
+
+  const validateForm = () => {
+    let isValid = true;
+    const errors = {
+      containerSize: "",
+      dailyGoal: "",
+      containerType: "",
+    };
+
+    if (selectedConatinerValue === 0) {
+      errors.containerSize = "Please select a container size";
+      isValid = false;
+    }
+
+    if (selectedDailyGoal === 0) {
+      errors.dailyGoal = "Please select a daily goal";
+      isValid = false;
+    }
+
+    if (selectedContainer === "") {
+      errors.containerType = "Please select a container type";
+      isValid = false;
+    }
+
+    setError(errors);
+    return isValid;
+  };
+
+  console.log(selectedDailyGoal);
 
   const toggleSwitch = () => {
     const toValue = isToggled ? 0 : 1;
@@ -118,6 +159,9 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
   });
 
   const handleSave = async () => {
+    if (!validateForm()) {
+      return;
+    }
     const data = {
       containerType: selectedContainer,
       containerSize: selectedConatinerValue,
@@ -136,19 +180,21 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
           text1: response.data.message,
         });
         closeModal();
-        setContainerSize(false);
-        setDailyGoal(false);
+        // setContainerSize(false);
+        // setDailyGoal(false);
         getHomeData();
       }
     } catch (error: any) {
-      Toast.show({
-        type: "error",
-        text1: error.message || "Something went wrong",
-      });
     } finally {
       setIsButtonLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isVisible) {
+      toggleAnim.setValue(isToggled ? 1 : 0);
+    }
+  }, [isVisible]);
 
   return (
     <Modal
@@ -191,6 +237,21 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
             }}
           >
             <View style={{ gap: verticalScale(10) }}>
+              {error.containerSize && (
+                <CustomText fontSize={10} fontFamily="regular" color="red">
+                  {error.containerSize}
+                </CustomText>
+              )}
+              {error.dailyGoal && (
+                <CustomText fontSize={10} fontFamily="regular" color="red">
+                  {error.dailyGoal}
+                </CustomText>
+              )}
+              {error.containerSize && (
+                <CustomText fontSize={10} fontFamily="regular" color="red">
+                  {error.containerSize}
+                </CustomText>
+              )}
               <CustomText
                 fontSize={12}
                 fontFamily="regular"

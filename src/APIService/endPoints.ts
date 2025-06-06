@@ -28,8 +28,7 @@ const ENDPOINTS = {
   recordMeal: `api/record-meal`,
   nutrition: `api/get-nutrition`,
   getImageData: "api/get-nutrition-by-image",
-  contactSupport: `api/get-privacy-and-contact-support?type=contact`,
-  privacyPolicy: `api/get-privacy-and-contact-support?type=privacy`,
+  privacyPolicy: `api/get-privacy-and-contact-support`,
   rating: "api/rate-app",
   pricePlanInfo: "api/get-price-plan-info",
 };

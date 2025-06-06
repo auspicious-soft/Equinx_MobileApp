@@ -26,6 +26,7 @@ const ChangePassword: FC<ChangePasswordScreenProps> = ({ navigation }) => {
     newPassword: "",
     confirmPassword: "",
   });
+
   const validInputs = () => {
     let valid = true;
     let newErrors = {

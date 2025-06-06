@@ -231,7 +231,7 @@ const FastDetail: FC<FastDetailsScreenProps> = ({ navigation, route }) => {
                 fontFamily="medium"
                 color={COLORS.darkBLue}
               >
-                No meals available for this day
+                Buy a plan to see your recorded Meals
               </CustomText>
             </View>
           )}

@@ -33,6 +33,10 @@ const IMAGES = {
   achievementImg: require("./achiementImg.png"),
   blurImg: require("./blurImg.png"),
   userPlaceholder: require("./userPlaceHolder.png"),
+  hydrateImg: require("./hydrateImg.png"),
+  brainImg: require("./brainImg.png"),
+  metabolisomImg: require("./metabolisomImg.png"),
+  watchImg: require("./watchimg.png"),
 };
 
 export default IMAGES;

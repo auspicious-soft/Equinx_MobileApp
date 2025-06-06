@@ -19,19 +19,19 @@ const CreatePassword: FC<CreatePasswordScreenProps> = ({
   navigation,
   route,
 }) => {
-  const [isModalVisible, setModalVisible] = React.useState(false);
   const { otp } = route.params;
-
-  const closeModal = () => {
-    setModalVisible(false);
-  };
-
+  const [isModalVisible, setModalVisible] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState({
     newPassword: "",
     confirmPassword: "",
   });
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
 
   const validInputs = () => {
     let valid = true;
@@ -70,6 +70,8 @@ const CreatePassword: FC<CreatePasswordScreenProps> = ({
       otp: otp,
     };
 
+    setIsLoading(true);
+
     const response = await postData(ENDPOINTS.createPassword, data);
     console.log(response.data);
 
@@ -86,6 +88,8 @@ const CreatePassword: FC<CreatePasswordScreenProps> = ({
         type: "error",
         text1: error.message || "Something went wrong",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
   return (
@@ -146,6 +150,7 @@ const CreatePassword: FC<CreatePasswordScreenProps> = ({
               <PrimaryButton
                 title="Create New Password"
                 onPress={handleCreatePassword}
+                isLoading={isLoading}
               />
               <View style={styles.footerContainer}>
                 <CustomText fontSize={12} color={COLORS.oldGrey}>
