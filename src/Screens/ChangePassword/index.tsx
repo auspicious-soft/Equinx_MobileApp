@@ -1,4 +1,11 @@
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { FC, useState } from "react";
 import { ChangePasswordScreenProps } from "../../Typings/route";
 import { KeyboardAvoidingContainer } from "../../Components/KeyboardAvoidingComponent";
@@ -21,6 +28,10 @@ const ChangePassword: FC<ChangePasswordScreenProps> = ({ navigation }) => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isButtonLoading, setIsButtonLoading] = useState(false);
+  const [isShowConfirmPassword, setIsShowConfirmPassword] = useState(false);
+  const [isShowNewPassword, setIsShowNewPassword] = useState(false);
+  const [isShowOldPassword, setIsShowOldPassword] = useState(false);
+
   const [error, setError] = useState({
     oldPassword: "",
     newPassword: "",
@@ -121,24 +132,97 @@ const ChangePassword: FC<ChangePasswordScreenProps> = ({ navigation }) => {
 
         <View style={{ gap: verticalScale(20) }}>
           <View style={{ gap: verticalScale(10) }}>
-            <CustomInput
-              onChangeText={setOldPassword}
-              value={oldPassword}
-              label={translations.old_password}
-              placeholder="*********"
-            />
-            <CustomInput
-              onChangeText={setNewPassword}
-              value={newPassword}
-              label={translations.new_password}
-              placeholder="*********"
-            />
-            <CustomInput
-              onChangeText={setConfirmPassword}
-              value={confirmPassword}
-              label={translations.confirm_password}
-              placeholder="*********"
-            />
+            <View style={{ gap: verticalScale(5) }}>
+              <CustomText
+                fontFamily="regular"
+                color={COLORS.oldGrey}
+                fontSize={14}
+              >
+                Old Password
+              </CustomText>
+              <View style={styles.textInputContainer}>
+                <TextInput
+                  placeholder="***********"
+                  value={oldPassword}
+                  onChangeText={setOldPassword}
+                  placeholderTextColor="#C5C9D0"
+                  secureTextEntry={!isShowOldPassword}
+                  style={{
+                    paddingVertical: verticalScale(15),
+                    flex: 1,
+                  }}
+                />
+
+                <CustomIcon
+                  onPress={() => setIsShowOldPassword(!isShowOldPassword)}
+                  Icon={isShowOldPassword ? ICONS.EyeOnIcon : ICONS.EyeOffIcon}
+                  height={16}
+                  width={16}
+                />
+              </View>
+            </View>
+            <View style={{ gap: verticalScale(5) }}>
+              <CustomText
+                fontFamily="regular"
+                color={COLORS.oldGrey}
+                fontSize={14}
+              >
+                New Password
+              </CustomText>
+              <View style={styles.textInputContainer}>
+                <TextInput
+                  placeholder="***********"
+                  value={newPassword}
+                  onChangeText={setNewPassword}
+                  placeholderTextColor="#C5C9D0"
+                  secureTextEntry={!isShowNewPassword}
+                  style={{
+                    paddingVertical: verticalScale(15),
+                    flex: 1,
+                  }}
+                />
+
+                <CustomIcon
+                  onPress={() => setIsShowNewPassword(!isShowNewPassword)}
+                  Icon={isShowNewPassword ? ICONS.EyeOnIcon : ICONS.EyeOffIcon}
+                  height={16}
+                  width={16}
+                />
+              </View>
+            </View>
+            <View style={{ gap: verticalScale(5) }}>
+              <CustomText
+                fontFamily="regular"
+                color={COLORS.oldGrey}
+                fontSize={14}
+              >
+                Confirm Password
+              </CustomText>
+              <View style={styles.textInputContainer}>
+                <TextInput
+                  placeholder="***********"
+                  value={confirmPassword}
+                  onChangeText={setConfirmPassword}
+                  placeholderTextColor="#C5C9D0"
+                  secureTextEntry={!isShowConfirmPassword}
+                  style={{
+                    paddingVertical: verticalScale(15),
+                    flex: 1,
+                  }}
+                />
+
+                <CustomIcon
+                  onPress={() =>
+                    setIsShowConfirmPassword(!isShowConfirmPassword)
+                  }
+                  Icon={
+                    isShowConfirmPassword ? ICONS.EyeOnIcon : ICONS.EyeOffIcon
+                  }
+                  height={16}
+                  width={16}
+                />
+              </View>
+            </View>
           </View>
           <PrimaryButton
             onPress={handlePassword}
@@ -206,5 +290,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     alignItems: "center",
     justifyContent: "center",
+  },
+  textInputContainer: {
+    borderWidth: 1,
+    borderColor: COLORS.greyishWhite,
+    paddingHorizontal: horizontalScale(14),
+    borderRadius: verticalScale(12),
+    flexDirection: "row",
+    alignItems: "center",
+    gap: horizontalScale(10),
   },
 });

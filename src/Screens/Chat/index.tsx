@@ -114,7 +114,7 @@ const Chat = () => {
 
   useEffect(() => {
     fetchChat();
-  }, [chatData, loadingAssistant]);
+  }, [loadingAssistant]);
 
   return (
     <SafeAreaView style={styles.safeAreaContainer} edges={["top"]}>
@@ -129,7 +129,7 @@ const Chat = () => {
       <KeyboardAvoidingContainer style={{ flex: 1, gap: verticalScale(10) }}>
         <FlatList
           ref={flatListRef}
-          data={chatData}
+          data={chatData || []}
           keyExtractor={(item) => item._id}
           renderItem={renderChatData}
           inverted // Display latest messages at the bottom

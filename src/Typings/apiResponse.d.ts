@@ -204,6 +204,7 @@ export interface Pagination {
 export interface SettingResponse {
   editProfile: EditProfile;
   notification: boolean;
+  mealReminder: boolean;
   membership: Membership;
   language: string;
 }

@@ -31,6 +31,8 @@ const ENDPOINTS = {
   privacyPolicy: `api/get-privacy-and-contact-support`,
   rating: "api/rate-app",
   pricePlanInfo: "api/get-price-plan-info",
+  settingsUpdate: `api/update-settings`,
+  socialLogin: `api/user-social-signup`,
 };
 
 export default ENDPOINTS;

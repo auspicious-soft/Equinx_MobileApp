@@ -184,7 +184,8 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
 
     const options: CameraOptions = {
       mediaType: "photo",
-      saveToPhotos: true,
+      quality: 0.1,
+      saveToPhotos: true, // Save to gallery
     };
     launchCamera(options, async (response) => {
       if (response.didCancel) {
@@ -192,7 +193,7 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
       } else if (response.errorCode) {
         console.log("camera open error");
       } else if (response.assets && response.assets.length > 0) {
-        setSelectedImage(response.assets[0].uri!);
+        setSelectedImage(response.assets[0]?.uri!);
         const formData = new FormData();
         const asset = response.assets[0];
         formData.append("image", {
@@ -201,9 +202,11 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
           name: asset.fileName,
         });
         try {
-          await postData(ENDPOINTS.updateProfilPic, formData, {
-            "Content-Type": "multipart/form-data",
-          });
+          const response = await postFormData(
+            ENDPOINTS.updateProfilPic,
+            formData
+          );
+          console.log(response.data, "yyyy");
         } catch (error: any) {
           Toast.show({
             type: "error",
@@ -322,8 +325,8 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
       setProfileForm({
         gender: userData?.gender,
         dob: userData?.dob,
-        height: userData?.height.toLocaleString(),
-        weight: userData?.weight.toLocaleString(),
+        height: userData?.height?.toLocaleString(),
+        weight: userData?.weight?.toLocaleString(),
       })
     );
   }, [userData]);

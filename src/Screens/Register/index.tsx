@@ -33,8 +33,10 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [showCountryPicker, setShowCountryPicker] = useState(false);
-  const [password, setpassword] = useState("");
+  const [password, setPassword] = useState("");
   const [confirmPassword, setconfirmPassword] = useState("");
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [isShowConfirmPassword, setIsShowConfirmPassword] = useState(false);
 
   const [countryCode, setCountryCode] = useState<CountryCode>("US");
   const [country, setCountry] = useState<Country | null>(null);
@@ -184,47 +186,115 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
               <View
                 style={{ marginTop: verticalScale(15), gap: verticalScale(10) }}
               >
-                <CustomInput
-                  label="Full Name"
-                  value={name}
-                  onChangeText={setName}
-                  placeholder="Enter your name"
-                  inputStyle={{
-                    paddingVertical: verticalScale(15),
-                  }}
-                />
+                <View style={{ gap: verticalScale(5) }}>
+                  <CustomText
+                    fontFamily="regular"
+                    color={COLORS.oldGrey}
+                    fontSize={14}
+                  >
+                    Full Name
+                  </CustomText>
+                  <View style={styles.textInputContainer}>
+                    <TextInput
+                      placeholder="Enter your name"
+                      value={name}
+                      onChangeText={setName}
+                      placeholderTextColor="#C5C9D0"
+                      style={{
+                        paddingVertical: verticalScale(15),
+                        flex: 1,
+                      }}
+                    />
+                  </View>
+                </View>
+                <View style={{ gap: verticalScale(5) }}>
+                  <CustomText
+                    fontFamily="regular"
+                    color={COLORS.oldGrey}
+                    fontSize={14}
+                  >
+                    Email Address
+                  </CustomText>
+                  <View style={styles.textInputContainer}>
+                    <TextInput
+                      placeholder="Enter your email"
+                      value={email}
+                      onChangeText={setEmail}
+                      placeholderTextColor="#C5C9D0"
+                      style={{
+                        paddingVertical: verticalScale(15),
+                        flex: 1,
+                      }}
+                    />
+                  </View>
+                </View>
 
-                <CustomInput
-                  label="Email Address"
-                  value={email}
-                  onChangeText={setEmail}
-                  placeholder="Enter your email"
-                  inputStyle={{
-                    paddingVertical: verticalScale(15),
-                  }}
-                />
+                <View style={{ gap: verticalScale(5) }}>
+                  <CustomText
+                    fontFamily="regular"
+                    color={COLORS.oldGrey}
+                    fontSize={14}
+                  >
+                    Create Password
+                  </CustomText>
+                  <View style={styles.textInputContainer}>
+                    <TextInput
+                      placeholder="***********"
+                      value={password}
+                      onChangeText={setPassword}
+                      placeholderTextColor="#C5C9D0"
+                      secureTextEntry={!isPasswordVisible}
+                      style={{
+                        paddingVertical: verticalScale(15),
+                        flex: 1,
+                      }}
+                    />
 
-                <CustomInput
-                  label="Create Password"
-                  type="password"
-                  value={password}
-                  onChangeText={setpassword}
-                  placeholder="********"
-                  inputStyle={{
-                    paddingVertical: verticalScale(15),
-                  }}
-                />
+                    <CustomIcon
+                      onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                      Icon={
+                        isPasswordVisible ? ICONS.EyeOnIcon : ICONS.EyeOffIcon
+                      }
+                      height={16}
+                      width={16}
+                    />
+                  </View>
+                </View>
+                <View style={{ gap: verticalScale(5) }}>
+                  <CustomText
+                    fontFamily="regular"
+                    color={COLORS.oldGrey}
+                    fontSize={14}
+                  >
+                    Confirm Password
+                  </CustomText>
+                  <View style={styles.textInputContainer}>
+                    <TextInput
+                      placeholder="***********"
+                      value={confirmPassword}
+                      onChangeText={setconfirmPassword}
+                      placeholderTextColor="#C5C9D0"
+                      secureTextEntry={!isShowConfirmPassword}
+                      style={{
+                        paddingVertical: verticalScale(15),
+                        flex: 1,
+                      }}
+                    />
 
-                <CustomInput
-                  label="Confirm Password"
-                  type="password"
-                  value={confirmPassword}
-                  onChangeText={setconfirmPassword}
-                  placeholder="********"
-                  inputStyle={{
-                    paddingVertical: verticalScale(15),
-                  }}
-                />
+                    <CustomIcon
+                      onPress={() =>
+                        setIsShowConfirmPassword(!isShowConfirmPassword)
+                      }
+                      Icon={
+                        isShowConfirmPassword
+                          ? ICONS.EyeOnIcon
+                          : ICONS.EyeOffIcon
+                      }
+                      height={16}
+                      width={16}
+                    />
+                  </View>
+                </View>
 
                 <View style={{ gap: verticalScale(5) }}>
                   <CustomText fontSize={12} color={COLORS.oldGrey}>
@@ -355,5 +425,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: horizontalScale(5),
     flex: 1,
+  },
+  textInputContainer: {
+    borderWidth: 1,
+    borderColor: COLORS.greyishWhite,
+    paddingHorizontal: horizontalScale(14),
+    borderRadius: verticalScale(12),
+    flexDirection: "row",
+    alignItems: "center",
+    gap: horizontalScale(10),
   },
 });

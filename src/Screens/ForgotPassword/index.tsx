@@ -1,4 +1,11 @@
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { FC, useState } from "react";
 import LinearGradient from "react-native-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -14,6 +21,7 @@ import { KeyboardAvoidingContainer } from "../../Components/KeyboardAvoidingComp
 import { postData } from "../../APIService/api";
 import ENDPOINTS from "../../APIService/endPoints";
 import Toast from "react-native-toast-message";
+import CustomIcon from "../../Components/CustomIcon";
 
 const ForgotPassword: FC<ForgotPasswordScreenProps> = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -113,21 +121,33 @@ const ForgotPassword: FC<ForgotPasswordScreenProps> = ({ navigation }) => {
                 color={COLORS.darkBLue}
                 style={{ textAlign: "center" }}
               >
-                Enter the Phone Number/email associated with your account.
+                Enter the email associated with your account.
               </CustomText>
             </View>
 
             <View style={styles.footerContainer}>
-              <CustomInput
-                value={email}
-                onChangeText={setEmail}
-                label="Email/Phone"
-                leftIcon={ICONS.profileIcon}
-                placeholder="Enter your email"
-                inputStyle={{
-                  paddingVertical: verticalScale(15),
-                }}
-              />
+              <View style={{ gap: verticalScale(5) }}>
+                <CustomText
+                  fontFamily="regular"
+                  color={COLORS.oldGrey}
+                  fontSize={14}
+                >
+                  Email
+                </CustomText>
+                <View style={styles.textInputContainer}>
+                  <CustomIcon Icon={ICONS.profileIcon} height={16} width={16} />
+                  <TextInput
+                    placeholder="Enter your email"
+                    value={email}
+                    onChangeText={setEmail}
+                    placeholderTextColor="#C5C9D0"
+                    style={{
+                      paddingVertical: verticalScale(15),
+                      flex: 1,
+                    }}
+                  />
+                </View>
+              </View>
               <PrimaryButton
                 onPress={handleForgotPassword}
                 title="Confirm"
@@ -185,5 +205,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     alignSelf: "center",
     gap: horizontalScale(5),
+  },
+  textInputContainer: {
+    borderWidth: 1,
+    borderColor: COLORS.greyishWhite,
+    paddingHorizontal: horizontalScale(14),
+    borderRadius: verticalScale(12),
+    flexDirection: "row",
+    alignItems: "center",
+    gap: horizontalScale(10),
   },
 });

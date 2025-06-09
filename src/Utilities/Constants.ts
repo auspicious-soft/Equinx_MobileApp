@@ -13,6 +13,7 @@ const STORAGE_KEYS = {
   credentials: "credentials",
   isWelcomeScreen: "isWelcomeScreen",
   language_key: "app_language",
+  idToken: "id_token",
 };
 
 export default STORAGE_KEYS;

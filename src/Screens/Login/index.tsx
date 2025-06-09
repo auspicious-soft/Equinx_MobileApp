@@ -1,5 +1,13 @@
 import React, { FC, useEffect, useState } from "react";
-import { Alert, Image, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Alert,
+  Image,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import LinearGradient from "react-native-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import ICONS from "../../Assets/Icons";
@@ -27,6 +35,7 @@ import {
   statusCodes,
 } from "@react-native-google-signin/google-signin";
 import auth, { onAuthStateChanged } from "@react-native-firebase/auth";
+import DeviceInfo, { getDeviceId } from "react-native-device-info";
 
 const Login: FC<LoginScreenProps> = ({ navigation }) => {
   const [initializing, setInitializing] = useState(true); // For Firebase Auth status
@@ -34,6 +43,9 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
   const [user, setUser] = useState<string | null>("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isIdToken, setIsIdToken] = useState(null);
+  const [isLoader, setIsLoader] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [activeCheckBox, setActiveCheckBox] = useState<
     "ActiveBox" | "nonActive"
   >("nonActive");
@@ -77,40 +89,6 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
     );
   };
 
-  const signIn = async () => {
-    try {
-      await GoogleSignin.hasPlayServices({
-        showPlayServicesUpdateDialog: true,
-      });
-      const userInfo = await GoogleSignin.signIn();
-      console.log("Google Sign-In Success:", userInfo);
-    } catch (error: any) {
-      console.error("Google Sign-In Error:", error);
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        Alert.alert("Sign In Cancelled", "User cancelled the sign in flow.");
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        Alert.alert(
-          "Sign In In Progress",
-          "Operation (e.g. sign in) is already in progress."
-        );
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        Alert.alert(
-          "Play Services Not Available",
-          "Google Play Services not available or outdated."
-        );
-      } else {
-        Alert.alert("Sign In Error", error.message);
-      }
-    }
-  };
-
-  useEffect(() => {
-    GoogleSignin.configure({
-      webClientId:
-        "203391657684-114uktiehnnml86as45u99jmhsmov837.apps.googleusercontent.com",
-    });
-  }, []);
-
   const getFcmToken = async () => {
     const getToken = await getLocalStorageData(STORAGE_KEYS.fcmToken);
     console.log(getToken);
@@ -119,9 +97,18 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
     }
   };
 
+  const getIdToken = async () => {
+    const idToken = await getLocalStorageData(STORAGE_KEYS.idToken);
+    console.log("Id Token:", idToken);
+    if (idToken) {
+      setIsIdToken(idToken);
+    }
+  };
+
   useEffect(() => {
     getFcmToken();
-  }, [fcmToken]);
+    getIdToken();
+  }, [fcmToken, isIdToken]);
 
   const handleLogin = async () => {
     if (!validInputs()) {
@@ -189,6 +176,85 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
     }
   };
 
+  const signIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices({
+        showPlayServicesUpdateDialog: true,
+      });
+      const userInfo = await GoogleSignin.signIn();
+      console.log("Google Sign-In Success:", userInfo);
+      await handleSocialLogin(userInfo.data?.idToken!);
+    } catch (error: any) {
+      console.error("Google Sign-In Error:", error);
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        Alert.alert("Sign In Cancelled", "User cancelled the sign in flow.");
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        Alert.alert(
+          "Sign In In Progress",
+          "Operation (e.g. sign in) is already in progress."
+        );
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        Alert.alert(
+          "Play Services Not Available",
+          "Google Play Services not available or outdated."
+        );
+      } else {
+        Alert.alert("Sign In Error", error.message);
+      }
+    }
+  };
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId:
+        "203391657684-114uktiehnnml86as45u99jmhsmov837.apps.googleusercontent.com",
+    });
+  }, []);
+
+  const handleSocialLogin = async (idToken: string) => {
+    const data = {
+      deviceId: await DeviceInfo.getUniqueId(),
+      fcmToken: fcmToken,
+      idToken,
+      authType: "Google",
+    };
+
+    console.log("Social Login Data:", data);
+
+    setIsLoader(true);
+
+    try {
+      const response = await postData(ENDPOINTS.socialLogin, data);
+      console.log("Social Login Response:", response.data);
+      if (response.data.success) {
+        await storeLocalStorageData(
+          STORAGE_KEYS.token,
+          response.data.data.token
+        );
+
+        Toast.show({
+          type: "success",
+          text1: response.data.message,
+        });
+
+        navigation.replace("mainStack", {
+          screen: "tabs",
+          params: {
+            screen: "home",
+          },
+        });
+      }
+    } catch (error: any) {
+      console.error("Social Login Error:", error);
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
+    } finally {
+      setIsLoader(false);
+    }
+  };
+
   // Get Credtientials from local storage
 
   const loadSavedCredintails = async () => {
@@ -235,27 +301,59 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
             </View>
 
             <View style={styles.inputContainer}>
-              <CustomInput
-                label="Email"
-                value={email}
-                onChangeText={setEmail}
-                leftIcon={ICONS.profileIcon}
-                placeholder="Enter your email"
-                inputStyle={{
-                  paddingVertical: verticalScale(15),
-                }}
-              />
+              <View style={{ gap: verticalScale(5) }}>
+                <CustomText
+                  fontFamily="regular"
+                  color={COLORS.oldGrey}
+                  fontSize={14}
+                >
+                  Email
+                </CustomText>
+                <View style={styles.textInputContainer}>
+                  <CustomIcon Icon={ICONS.profileIcon} height={16} width={16} />
+                  <TextInput
+                    placeholder="Enter your email"
+                    value={email}
+                    onChangeText={setEmail}
+                    placeholderTextColor="#C5C9D0"
+                    style={{
+                      paddingVertical: verticalScale(15),
+                      flex: 1,
+                    }}
+                  />
+                </View>
+              </View>
+              <View style={{ gap: verticalScale(5) }}>
+                <CustomText
+                  fontFamily="regular"
+                  color={COLORS.oldGrey}
+                  fontSize={14}
+                >
+                  Password
+                </CustomText>
+                <View style={styles.textInputContainer}>
+                  <TextInput
+                    placeholder="***********"
+                    value={password}
+                    onChangeText={setPassword}
+                    placeholderTextColor="#C5C9D0"
+                    secureTextEntry={!isPasswordVisible}
+                    style={{
+                      paddingVertical: verticalScale(15),
+                      flex: 1,
+                    }}
+                  />
 
-              <CustomInput
-                label="Password"
-                value={password}
-                onChangeText={setPassword}
-                type="password"
-                placeholder="*********"
-                inputStyle={{
-                  paddingVertical: verticalScale(15),
-                }}
-              />
+                  <CustomIcon
+                    onPress={() => setIsPasswordVisible(!isPasswordVisible)}
+                    Icon={
+                      isPasswordVisible ? ICONS.EyeOnIcon : ICONS.EyeOffIcon
+                    }
+                    height={16}
+                    width={16}
+                  />
+                </View>
+              </View>
             </View>
 
             <View style={styles.remember_forgotContainer}>
@@ -317,10 +415,20 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
                 style={styles.googleBtnContainer}
                 onPress={signIn}
               >
-                <CustomIcon Icon={ICONS.googleIcon} height={17} width={17} />
-                <CustomText fontSize={12} color={COLORS.oldGrey}>
-                  Google
-                </CustomText>
+                {isLoader === true ? (
+                  <ActivityIndicator color={COLORS.green} size={20} />
+                ) : (
+                  <>
+                    <CustomIcon
+                      Icon={ICONS.googleIcon}
+                      height={17}
+                      width={17}
+                    />
+                    <CustomText fontSize={12} color={COLORS.oldGrey}>
+                      Google
+                    </CustomText>
+                  </>
+                )}
               </TouchableOpacity>
               {/* <TouchableOpacity style={styles.googleBtnContainer}>
                 <CustomIcon Icon={ICONS.faceBookIcon} height={17} width={17} />
@@ -405,5 +513,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: horizontalScale(10),
     justifyContent: "center",
     flex: 1,
+  },
+  textInputContainer: {
+    borderWidth: 1,
+    borderColor: COLORS.greyishWhite,
+    paddingHorizontal: horizontalScale(14),
+    borderRadius: verticalScale(12),
+    flexDirection: "row",
+    alignItems: "center",
+    gap: horizontalScale(10),
   },
 });

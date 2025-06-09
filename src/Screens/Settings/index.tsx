@@ -29,7 +29,7 @@ import {
 } from "../../Utilities/Storage";
 import STORAGE_KEYS from "../../Utilities/Constants";
 import Toast from "react-native-toast-message";
-import { fetchData, postData } from "../../APIService/api";
+import { fetchData, postData, putData } from "../../APIService/api";
 import ENDPOINTS from "../../APIService/endPoints";
 import { SettingResponse } from "../../Typings/apiResponse";
 import { useAppDispatch, useAppSelector } from "../../Redux/store";
@@ -44,14 +44,13 @@ import { setNotification } from "../../Redux/slices/NotificationSlice";
 const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const { notification } = useAppSelector((state) => state.notification);
+  const { settingData } = useAppSelector((state) => state.settingData);
   const { translations } = useLanguage();
   const [isToggled, setIsToggled] = useState(false);
   const toggleAnim = useRef(new Animated.Value(0)).current;
   const [isLoading, setIsLoading] = useState(false);
   const [fcmToken, setFcmToken] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
-
-  const { settingData } = useAppSelector((state) => state.settingData);
 
   const toggleSwitch = () => {
     const toValue = isToggled ? 0 : 1;
@@ -63,6 +62,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
       useNativeDriver: false,
     }).start();
 
+    // Handle the notification state change
     setIsToggled(!isToggled);
     if (isToggled) {
       dispatch(setNotification(true));
@@ -80,8 +80,15 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
     setIsLoading(true);
     try {
       const response = await fetchData<SettingResponse>(ENDPOINTS.settings);
-      // console.log("userData response", response);
+      console.log("userData response", response);
       if (response.data.success) {
+        setIsToggled(response.data.data.mealReminder);
+        Animated.timing(toggleAnim, {
+          toValue: response.data.data.mealReminder ? 1 : 0,
+          duration: 300,
+          easing: Easing.linear,
+          useNativeDriver: false,
+        }).start();
         dispatch(setSettingData(response.data.data));
       }
     } catch (error: any) {
@@ -91,6 +98,34 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleNotification = async () => {
+    const nextValue = !isToggled;
+    const data = {
+      mealReminder: nextValue,
+    };
+    console.log("Notification data", data);
+
+    try {
+      const response = await putData(ENDPOINTS.settingsUpdate, data);
+      console.log(response);
+
+      if (response.data.success) {
+        Toast.show({
+          type: "success",
+          text1: response.data.message,
+        });
+        setIsToggled(nextValue); // update state only after success
+        dispatch(setNotification(nextValue));
+        fetchUser();
+      }
+    } catch (error: any) {
+      Toast.show({
+        type: "error",
+        text1: error.message || "Something went wrong",
+      });
     }
   };
 
@@ -286,7 +321,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
           <View style={{ gap: verticalScale(4) }}>
             <TouchableOpacity
               style={styles.profileContainer}
-              onPress={toggleSwitch}
+              onPress={handleNotification}
             >
               <View
                 style={{
@@ -300,7 +335,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
                   <CustomIcon Icon={ICONS.notifyIcon} height={16} width={16} />
                 </View>
                 <CustomText fontSize={14} fontFamily="regular">
-                  {translations.notifications}
+                  {translations.mealReminder}
                 </CustomText>
               </View>
 
@@ -478,7 +513,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.green,
   },
   userImg: {
-    height: hp(13.7),
+    height: hp(13.5),
     width: wp(28.9),
     borderRadius: 100,
     resizeMode: "cover",
