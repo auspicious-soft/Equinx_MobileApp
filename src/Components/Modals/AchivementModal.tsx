@@ -18,10 +18,7 @@ import {
 import IMAGES from "../../Assets/Images";
 import CustomIcon from "../CustomIcon";
 import ICONS from "../../Assets/Icons";
-import {
-  SafeAreaView,
-  useSafeAreaInsets,
-} from "react-native-safe-area-context";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import COLORS from "../../Utilities/Colors";
 import { CustomText } from "../CustomText";
 
@@ -35,6 +32,18 @@ const AchivementModal: FC<AchivementModalProps> = ({
   closeModal,
 }) => {
   const insets = useSafeAreaInsets();
+
+  const formatDate = (date: Date): string => {
+    const options: Intl.DateTimeFormatOptions = {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    };
+    return date.toLocaleDateString("en-US", options);
+  };
+  const currentDate = new Date();
+  const formattedDate = formatDate(currentDate);
+
   return (
     <Modal
       visible={isVisible}
@@ -59,7 +68,7 @@ const AchivementModal: FC<AchivementModalProps> = ({
         <TouchableOpacity onPress={closeModal}>
           <CustomIcon Icon={ICONS.BackArrow} />
         </TouchableOpacity>
-        <View style={styles.notifyContainer}>
+        {/* <View style={styles.notifyContainer}>
           <Image source={IMAGES.taskCompleteImg} style={styles.tickImg} />
           <View
             style={{
@@ -83,7 +92,7 @@ const AchivementModal: FC<AchivementModalProps> = ({
               today.
             </CustomText>
           </View>
-        </View>
+        </View> */}
         <Image source={IMAGES.achievementImg} style={styles.centerImg} />
         <CustomText
           fontSize={14}
@@ -100,7 +109,7 @@ const AchivementModal: FC<AchivementModalProps> = ({
           color={COLORS.darkBLue}
           style={{ textAlign: "center" }}
         >
-          23 March, 2025
+          {formattedDate}
         </CustomText>
         <TouchableOpacity style={styles.shareContainer}>
           <CustomText fontSize={14} fontFamily="regular" color={COLORS.white}>
@@ -137,8 +146,8 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
   },
   centerImg: {
-    height: hp(40),
-    width: wp(80),
+    height: hp(48),
+    width: wp(84),
     alignSelf: "center",
     resizeMode: "contain",
   },

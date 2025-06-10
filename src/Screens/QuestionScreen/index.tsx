@@ -86,26 +86,28 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
   // Handle option selection with limit of 5
   const handleOptionSelect = (optionId: string) => {
     if (isMultiSelect) {
-      // ... (selection logic)
-      const newOptions = selectedOptions.includes(optionId)
-        ? selectedOptions.filter((id) => id !== optionId)
-        : [...selectedOptions, optionId];
+      const alreadySelected = selectedOptions.includes(optionId);
+      const newOptions = alreadySelected
+        ? selectedOptions.filter((id) => id !== optionId) // deselect
+        : [...selectedOptions, optionId]; // select
 
-      // Update both selectedOptions and questionAnswers
-      dispatch(
-        setSelectedOptions({
-          options: newOptions,
-          updateAnswers: true,
-        })
-      );
+      // Only allow update if the new selection is within the limit
+      if (newOptions.length <= 5) {
+        dispatch(
+          setSelectedOptions({
+            options: newOptions,
+            updateAnswers: true,
+          })
+        );
 
-      dispatch(
-        setQuestionAnswer({
-          questionId,
-          answers: newOptions,
-          order: currentQuestionIndex,
-        })
-      ); // Updates state
+        dispatch(
+          setQuestionAnswer({
+            questionId,
+            answers: newOptions,
+            order: currentQuestionIndex,
+          })
+        );
+      }
     } else {
       const newOptions = [optionId];
 

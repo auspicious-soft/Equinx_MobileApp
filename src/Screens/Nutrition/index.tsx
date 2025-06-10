@@ -83,7 +83,6 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
   const [recordMealModal, setRecordMealModal] = useState(false);
   const [captureMealModal, setCaptureMealModal] = useState(false);
   const [mealType, setMealType] = useState<string | null>(null);
-  const [achievementModal, setAchievementModal] = useState(false);
   const [mealId, setMealId] = useState<string | null>(null);
   const [carbs, setCarbs] = useState("");
   const [protine, setProtine] = useState("");
@@ -144,10 +143,6 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
 
   const { message, backgroundColor, borderColor, textColor } =
     getRemainingCaloriesStatus();
-
-  const closeAchivementModal = () => {
-    setAchievementModal(false);
-  };
 
   const closeRecordMealModal = () => {
     setRecordMealModal(false);
@@ -1338,11 +1333,6 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
             }}
           />
         )}
-
-        <AchivementModal
-          closeModal={closeAchivementModal}
-          isVisible={achievementModal}
-        />
       </SafeAreaView>
     </ScrollView>
   );

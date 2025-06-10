@@ -39,6 +39,7 @@ import { setHomeData } from "../../Redux/slices/homeDataSlice";
 import { useLanguage } from "../../Context/LanguageContext";
 import { setNutrition } from "../../Redux/slices/NutritionSlice";
 import { setSettingData } from "../../Redux/slices/settingSlice";
+import AchivementModal from "../../Components/Modals/AchivementModal";
 
 interface FastingMethod {
   type: "16:8" | "5:2";
@@ -54,6 +55,8 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
   const [timeRemaining, setTimeRemaining] = useState("");
   const [isFasting, setIsFasting] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [achievementModal, setAchievementModal] = useState(false);
+
   const [fastingStatus, setFastingStatus] = useState<
     "Fasting" | "Eating" | "Low-Calorie"
   >("Eating");
@@ -98,6 +101,9 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
         setSelectedContainerValue(response.data.data.waterIntake.containerSize);
         setSelectedDailyGoal(response.data.data.waterIntake.goal);
         setIsToggled(response.data.data.waterIntake.waterReminder);
+        if (response.data.data.thisWeekFastingDays === 5) {
+          setAchievementModal(true);
+        }
       }
     } catch (error: any) {
       Toast.show({
@@ -502,6 +508,7 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
             title={translations.start_chat}
             onPress={() => {
               navigation.navigate("chats");
+              // setAchievementModal(true);
             }}
           />
         </View>
@@ -524,6 +531,10 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
           selectedRecord={selectedRecord}
           setSelectedRecord={setSelectedRecord}
           getHomeData={getHomeData}
+        />
+        <AchivementModal
+          closeModal={() => setAchievementModal(false)}
+          isVisible={achievementModal}
         />
       </SafeAreaView>
     </ScrollView>
