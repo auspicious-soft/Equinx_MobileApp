@@ -3,9 +3,9 @@ import {
   Alert,
   Image,
   Modal,
-  PermissionsAndroid,
   Platform,
   StyleSheet,
+  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -91,19 +91,20 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
       errors.carbs = "Please record a carbs";
       isValid = false;
     }
+
     if (!protine) {
       errors.protine = "Please record a protine";
       isValid = false;
     }
+
     if (!fat) {
       errors.fat = "Please record a fat";
       isValid = false;
     }
+
     setError(errors);
     return isValid;
   };
-
-  console.log(carbs);
 
   const [isType, setIsType] = useState(false);
 
@@ -163,7 +164,10 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
         });
         closeModal();
         getNutrition();
-        // handleEmptyInput();
+        setCarbs("");
+        setProtine("");
+        setFat("");
+        setError({ carbs: "", protine: "", fat: "" });
       }
     } catch (error: any) {
       // Toast.show({
@@ -421,6 +425,10 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
           onPress={() => {
             closeModal();
             setIsType(false);
+            setCarbs("");
+            setProtine("");
+            setFat("");
+            setError({ carbs: "", protine: "", fat: "" });
           }}
           activeOpacity={1}
           style={styles.container}
@@ -563,7 +571,8 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                     <CustomInput
                       onChangeText={setCarbs}
                       value={carbs}
-                      placeholder="record your carbs "
+                      placeholder="Record your carbs "
+                      type="number"
                       inputStyle={{
                         paddingVertical: verticalScale(10),
                       }}
@@ -594,7 +603,8 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                     <CustomInput
                       onChangeText={setProtine}
                       value={protine}
-                      placeholder="record your protine "
+                      placeholder="Record your protine "
+                      type="number"
                       inputStyle={{
                         paddingVertical: verticalScale(10),
                       }}
@@ -625,7 +635,8 @@ const RecordMealModal: FC<RecordMealModalProps> = ({
                     <CustomInput
                       onChangeText={setFat}
                       value={fat}
-                      placeholder="record your fat "
+                      placeholder="Record your fat "
+                      type="number"
                       inputStyle={{
                         paddingVertical: verticalScale(10),
                       }}

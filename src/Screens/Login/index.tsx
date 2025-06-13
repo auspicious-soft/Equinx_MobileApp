@@ -13,7 +13,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import ICONS from "../../Assets/Icons";
 import IMAGES from "../../Assets/Images";
 import CustomIcon from "../../Components/CustomIcon";
-import CustomInput from "../../Components/CustomInput";
 import { CustomText } from "../../Components/CustomText";
 import { KeyboardAvoidingContainer } from "../../Components/KeyboardAvoidingComponent";
 import PrimaryButton from "../../Components/PrimaryButton";
@@ -61,6 +60,7 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
       email: "",
       password: "",
     };
+
     if (!email) {
       valid = false;
       newErrors.email = "Email is required.";
@@ -68,6 +68,7 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
         type: "error",
         text1: "Email is required.",
       });
+      return;
     }
 
     if (!password) {
@@ -77,6 +78,7 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
         type: "error",
         text1: "Password is required.",
       });
+      return;
     }
 
     setIsError(newErrors);
@@ -132,6 +134,8 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
           response.data.data.token
         );
 
+        await storeLocalStorageData(STORAGE_KEYS.loginWithEmail, true);
+
         //  Saved credentials
         if (activeCheckBox === "ActiveBox") {
           await storeLocalStorageData(STORAGE_KEYS.credentials, {
@@ -148,10 +152,10 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
 
         console.log("iswelcome", isWelcomeScreen);
 
-        Toast.show({
-          type: "success",
-          text1: response.data.message,
-        });
+        // Toast.show({
+        //   type: "success",
+        //   text1: response.data.message,
+        // });
 
         if (isWelcomeScreen) {
           navigation.replace("mainStack", {
@@ -181,6 +185,7 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
       await GoogleSignin.hasPlayServices({
         showPlayServicesUpdateDialog: true,
       });
+
       const userInfo = await GoogleSignin.signIn();
       console.log("Google Sign-In Success:", userInfo);
       await handleSocialLogin(userInfo.data?.idToken!);
@@ -204,13 +209,6 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
     }
   };
 
-  useEffect(() => {
-    GoogleSignin.configure({
-      webClientId:
-        "203391657684-114uktiehnnml86as45u99jmhsmov837.apps.googleusercontent.com",
-    });
-  }, []);
-
   const handleSocialLogin = async (idToken: string) => {
     const data = {
       deviceId: await DeviceInfo.getUniqueId(),
@@ -232,24 +230,38 @@ const Login: FC<LoginScreenProps> = ({ navigation }) => {
           response.data.data.token
         );
 
-        Toast.show({
-          type: "success",
-          text1: response.data.message,
-        });
+        await storeLocalStorageData(STORAGE_KEYS.loginWithGoogle, true);
 
-        navigation.replace("mainStack", {
-          screen: "tabs",
-          params: {
-            screen: "home",
-          },
-        });
+        // Save the idToken in local storage
+
+        // Toast.show({
+        //   type: "success",
+        //   text1: response.data.message,
+        // });
+
+        const isWelcomeScreen = await getLocalStorageData(
+          STORAGE_KEYS.isWelcomeScreen
+        );
+
+        if (isWelcomeScreen) {
+          navigation.replace("mainStack", {
+            screen: "tabs",
+            params: {
+              screen: "home",
+            },
+          });
+        } else {
+          navigation.replace("mainStack", {
+            screen: "Welcome",
+          });
+        }
       }
     } catch (error: any) {
       console.error("Social Login Error:", error);
-      Toast.show({
-        type: "error",
-        text1: error.message || "Something went wrong",
-      });
+      // Toast.show({
+      //   type: "error",
+      //   text1: error.message || "Something went wrong",
+      // });
     } finally {
       setIsLoader(false);
     }

@@ -52,6 +52,7 @@ const ChangePassword: FC<ChangePasswordScreenProps> = ({ navigation }) => {
         type: "error",
         text1: "Old Password is required.",
       });
+      return;
     }
     if (!newPassword) {
       valid = false;
@@ -60,6 +61,7 @@ const ChangePassword: FC<ChangePasswordScreenProps> = ({ navigation }) => {
         type: "error",
         text1: "New Password is required.",
       });
+      return;
     }
     if (!confirmPassword) {
       valid = false;
@@ -68,6 +70,7 @@ const ChangePassword: FC<ChangePasswordScreenProps> = ({ navigation }) => {
         type: "error",
         text1: "Confirm Password is required.",
       });
+      return;
     } else if (newPassword !== confirmPassword) {
       valid = false;
       newErrors.confirmPassword = "Passwords do not match.";
@@ -75,6 +78,7 @@ const ChangePassword: FC<ChangePasswordScreenProps> = ({ navigation }) => {
         type: "error",
         text1: "Passwords do not match.",
       });
+      return;
     }
 
     setError(newErrors);

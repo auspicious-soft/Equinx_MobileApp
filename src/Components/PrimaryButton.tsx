@@ -54,7 +54,7 @@ const PrimaryButton: FC<PrimaryButtonProps> = ({
       end={{ x: 1, y: 0 }}
     >
       <TouchableOpacity
-        disabled={disabled}
+        disabled={disabled || isLoading}
         activeOpacity={0.7}
         style={[isFullWidth && styles.button, style]}
         onPress={() => {

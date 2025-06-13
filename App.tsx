@@ -1,4 +1,4 @@
-import { PUBLISHABLE_KEY } from "@env";
+import { PUBLISHABLE_KEY, web_Client_Id } from "@env";
 import messaging from "@react-native-firebase/messaging";
 import { NavigationContainer, NavigationState } from "@react-navigation/native";
 import { StripeProvider } from "@stripe/stripe-react-native";
@@ -22,8 +22,14 @@ import STORAGE_KEYS from "./src/Utilities/Constants";
 import { storeLocalStorageData } from "./src/Utilities/Storage";
 import { LanguageProvider } from "./src/Context/LanguageContext";
 import notifee, { EventType } from "@notifee/react-native";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 LogBox.ignoreAllLogs(true);
+
+// Configure Google Sign-In
+GoogleSignin.configure({
+  webClientId: web_Client_Id, // From Firebase console settings
+});
 
 const App = () => {
   const dispatch = useAppDispatch();
@@ -143,8 +149,6 @@ const App = () => {
       unsubscribeForeground();
     };
   }, []);
-
-
 
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {

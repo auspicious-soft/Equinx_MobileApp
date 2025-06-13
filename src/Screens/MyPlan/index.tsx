@@ -41,7 +41,7 @@ import { useLanguage } from "../../Context/LanguageContext";
 const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const { translations } = useLanguage();
-  const { myPlan } = useAppSelector((state) => state.myPlan);
+  const { myPlan, isRefresh } = useAppSelector((state) => state.myPlan);
   const { nutrition } = useAppSelector((state) => state.nutrition);
   const { settingData } = useAppSelector((state) => state.settingData);
   const [isLoading, setIsLoading] = useState(false);
@@ -50,9 +50,6 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
   const [activeDay, setActiveDay] = useState<string | null>("1");
   const [activeData, setActiveData] = useState<MyPlanData | null>(null);
   const [selectedMealData, setSelectedMealData] = useState<Meal | null>(null);
-  const closeModal = () => {
-    setIsVisibleModal(false);
-  };
 
   const mealData = [
     {
@@ -155,6 +152,12 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
       },
     },
   ];
+  const formatTodayDate = () => {
+    const today = new Date();
+    const day = today.getDate();
+    const month = today.toLocaleString("en-US", { month: "long" });
+    return `${day} ${month}`;
+  };
 
   const getMyPlan = async () => {
     setIsLoading(true);
@@ -169,10 +172,10 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
         setActiveData(response.data.data.plan[0]);
       }
     } catch (error: any) {
-      Toast.show({
-        type: "error",
-        text1: error.message || "Something went wrong",
-      });
+      // Toast.show({
+      //   type: "error",
+      //   text1: error.message || "Something went wrong",
+      // });
     } finally {
       setIsLoading(false);
     }
@@ -329,8 +332,23 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
   };
 
   useEffect(() => {
+    // Reset states when component mounts to avoid stale data
+    setActiveDay(null);
+    setActiveData(null);
+    setSelectedMealData(null);
+
+    // Then fetch fresh data
     getMyPlan();
-  }, []);
+  }, [isRefresh]);
+
+  // Add a separate effect to handle state updates after data is loaded
+  useEffect(() => {
+    if (myPlan?.hasActivePlan && myPlan.plan?.length > 0) {
+      // Set active day and data when myPlan updates from Redux
+      setActiveDay(myPlan.plan[0].planId._id);
+      setActiveData(myPlan.plan[0]);
+    }
+  }, [myPlan]);
 
   if (isLoading) {
     return (
@@ -360,15 +378,7 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
           style={styles.mainImage}
           resizeMode="cover"
         ></ImageBackground>
-        <View
-          style={{
-            flex: 1,
-            paddingVertical: verticalScale(15),
-            paddingHorizontal: horizontalScale(20),
-            gap: verticalScale(15),
-            backgroundColor: "fff4e5",
-          }}
-        >
+        <View style={styles.main}>
           {myPlan?.hasActivePlan ? (
             <View
               style={{
@@ -405,7 +415,7 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
                 </View>
                 <View style={styles.progressContainer}>
                   <CustomText fontSize={16} color={COLORS.lightGrey}>
-                    {translations.Today}, March 25
+                    {translations.Today}, {formatTodayDate()}
                   </CustomText>
 
                   <CircularProgress
@@ -526,7 +536,7 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
         </View>
         {selectedMealData && (
           <MealModal
-            closeModal={closeModal}
+            closeModal={() => setIsVisibleModal(false)}
             isVisible={isVisibleModal}
             onpress={() => {}}
             data={selectedMealData}
@@ -543,6 +553,9 @@ export default MyPlan;
 const styles = StyleSheet.create({
   main: {
     flex: 1,
+    paddingVertical: verticalScale(15),
+    paddingHorizontal: horizontalScale(20),
+    gap: verticalScale(15),
     backgroundColor: "fff4e5",
   },
   mainImage: {

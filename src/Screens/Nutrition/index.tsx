@@ -58,6 +58,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
   const dispatch = useAppDispatch();
 
   const { nutrition } = useAppSelector((state) => state.nutrition);
+  const { isRefresh } = useAppSelector((state) => state.myPlan);
   const { translations } = useLanguage();
 
   const microNutrients = [
@@ -94,37 +95,41 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
   const [dinnerItemsToShow, setDinnerItemsToShow] = useState(4);
   const [otherItemsToShow, setOtherItemsToShow] = useState(4);
   const [isLoading, setIsLoading] = useState(false);
-
   const [refreshData, setRefreshData] = useState(0);
 
+  console.log(nutrition?.todayMeal?.stats?.overall?.percentage, "askjhds");
+
   const getRemainingCaloriesStatus = () => {
-    const totalCalories =
-      nutrition?.todayMeal?.stats?.carbs?.target +
-      nutrition?.todayMeal?.stats?.protein?.target +
-      nutrition?.todayMeal?.stats?.fat?.target;
-
-    const consumedCalories =
-      nutrition?.todayMeal?.stats?.carbs?.consumed +
-      nutrition?.todayMeal?.stats?.protein?.consumed +
-      nutrition?.todayMeal?.stats?.fat?.consumed;
-
-    const remaining = totalCalories - consumedCalories;
-
-    if (remaining > 800) {
+    // Check if data exists first
+    if (!nutrition?.todayMeal?.stats?.overall?.percentage) {
       return {
         message: translations.need_more_fuel,
         backgroundColor: "#EFFFF3",
         borderColor: COLORS.golden,
         textColor: COLORS.golden,
       };
-    } else if (remaining > 0) {
+    }
+
+    const percentage = nutrition.todayMeal.stats.overall.percentage;
+
+    if (percentage < 50) {
+      // If less than 50% of daily target consumed
+      return {
+        message: translations.need_more_fuel,
+        backgroundColor: "#EFFFF3",
+        borderColor: COLORS.golden,
+        textColor: COLORS.golden,
+      };
+    } else if (percentage < 100) {
+      // If between 50% and 100% of daily target consumed
       return {
         message: translations.Great_you_almost,
         backgroundColor: "#E3F2FD",
         borderColor: "#64B5F6",
         textColor: "#64B5F6",
       };
-    } else if (remaining === 0) {
+    } else if (percentage === 100) {
+      // If exactly 100% of daily target consumed
       return {
         message: translations.perfect_sufficient_calories,
         backgroundColor: "#E8F5E9",
@@ -132,6 +137,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
         textColor: "#66BB6A",
       };
     } else {
+      // If more than 100% of daily target consumed
       return {
         message: translations.be_careful_more_calories,
         backgroundColor: "#FFEBEE",
@@ -144,20 +150,14 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
   const { message, backgroundColor, borderColor, textColor } =
     getRemainingCaloriesStatus();
 
-  const closeRecordMealModal = () => {
-    setRecordMealModal(false);
-  };
-
-  const closeCaptureMealModal = () => {
-    setCaptureMealModal(false);
-  };
-
   const handleGetNutrition = async () => {
     setIsLoading(true);
     try {
       const response = await fetchData<NutritionResponse>(ENDPOINTS.nutrition);
+      console.log("Nutrition response:", response.data);
       if (response.data.success) {
         dispatch(setNutrition(response.data.data));
+        console.log("Nutrition data fetched successfully:", response.data.data);
       }
     } catch (error: any) {
       Toast.show({
@@ -171,7 +171,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
 
   useEffect(() => {
     handleGetNutrition();
-  }, [refreshData]);
+  }, [refreshData, isRefresh]);
 
   if (isLoading) {
     return (
@@ -363,14 +363,15 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                 >
                   {translations.Remaining_Calories}
                 </CustomText>
+
                 <CustomText color={textColor} fontFamily="bold" fontSize={12}>
-                  {`${Math.abs(
-                    nutrition?.todayMeal?.stats?.carbs?.target +
-                      nutrition?.todayMeal?.stats?.protein?.target +
-                      nutrition?.todayMeal?.stats?.fat?.target -
-                      (nutrition?.todayMeal?.stats?.carbs?.consumed +
-                        nutrition?.todayMeal?.stats?.protein?.consumed +
-                        nutrition?.todayMeal?.stats?.fat?.consumed)
+                  {`${Math.round(
+                    (Number(nutrition?.todayMeal?.planId?.total_calories) ||
+                      0) *
+                      (1 -
+                        (nutrition?.todayMeal?.stats?.overall?.percentage ||
+                          0) /
+                          100)
                   )} ${translations.kcal}`}
                 </CustomText>
               </View>
@@ -860,7 +861,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                   fontSize={12}
                   color={COLORS.green}
                 >
-                  {nutrition?.todayMeal.planId.total_calories}
+                  {nutrition?.todayMeal?.planId?.total_calories}
                 </CustomText>
               </View>
               {/* <PrimaryButton
@@ -1305,7 +1306,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
 
         <RecordMealModal
           isVisible={recordMealModal}
-          closeModal={closeRecordMealModal}
+          closeModal={() => setRecordMealModal(false)}
           mealType={mealType}
           mealId={mealId}
           getNutrition={handleGetNutrition}
@@ -1322,7 +1323,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
         {nutrition?.todayMeal.planId && (
           <RecordMealModal
             isVisible={captureMealModal}
-            closeModal={closeCaptureMealModal}
+            closeModal={() => setCaptureMealModal(false)}
             mealType={mealType}
             mealId={mealId}
             getNutrition={handleGetNutrition}

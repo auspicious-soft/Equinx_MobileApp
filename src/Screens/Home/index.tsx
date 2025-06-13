@@ -46,15 +46,15 @@ interface FastingMethod {
   fastingDays?: number[]; // For 5:2, e.g., [1, 4] for Monday and Thursday (0 = Sunday)
 }
 const Home: FC<HomeScreenProps> = ({ navigation }) => {
+  const { translations } = useLanguage();
   const dispatch = useAppDispatch();
   const { homeData } = useAppSelector((state) => state.homeData);
   const { settingData } = useAppSelector((state) => state.settingData);
-  const { translations } = useLanguage();
-  const [isModal, setIsModal] = useState(false);
-  const [recordModal, setRecordModal] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState("");
-  const [isFasting, setIsFasting] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [isModal, setIsModal] = useState(false);
+  const [isFasting, setIsFasting] = useState(false);
+  const [recordModal, setRecordModal] = useState(false);
   const [achievementModal, setAchievementModal] = useState(false);
 
   const [fastingStatus, setFastingStatus] = useState<
@@ -103,6 +103,8 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
         setIsToggled(response.data.data.waterIntake.waterReminder);
         if (response.data.data.thisWeekFastingDays === 5) {
           setAchievementModal(true);
+        } else {
+          setAchievementModal(false);
         }
       }
     } catch (error: any) {
@@ -119,7 +121,7 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
     setIsButtonLoading(true);
     try {
       const response = await postData(ENDPOINTS.fastingToday);
-      console.log(response);
+      console.log(response, "fasting record ");
       if (response.data.success) {
         Toast.show({
           type: "success",
@@ -273,15 +275,7 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
       bounces={false}
       style={{ flex: 1, backgroundColor: COLORS.white }}
     >
-      <SafeAreaView
-        style={{
-          flex: 1,
-          backgroundColor: COLORS.white,
-          paddingVertical: verticalScale(15),
-          paddingHorizontal: horizontalScale(20),
-          gap: verticalScale(20),
-        }}
-      >
+      <SafeAreaView style={styles.safeAreaContainer}>
         <View style={styles.headerContainer}>
           <CustomText fontSize={22} color={COLORS.darkBLue} fontFamily="bold">
             {translations.good_morning}{" "}
@@ -319,7 +313,7 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
                 color={COLORS.darkBLue}
                 fontFamily="regular"
               >
-                {fastingMethod.type} {translations.fasting_schedule}
+                {homeData?.fastingMethod} {translations.fasting_schedule}
               </CustomText>
               {fastingMethod.type === "5:2" &&
                 fastingStatus === "Low-Calorie" && (
@@ -328,7 +322,11 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
             </View>
             <CircularProgress
               color={
-                fastingStatus === "Low-Calorie" ? COLORS.orange : COLORS.green
+                homeData?.fastingMethod === "16:8"
+                  ? isFasting
+                    ? COLORS.green
+                    : COLORS.orange
+                  : COLORS.green
               }
               backgroundColor={COLORS.white}
               progress={progress}
@@ -353,8 +351,12 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
               </CustomText>
             </CircularProgress>
             <PrimaryButton
-              title={`${translations.start_Your} ${fastingMethod.type} ${
-                isFasting ? translations.fasting : translations.eating
+              title={`${translations.start_Your} ${homeData?.fastingMethod} ${
+                homeData?.fastingMethod === "16:8"
+                  ? isFasting
+                    ? translations.fasting
+                    : translations.eating
+                  : translations.fasting
               }`}
               onPress={handleFastingToday}
               isLoading={isButtonLoading}
@@ -544,6 +546,14 @@ const Home: FC<HomeScreenProps> = ({ navigation }) => {
 export default Home;
 
 const styles = StyleSheet.create({
+  safeAreaContainer: {
+    flex: 1,
+    backgroundColor: COLORS.white,
+    paddingVertical: verticalScale(15),
+    paddingHorizontal: horizontalScale(20),
+    gap: verticalScale(20),
+  },
+
   headerContainer: {
     gap: verticalScale(10),
   },

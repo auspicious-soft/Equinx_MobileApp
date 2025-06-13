@@ -237,21 +237,6 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
             }}
           >
             <View style={{ gap: verticalScale(10) }}>
-              {error.containerSize && (
-                <CustomText fontSize={10} fontFamily="regular" color="red">
-                  {error.containerSize}
-                </CustomText>
-              )}
-              {error.dailyGoal && (
-                <CustomText fontSize={10} fontFamily="regular" color="red">
-                  {error.dailyGoal}
-                </CustomText>
-              )}
-              {error.containerSize && (
-                <CustomText fontSize={10} fontFamily="regular" color="red">
-                  {error.containerSize}
-                </CustomText>
-              )}
               <CustomText
                 fontSize={12}
                 fontFamily="regular"
@@ -335,6 +320,11 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
               backgroundColor: COLORS.greyishWhite,
             }}
           />
+          {/* {error.containerType && (
+            <CustomText fontSize={10} fontFamily="regular" color="red">
+              {error.containerType}
+            </CustomText>
+          )} */}
 
           <View
             style={{
@@ -386,6 +376,11 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
                   />
                 </TouchableOpacity>
               </View>
+              {error.containerSize && (
+                <CustomText fontSize={10} fontFamily="regular" color="red">
+                  {error.containerSize}
+                </CustomText>
+              )}
 
               {containerSize && (
                 <View style={styles.sizeMlContainer}>
@@ -455,6 +450,11 @@ const WaterTrackModal: FC<WaterTrackModalProps> = ({
                     />
                   </TouchableOpacity>
                 </View>
+                {error.dailyGoal && (
+                  <CustomText fontSize={10} fontFamily="regular" color="red">
+                    {error.dailyGoal}
+                  </CustomText>
+                )}
                 {dailyGoal && (
                   <View style={styles.dailyGoal}>
                     {dailGoalData.map((item, index) => (

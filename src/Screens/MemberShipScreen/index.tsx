@@ -36,6 +36,7 @@ import {
 } from "@stripe/stripe-react-native";
 import { PUBLISHABLE_KEY } from "@env";
 import { useLanguage } from "../../Context/LanguageContext";
+import { refreshData } from "../../Redux/slices/MyPlan";
 
 const planData = [
   {
@@ -221,6 +222,7 @@ const MemberShip: FC<MemberShipScreenProps> = ({ navigation }) => {
 
       Alert.alert(`Error: ${error.message}`);
     } else {
+      dispatch(refreshData());
       navigation.goBack();
     }
   };

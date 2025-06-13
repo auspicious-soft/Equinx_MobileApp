@@ -26,12 +26,13 @@ import { useLanguage } from "../../Context/LanguageContext";
 
 const Chat = () => {
   const { translations } = useLanguage();
-  const [sendMessage, setSendMessage] = useState("");
-  const [isSending, setIsSending] = useState(false); // Track sending state
   const dispatch = useAppDispatch();
-  const flatListRef = useRef<FlatList>(null); // Reference to FlatList for scrolling
   const { chatData } = useAppSelector((state) => state.chatData);
+  const [sendMessage, setSendMessage] = useState("");
+  // const [isSending, setIsSending] = useState(false); // Track sending state
+  const flatListRef = useRef<FlatList>(null); // Reference to FlatList for scrolling
   const [loadingAssistant, setLoadingAssistant] = useState(false);
+  const [isBtnLoader, setIsBtnLoader] = useState(false);
 
   // Send message to API and update chat
   const handleSendMessage = async () => {
@@ -42,12 +43,13 @@ const Chat = () => {
       content: sendMessage,
     };
 
-    Keyboard.dismiss();
+    // Keyboard.dismiss();
+    setIsBtnLoader(true);
     setSendMessage("");
+    setTimeout(() => {
+      setLoadingAssistant(true);
+    }, 2000);
     try {
-      setTimeout(() => {
-        setLoadingAssistant(true);
-      }, 2000);
       const response = await postData(ENDPOINTS.chat, data);
       console.log(response.data);
       if (response.data.success) {
@@ -55,14 +57,17 @@ const Chat = () => {
           type: "success",
           text1: "Message sent successfully",
         });
+        // Update chat data in Redux store
+        await fetchChat();
       }
     } catch (error: any) {
-      Toast.show({
-        type: "error",
-        text1: error.message || "Something went wrong",
-      });
+      // Toast.show({
+      //   type: "error",
+      //   text1: error.message || "Something went wrong",
+      // });
     } finally {
       setLoadingAssistant(false);
+      setIsBtnLoader(false);
     }
   };
 
@@ -72,10 +77,10 @@ const Chat = () => {
       const response = await fetchData<ChatResponse>(ENDPOINTS.chatFetch);
       dispatch(setChatData(response.data.data));
     } catch (error: any) {
-      Toast.show({
-        type: "error",
-        text1: error.message || "Something went wrong",
-      });
+      // Toast.show({
+      //   type: "error",
+      //   text1: error.message || "Something went wrong",
+      // });
     }
   };
 
@@ -167,20 +172,29 @@ const Chat = () => {
             onChangeText={setSendMessage}
             style={styles.inputStyle}
             placeholderTextColor={COLORS.lightGrey}
-            editable={!isSending} // Disable input while sending
+            // editable={!isSending} // Disable input while sending
           />
-          <TouchableOpacity
-            onPress={handleSendMessage}
-            disabled={isSending}
-            style={styles.sendButton}
-          >
-            <CustomIcon
-              Icon={ICONS.sendIcon}
-              height={16}
-              width={16}
-              style={{ opacity: isSending ? 0.5 : 1 }}
+
+          {isBtnLoader === true ? (
+            <ActivityIndicator
+              size="small"
+              color={COLORS.green}
+              style={{ padding: horizontalScale(10) }}
             />
-          </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={handleSendMessage}
+              // disabled={isSending}
+              style={styles.sendButton}
+            >
+              <CustomIcon
+                Icon={ICONS.sendIcon}
+                height={16}
+                width={16}
+                // style={{ opacity: isSending ? 0.5 : 1 }}
+              />
+            </TouchableOpacity>
+          )}
         </View>
       </KeyboardAvoidingContainer>
     </SafeAreaView>

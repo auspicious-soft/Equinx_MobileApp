@@ -58,6 +58,7 @@ export interface loginAPiResponse {
 }
 
 export interface HomeDataResponse {
+  fastingMethod: string;
   fastingStreak: number;
   thisWeekFastingDays: number;
   thisWeekFastingHours: number;
@@ -117,10 +118,10 @@ export interface MyPlanData {
   otherMealStatus: OtherMealStatus;
   _id: string;
   userId: string;
-  planId: PlanId;
-  planDay: string;
   __v: number;
   createdAt: string;
+  planDay: string;
+  planId: PlanId;
   updatedAt: string;
 }
 

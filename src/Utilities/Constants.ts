@@ -14,6 +14,8 @@ const STORAGE_KEYS = {
   isWelcomeScreen: "isWelcomeScreen",
   language_key: "app_language",
   idToken: "id_token",
+  loginWithGoogle: "login_with_google",
+  loginWithEmail: "login_with_email",
 };
 
 export default STORAGE_KEYS;

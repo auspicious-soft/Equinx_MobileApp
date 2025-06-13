@@ -58,6 +58,7 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
 
   const [isMultiSelect, setIsMultiSelect] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoader, setIsLoader] = useState(false);
 
   // Find the question data by ID instead of using array index
   const questionData = questionsData.find((q) => q._id === questionId);
@@ -158,6 +159,7 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
     if (!questionData) return;
 
     setIsLoading(true);
+    setIsLoader(true);
     const questionDataForApi = {
       deviceId: await DeviceInfo.getUniqueId(),
       questionId: questionData._id,
@@ -226,6 +228,7 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
       console.log(error);
     } finally {
       setIsLoading(false);
+      setIsLoader(false);
     }
   };
 
@@ -439,6 +442,7 @@ const QuestionScreen: FC<QuestionScreenProps> = ({ navigation, route }) => {
                 title="Next"
                 onPress={handleNext}
                 disabled={selectedOptions.length === 0}
+                isLoading={isLoader}
               />
             </View>
           )}

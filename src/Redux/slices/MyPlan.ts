@@ -5,11 +5,13 @@ import { createSlice } from "@reduxjs/toolkit";
 // Define a type for the slice state
 interface MyPlanSliceState {
   myPlan: MyPlanApiResponse | null;
+  isRefresh: number;
 }
 
 // Define the initial state using that type
 const initialState: MyPlanSliceState = {
   myPlan: null,
+  isRefresh: 0,
 };
 
 export const GetMyPlanSlice = createSlice({
@@ -19,9 +21,12 @@ export const GetMyPlanSlice = createSlice({
     setMyPlan: (state, action: PayloadAction<MyPlanApiResponse>) => {
       state.myPlan = action.payload;
     },
+    refreshData: (state) => {
+      state.isRefresh = Math.floor(Math.random() * 1000) + 1;
+    },
   },
 });
 
-export const { setMyPlan } = GetMyPlanSlice.actions;
+export const { setMyPlan, refreshData } = GetMyPlanSlice.actions;
 
 export default GetMyPlanSlice.reducer;

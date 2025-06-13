@@ -1,4 +1,11 @@
-import { Image, Modal, StyleSheet, TouchableOpacity, View } from "react-native";
+import {
+  ActivityIndicator,
+  Image,
+  Modal,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { FC, useEffect, useState } from "react";
 import { horizontalScale, verticalScale, wp } from "../../Utilities/Metrics";
 import COLORS from "../../Utilities/Colors";
@@ -43,6 +50,7 @@ type RateUsModalProps = {
 const RateUs: FC<RateUsModalProps> = ({ isVisible, closeModal }) => {
   const [rating, setRating] = useState<number | null>(null);
   const [hasRated, setHasRated] = useState(false);
+  const [isLoader, setIsLoader] = useState(false);
 
   const { translations } = useLanguage();
 
@@ -80,6 +88,7 @@ const RateUs: FC<RateUsModalProps> = ({ isVisible, closeModal }) => {
   };
 
   const getRating = async () => {
+    setIsLoader(true);
     try {
       const response = await fetchData<RatingResponse>(ENDPOINTS.rating);
       if (response.data.success) {
@@ -89,6 +98,8 @@ const RateUs: FC<RateUsModalProps> = ({ isVisible, closeModal }) => {
     } catch (error: any) {
       // If error occurs, user likely hasn't rated yet
       setHasRated(false);
+    } finally {
+      setIsLoader(false);
     }
   };
 
@@ -106,7 +117,10 @@ const RateUs: FC<RateUsModalProps> = ({ isVisible, closeModal }) => {
       animationType="fade"
     >
       <TouchableOpacity
-        onPress={closeModal}
+        onPress={() => {
+          closeModal();
+          setRating(null);
+        }}
         activeOpacity={1}
         style={styles.container}
       >
@@ -116,40 +130,54 @@ const RateUs: FC<RateUsModalProps> = ({ isVisible, closeModal }) => {
           onResponderRelease={(e) => e.stopPropagation()}
         >
           <CustomIcon Icon={ICONS.rateFruitIcon} height={100} width={100} />
-          <View style={styles.rateContainer}>
-            <CustomText fontSize={22} color={COLORS.darkBLue} fontFamily="bold">
-              {translations.please_rate_us}
-            </CustomText>
-            <View style={styles.starContainer}>
-              {stars.map((item, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => handleStarPress(item.id)}
-                  disabled={hasRated}
+          {isLoader === true ? (
+            <ActivityIndicator
+              size="small"
+              color={COLORS.green}
+              style={{ padding: horizontalScale(10) }}
+            />
+          ) : (
+            <>
+              <View style={styles.rateContainer}>
+                <CustomText
+                  fontSize={22}
+                  color={COLORS.darkBLue}
+                  fontFamily="bold"
                 >
-                  <CustomIcon
-                    Icon={
-                      rating !== null && item.id <= rating
-                        ? ICONS.greenStar
-                        : ICONS.whiteStar
-                    }
-                    height={25}
-                    width={25}
-                  />
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-          <PrimaryButton
-            title={translations.submit}
-            onPress={() => {
-              handleRating();
-              closeModal();
-            }}
-            isFullWidth={false}
-            style={styles.btnStyle}
-            disabled={hasRated || rating === null}
-          />
+                  {translations.please_rate_us}
+                </CustomText>
+                <View style={styles.starContainer}>
+                  {stars.map((item, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => handleStarPress(item.id)}
+                      disabled={hasRated}
+                    >
+                      <CustomIcon
+                        Icon={
+                          rating !== null && item.id <= rating
+                            ? ICONS.greenStar
+                            : ICONS.whiteStar
+                        }
+                        height={25}
+                        width={25}
+                      />
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+              <PrimaryButton
+                title={translations.submit}
+                onPress={() => {
+                  handleRating();
+                  closeModal();
+                }}
+                isFullWidth={false}
+                style={styles.btnStyle}
+                disabled={hasRated || rating === null}
+              />
+            </>
+          )}
         </View>
       </TouchableOpacity>
     </Modal>

@@ -39,7 +39,9 @@ import RateUs from "../../Components/Modals/RateUs";
 import { useLanguage } from "../../Context/LanguageContext";
 import IMAGES from "../../Assets/Images";
 import { setNotification } from "../../Redux/slices/NotificationSlice";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 // import NotificationService from "../../Services/NotificationService";
+import auth from "@react-native-firebase/auth";
 
 const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
   const dispatch = useAppDispatch();
@@ -142,14 +144,25 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
             fcmToken: fcmToken,
           };
 
+          const isGoogleLogin = await getLocalStorageData(
+            STORAGE_KEYS.loginWithGoogle
+          );
+
+          console.log("isGoogleLogin", isGoogleLogin);
+
           try {
             const response = await postData(ENDPOINTS.logOut, data);
             console.log(response.data);
             if (response.data.success) {
-              Toast.show({
-                type: "success",
-                text1: response.data.message,
-              });
+              if (isGoogleLogin) {
+                await GoogleSignin.signOut();
+              }
+              // await auth().signOut();
+              // Toast.show({
+              //   type: "success",
+              //   text1: response.data.message,
+              // });
+
               deleteLocalStorageData(STORAGE_KEYS.token);
               navigation.replace("authStack", {
                 screen: "login",
@@ -507,15 +520,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     height: hp(14.5),
     width: hp(14.5),
-    borderRadius: 100,
+    borderRadius: hp(14.5) / 2,
     justifyContent: "center",
     alignItems: "center",
     borderColor: COLORS.green,
+    overflow: "hidden",
   },
   userImg: {
-    height: hp(13.5),
-    width: wp(28.9),
-    borderRadius: 100,
+    height: hp(13.5), // Now 1 unit smaller than outer
+    width: hp(13.5),
+    borderRadius: hp(13.5) / 2,
     resizeMode: "cover",
     // backgroundColor: "red",
   },

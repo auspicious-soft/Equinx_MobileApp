@@ -57,8 +57,10 @@ const CreatePassword: FC<CreatePasswordScreenProps> = ({
         type: "error",
         text1: "New Password is required.",
       });
+      return;
     } else if (newPassword.length < 6) {
       valid = false;
+      return;
     } else if (newPassword !== confirmPassword) {
       valid = false;
       newErrors.confirmPassword = "Passwords do not match.";
@@ -66,6 +68,7 @@ const CreatePassword: FC<CreatePasswordScreenProps> = ({
         type: "error",
         text1: "Passwords do not match.",
       });
+      return;
     }
 
     setError(newErrors);

@@ -193,6 +193,7 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
       } else if (response.errorCode) {
         console.log("camera open error");
       } else if (response.assets && response.assets.length > 0) {
+        closeModal();
         setSelectedImage(response.assets[0]?.uri!);
         const formData = new FormData();
         const asset = response.assets[0];
@@ -214,7 +215,6 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
           });
         }
       }
-      closeModal();
     });
   };
 
@@ -229,6 +229,7 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
       } else if (response.errorCode) {
         console.log("image picker error");
       } else if (response.assets && response.assets.length > 0) {
+        closeModal();
         setSelectedImage(response.assets[0]?.uri!);
         const formData = new FormData();
         const asset = response.assets[0];
@@ -251,7 +252,6 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
           });
         }
       }
-      closeModal();
     });
   };
 
@@ -317,9 +317,9 @@ const EditProfile: FC<EditProfileScreenProps> = ({ navigation, route }) => {
 
     console.log(callingCodeToCountryCode(userData?.countryCode));
 
-    setName(userData?.fullName);
-    setEmail(userData?.email);
-    setPhone(userData?.phoneNumber);
+    setName(userData?.fullName!);
+    setEmail(userData?.email!);
+    setPhone(userData?.phoneNumber!);
     setCountryCode(callingCodeToCountryCode(userData?.countryCode));
     dispatch(
       setProfileForm({

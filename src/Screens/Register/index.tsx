@@ -37,9 +37,9 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
   const [confirmPassword, setconfirmPassword] = useState("");
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isShowConfirmPassword, setIsShowConfirmPassword] = useState(false);
-
   const [countryCode, setCountryCode] = useState<CountryCode>("US");
   const [country, setCountry] = useState<Country | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState({
     name: "",
     email: "",
@@ -55,24 +55,26 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
       password: "",
       confirmPassword: "",
     };
-    if (!name) {
+    if (!name.trim()) {
       valid = false;
       newErrors.name = "Name is required.";
       Toast.show({
         type: "error",
         text1: "Name is required.",
       });
+      return;
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-    if (!email) {
+    if (!email.trim()) {
       valid = false;
       newErrors.email = "Email is required.";
       Toast.show({
         type: "error",
         text1: "Email is required.",
       });
+      return;
     } else if (!emailRegex.test(email)) {
       valid = false;
       newErrors.email = "Invalid email format.";
@@ -80,30 +82,43 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
         type: "error",
         text1: "Invalid email format.",
       });
+      return;
     }
 
-    if (!password) {
+    if (!password.trim()) {
       valid = false;
       newErrors.password = "Password is required.";
       Toast.show({
         type: "error",
         text1: "Password is required.",
       });
+      return;
     }
 
-    if (!confirmPassword) {
+    if (!confirmPassword.trim()) {
       valid = false;
       newErrors.confirmPassword = "Confirm Password is required.";
       Toast.show({
         type: "error",
         text1: "Confirm Password is required.",
       });
+      return;
     } else if (password !== confirmPassword) {
       valid = false;
       newErrors.confirmPassword = "Passwords do not match.";
       Toast.show({
         type: "error",
         text1: "Passwords do not match.",
+      });
+      return;
+    }
+
+    if (!phone.trim()) {
+      valid = false;
+      newErrors.confirmPassword = "Phone number is required.";
+      Toast.show({
+        type: "error",
+        text1: "Phone number is required.",
       });
     }
 
@@ -129,7 +144,8 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
       password: password,
       authType: "Email",
     };
-    console.log(data);
+    setIsLoading(true);
+    // console.log(data);
     try {
       const response = await postData(ENDPOINTS.signUp, data);
       if (response.data.success) {
@@ -148,6 +164,8 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
         type: "error",
         text1: error.message || "Something went wrong",
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -298,7 +316,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
 
                 <View style={{ gap: verticalScale(5) }}>
                   <CustomText fontSize={12} color={COLORS.oldGrey}>
-                    Phone Number (optional)
+                    Phone Number
                   </CustomText>
                   <View style={styles.phoneInputContainer}>
                     <TouchableOpacity
@@ -321,6 +339,7 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                           flagSizeButton: 20,
                         }}
                       />
+
                       <CustomIcon
                         Icon={ICONS.ArrowDownIcon}
                         height={10}
@@ -344,7 +363,11 @@ const Register: FC<RegisterScreenProps> = ({ navigation }) => {
                 </View>
               </View>
 
-              <PrimaryButton title="Register" onPress={handleSignUp} />
+              <PrimaryButton
+                title="Register"
+                onPress={handleSignUp}
+                isLoading={isLoading}
+              />
               <View style={styles.footerContainer}>
                 <CustomText fontSize={12} color={COLORS.oldGrey}>
                   Already have an account?
