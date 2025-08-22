@@ -47,6 +47,7 @@ const Settings: FC<SettingsScreenProps> = ({ navigation }) => {
   const dispatch = useAppDispatch();
   const { notification } = useAppSelector((state) => state.notification);
   const { settingData } = useAppSelector((state) => state.settingData);
+
   const { translations } = useLanguage();
   const [isToggled, setIsToggled] = useState(false);
   const toggleAnim = useRef(new Animated.Value(0)).current;

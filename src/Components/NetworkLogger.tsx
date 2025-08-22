@@ -1,5 +1,11 @@
 import React from "react";
-import { StyleSheet, TouchableOpacity, Text, SafeAreaView, Modal } from "react-native";
+import {
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  SafeAreaView,
+  Modal,
+} from "react-native";
 import NL from "react-native-network-logger";
 import { useState } from "react";
 import COLORS from "../Utilities/Colors";
@@ -12,7 +18,6 @@ const NetworkLogger = ({ onPress }: { onPress?: () => void }) => {
         style={styles.modal}
         visible={isNetworkModalVisible}
         // onBackButtonPress={() => setIsNetworkVIsible(false)}
-
       >
         <SafeAreaView style={styles.contentContainer}>
           <TouchableOpacity

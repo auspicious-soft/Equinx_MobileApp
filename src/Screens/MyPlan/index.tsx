@@ -159,6 +159,24 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
     return `${day} ${month}`;
   };
 
+  const rawTotalCalories = nutrition?.todayMeal?.planId?.total_calories;
+  const remainingCal = nutrition?.todayMeal?.stats?.remainingCal;
+
+  let progressPercentage = 0;
+
+  if (rawTotalCalories && remainingCal !== undefined && remainingCal !== null) {
+    const totalCalories = Number(
+      rawTotalCalories.split(" ")[0].replace("~", "")
+    );
+    if (totalCalories > 0) {
+      const consumedCalories = totalCalories - remainingCal;
+      progressPercentage = Math.min(
+        (consumedCalories / totalCalories) * 100,
+        100
+      );
+    }
+  }
+
   const getMyPlan = async () => {
     setIsLoading(true);
     try {
@@ -421,22 +439,14 @@ const MyPlan: FC<MyPlanScreenProps> = ({ navigation }) => {
                   <CircularProgress
                     color={COLORS.green}
                     backgroundColor={COLORS.greyishWhite}
-                    progress={
-                      Math.min(
-                        nutrition?.todayMeal?.stats?.overall?.percentage! / 100,
-                        1
-                      ) || 0
-                    }
+                    progress={progressPercentage / 100}
                     radius={30}
                     strokeWidth={20}
                     // backgroundStrokeWidth={15}
                     progressStrokeWidth={8}
                   >
                     <CustomText fontSize={10} color={COLORS.darkBLue}>
-                      {`${Math.min(
-                        nutrition?.todayMeal?.stats?.overall?.percentage || 0,
-                        100
-                      )}%`}
+                      {`${Math.floor(progressPercentage)}%`}
                     </CustomText>
                   </CircularProgress>
                 </View>

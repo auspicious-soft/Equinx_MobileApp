@@ -110,26 +110,42 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
       };
     }
 
-    const percentage = nutrition.todayMeal.stats.overall.percentage;
+    const totalCalories = Number(
+      nutrition.todayMeal.planId.total_calories.split(" ")[0].replace("~", "")
+    );
 
-    if (percentage < 50) {
-      // If less than 50% of daily target consumed
+    // Ensure totalCalories is a valid number and greater than zero to avoid division errors
+    if (!totalCalories || totalCalories <= 0) {
+      return {
+        message: translations.invalid_calorie_target,
+        backgroundColor: "#FFF3E0",
+        borderColor: "#FFA726",
+        textColor: "#FFA726",
+      };
+    }
+
+    const remainig = nutrition.todayMeal.stats.remainingCal;
+    const remainingPercentage = (remainig / totalCalories) * 100;
+
+    // Logic based on remaining calorie percentage
+    if (remainingPercentage > 50) {
+      // More than 50% of calories left to consume
       return {
         message: translations.need_more_fuel,
         backgroundColor: "#EFFFF3",
         borderColor: COLORS.golden,
         textColor: COLORS.golden,
       };
-    } else if (percentage < 100) {
-      // If between 50% and 100% of daily target consumed
+    } else if (remainingPercentage > 0) {
+      // Between 0% and 50% of calories left
       return {
         message: translations.Great_you_almost,
         backgroundColor: "#E3F2FD",
         borderColor: "#64B5F6",
         textColor: "#64B5F6",
       };
-    } else if (percentage === 100) {
-      // If exactly 100% of daily target consumed
+    } else if (remainingPercentage === 0) {
+      // Exactly on target
       return {
         message: translations.perfect_sufficient_calories,
         backgroundColor: "#E8F5E9",
@@ -137,7 +153,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
         textColor: "#66BB6A",
       };
     } else {
-      // If more than 100% of daily target consumed
+      // Overeaten (negative remaining calories)
       return {
         message: translations.be_careful_more_calories,
         backgroundColor: "#FFEBEE",
@@ -168,6 +184,21 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
       setIsLoading(false);
     }
   };
+
+  const rawTotalCalories = nutrition?.todayMeal?.planId?.total_calories;
+  const remainingCal = nutrition?.todayMeal?.stats?.remainingCal;
+
+  let progressPercentage = 0;
+
+  if (rawTotalCalories && remainingCal !== undefined && remainingCal !== null) {
+    const totalCalories = Number(
+      rawTotalCalories.split(" ")[0].replace("~", "")
+    );
+    if (totalCalories > 0) {
+      const consumed = totalCalories - remainingCal;
+      progressPercentage = Math.min((consumed / totalCalories) * 100, 100);
+    }
+  }
 
   useEffect(() => {
     handleGetNutrition();
@@ -213,12 +244,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                 <CircularProgress
                   color={COLORS.green}
                   backgroundColor={COLORS.greyishWhite}
-                  progress={
-                    Math.min(
-                      nutrition?.todayMeal?.stats?.overall?.percentage! / 100,
-                      1
-                    ) || 0
-                  }
+                  progress={progressPercentage / 100}
                   radius={50}
                   strokeWidth={20}
                   backgroundStrokeWidth={8}
@@ -229,10 +255,7 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                     color={COLORS.darkBLue}
                     fontFamily="medium"
                   >
-                    {`${Math.min(
-                      nutrition?.todayMeal?.stats?.overall?.percentage || 0,
-                      100
-                    )}%`}
+                    {`${Math.floor(progressPercentage)}%`}
                   </CustomText>
                 </CircularProgress>
                 <CustomText
@@ -356,24 +379,25 @@ const Nutrition: FC<NutritionScreenProps> = ({ navigation }) => {
                   alignItems: "center",
                 }}
               >
-                <CustomText
-                  color={COLORS.darkBLue}
-                  fontFamily="regular"
-                  fontSize={12}
-                >
-                  {translations.Remaining_Calories}
-                </CustomText>
+                {message !== translations.be_careful_more_calories && (
+                  <>
+                    <CustomText
+                      color={COLORS.darkBLue}
+                      fontFamily="regular"
+                      fontSize={12}
+                    >
+                      {translations.Remaining_Calories}
+                    </CustomText>
 
-                <CustomText color={textColor} fontFamily="bold" fontSize={12}>
-                  {`${Math.round(
-                    (Number(nutrition?.todayMeal?.planId?.total_calories) ||
-                      0) *
-                      (1 -
-                        (nutrition?.todayMeal?.stats?.overall?.percentage ||
-                          0) /
-                          100)
-                  )} ${translations.kcal}`}
-                </CustomText>
+                    <CustomText
+                      color={textColor}
+                      fontFamily="bold"
+                      fontSize={12}
+                    >
+                      {`${nutrition?.todayMeal.stats.remainingCal} ${translations.kcal}`}
+                    </CustomText>
+                  </>
+                )}
               </View>
             </View>
           </View>

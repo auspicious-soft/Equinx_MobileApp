@@ -69,10 +69,13 @@ const RecordIntakeModal: FC<RecordIntakeModalProps> = ({
         getHomeData();
       }
     } catch (error: any) {
-      Toast.show({
-        type: "error",
-        text1: error.message || "Something went wrong",
-      });
+      closeModal();
+      setTimeout(() => {
+        Toast.show({
+          type: "error",
+          text1: error.message || "Something went wrong",
+        });
+      }, 1000);
     } finally {
       setIsButtonLoading(false);
     }

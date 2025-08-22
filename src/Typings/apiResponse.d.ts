@@ -1,3 +1,4 @@
+import { NutritionResponse } from "./apiResponse.d";
 export interface GetQuestionDataResponse {
   questions: Question[];
   questionResponse: QuestionResponse[];
@@ -424,6 +425,7 @@ export interface SecondMealStatus {
   protein: number;
   fat: number;
   status: boolean;
+  microNutrients: any;
   calories: number;
 }
 
@@ -432,25 +434,8 @@ export interface ThirdMealStatus {
   protein: number;
   fat: number;
   status: boolean;
-  microNutrients: MicroNutrients;
+  microNutrients: any;
   calories: number;
-}
-
-export interface MicroNutrients {
-  fiber: number;
-  sugar: number;
-  sodium: number;
-  potassium: number;
-  calcium: number;
-  iron: number;
-  vitaminA: number;
-  vitaminC: number;
-  vitaminD: number;
-  vitaminE: number;
-  vitaminK: number;
-  vitaminB1: number;
-  vitaminB2: number;
-  vitaminB3: number;
 }
 
 export interface OtherMealStatus {
@@ -458,6 +443,8 @@ export interface OtherMealStatus {
   protein: number;
   fat: number;
   status: boolean;
+  microNutrients: any;
+  calories: number;
 }
 
 export interface Stats {
@@ -465,6 +452,7 @@ export interface Stats {
   protein: Protein;
   fat: Fat;
   overall: Overall;
+  remainingCal: number;
 }
 
 export interface Carbs {
